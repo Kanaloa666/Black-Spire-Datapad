@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GRID NODE // RELAY-07</title>
+  <title>GRID NODE // TRANSFER PROTOCOL 77</title>
   <style>
     :root{
       --bg:#040a10;
@@ -137,6 +137,7 @@
       margin:0 0 8px 0;
       font-size:18px;
       letter-spacing:1.4px;
+      text-transform:uppercase;
     }
     .hero p{
       margin:0;
@@ -144,7 +145,7 @@
       font-family: var(--sans);
       font-size:14px;
       line-height:1.55;
-      max-width: 78ch;
+      max-width: 86ch;
     }
 
     .grid2{
@@ -186,14 +187,13 @@
       color: var(--muted);
       letter-spacing:.4px;
     }
-    .mono{
-      font-family: var(--mono);
-    }
+
     .flag-ok{color: var(--ok)}
     .flag-warn{color: var(--warn)}
+
     .chip{
       display:inline-block;
-      margin-top:8px;
+      margin-top:10px;
       padding:6px 10px;
       border-radius:999px;
       border:1px solid rgba(118,255,255,.28);
@@ -218,12 +218,34 @@
       letter-spacing:.9px;
       font-size:12px;
       margin-bottom:6px;
+      text-transform:uppercase;
     }
     .mode span{
       color: var(--muted);
       font-family: var(--sans);
       font-size:13px;
       line-height:1.45;
+    }
+
+    .steps{
+      margin:0;
+      padding:0;
+      list-style:none;
+      font-family: var(--sans);
+      font-size:14px;
+      color: var(--muted);
+    }
+    .steps li{
+      padding:10px 8px;
+      border-top:1px solid rgba(255,255,255,.08);
+      line-height:1.55;
+    }
+    .steps b{
+      color: var(--text);
+      font-family: var(--mono);
+      font-size:12px;
+      letter-spacing:.6px;
+      text-transform:uppercase;
     }
 
     .log{
@@ -247,13 +269,6 @@
       border:1px solid rgba(118,255,255,.16);
     }
 
-    .footer{
-      margin:16px 0 6px;
-      text-align:center;
-      font-family: var(--sans);
-      font-size:12px;
-      color: rgba(214,247,255,.55);
-    }
     .btnrow{
       display:flex;
       gap:10px;
@@ -276,6 +291,14 @@
     a.btn:hover{
       box-shadow: 0 0 24px rgba(118,255,255,.14);
     }
+
+    .footer{
+      margin:16px 0 6px;
+      text-align:center;
+      font-family: var(--sans);
+      font-size:12px;
+      color: rgba(214,247,255,.55);
+    }
   </style>
 </head>
 <body>
@@ -287,32 +310,34 @@
       <div class="brand">
         <div class="sig" aria-hidden="true"></div>
         <div class="title">
-          <b>GRID NODE // RELAY-07</b>
-          <span>ROGUE PROGRAM TERMINAL • OFF-GRID UPLINK</span>
+          <b>GRID NODE // TRANSFER PROTOCOL 77</b>
+          <span>ROGUE PROGRAM TERMINAL • OFF-GRID DIGITIZATION</span>
         </div>
       </div>
-      <div class="statuspill">STATUS: <span class="flag-ok">ACTIVE</span> • TRACE: <span class="flag-warn">LOW</span></div>
+      <div class="statuspill">STATUS: <span class="flag-ok">ARMED</span> • TRACE: <span class="flag-warn">LOW</span></div>
     </div>
 
     <div class="hero">
-      <h1>// SYNCHRONIZATION HANDSHAKE COMPLETE</h1>
+      <h1>IMPERIAL DESIGNATION DETECTED // CONVERSION INITIATED</h1>
       <p>
-        Relay-07 is a portable energy node used to stabilize Lightcycle-aligned signatures during off-grid movement.
-        It isn’t official. It isn’t registered. That’s the point.
-        If you found this terminal, the node is within range and listening for spectrum input.
+        You are the courier. The bounty hunter. The one who brings the analog scum to the Node.
+        Relay-77 captures hostile Imperial bio-signatures, converts them into digital constructs, and deploys them into
+        <b>The Games</b>—a Lightcycle arena containment protocol for high-aggression lifeforms.
+        <br/><br/>
+        This terminal is <b>read-only</b>. It does not control access. It logs custody transfer and monitors synchronization.
       </p>
-      <div class="chip">Hint: change the artifact color to switch node modes.</div>
+      <div class="chip">Operator hint: hand the artifact over, let them change the spectrum, then call the prisoners forward.</div>
     </div>
 
     <div class="grid2">
       <div class="card">
         <h2>DEVICE PROFILE</h2>
         <table class="kv">
-          <tr><td>Designation</td><td class="mono">RELAY-07 / “NODE SEED”</td></tr>
-          <tr><td>Origin</td><td>Off-grid build • assembled from reclaimed circuit shards</td></tr>
-          <tr><td>Primary Function</td><td>Maintain stable energy identity during Lightcycle deployment windows</td></tr>
-          <tr><td>Operator Guidance</td><td>Keep it quick. Keep it playful. If the Grid is busy, disengage and move.</td></tr>
-          <tr><td>Failsafe</td><td><span class="flag-ok">ENABLED</span> (no signal writes / read-only uplink)</td></tr>
+          <tr><td>Node ID</td><td>RELAY-77 / “TRANSFER NODE”</td></tr>
+          <tr><td>Custody Role</td><td>Chain-of-custody confirmation prior to digitization</td></tr>
+          <tr><td>Destination</td><td>THE GAMES (Lightcycle arena containment)</td></tr>
+          <tr><td>Priority Window</td><td><span class="flag-ok">AVAILABLE</span> — rapid deployment improves subject compliance</td></tr>
+          <tr><td>Failsafe</td><td><span class="flag-ok">ENABLED</span> (no writes • no system integrations)</td></tr>
         </table>
         <div class="btnrow">
           <a class="btn" href="../">← Exit Terminal</a>
@@ -320,49 +345,60 @@
       </div>
 
       <div class="card">
-        <h2>SPECTRUM MODES</h2>
+        <h2>SYNCHRONIZATION STATES (SPECTRUM INPUT)</h2>
         <div class="modes">
           <div class="mode">
-            <b>CYAN — GRID LINK</b>
-            <span>Clean lock to the Grid. Best “Tron” look.</span>
+            <b>CYAN — GRID LINK STABLE</b>
+            <span>Node handshake clean. Digital pathway open.</span>
           </div>
           <div class="mode">
             <b>BLUE — LIGHTCYCLE SYNC</b>
-            <span>Stable rider signature. Calibrated, controlled.</span>
+            <span>Alignment stable. Ideal for “call them forward.”</span>
           </div>
           <div class="mode">
             <b>WHITE — SAFE IDLE</b>
-            <span>Neutral output. Use as default when walking.</span>
+            <span>Neutral output while transporting custody.</span>
           </div>
           <div class="mode">
-            <b>RED — SURGE</b>
-            <span>High energy spike. Use sparingly (dramatic).</span>
+            <b>RED — AGGRESSION SURGE</b>
+            <span>Hostile temperament high. Keep transfer brief.</span>
           </div>
           <div class="mode">
-            <b>PURPLE — QUARANTINE</b>
-            <span>Contained mode. “Keep the node quiet.”</span>
+            <b>PURPLE — RESIDUAL IMPERIAL SIGNAL</b>
+            <span>Identity noise detected. Quarantine recommended.</span>
           </div>
           <div class="mode">
-            <b>CYCLE — SCAN</b>
-            <span>Slow cycle for demonstration / “system check.”</span>
+            <b>CYCLE — ARENA PREVIEW</b>
+            <span>Slow scan mode. Displays simulated deployment states.</span>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card">
+      <h2>TRANSFER PROCEDURE (FIELD PLAYBOOK)</h2>
+      <ul class="steps">
+        <li><b>STEP 01 — CONFIRM PROXIMITY</b><br/>Move subjects within Node range. Maintain custody posture.</li>
+        <li><b>STEP 02 — STABILIZE OUTPUT</b><br/>Select a spectrum mode (recommend <span style="color:var(--text);font-family:var(--mono)">BLUE</span> or <span style="color:var(--text);font-family:var(--mono)">CYAN</span>).</li>
+        <li><b>STEP 03 — CALL SUBJECTS FORWARD</b><br/>When alignment reads stable, call the prisoners forward for verification.</li>
+        <li><b>STEP 04 — VERIFY CUSTODY TRANSFER</b><br/>Identity confirmation occurs via resonance match (no badges required).</li>
+        <li><b>STEP 05 — DIGITIZATION</b><br/>Conversion initiates. Constructs are queued for arena deployment.</li>
+      </ul>
+    </div>
+
+    <div class="card">
       <h2>FIELD LOG (LOCAL CACHE)</h2>
       <ul class="log">
-        <li><span class="t">[BOOT]</span> Relay-07 awakened • uplink established • sector: <code>OFF-GRID / MK</code></li>
-        <li><span class="t">[PING]</span> Energy architecture matches Lightcycle profile • resonance stable</li>
-        <li><span class="t">[NOTE]</span> Node designed for <code>interaction</code>, not access. Keep it fun. Keep it moving.</li>
-        <li><span class="t">[OBS]</span> High-frequency pulses detected • likely adjacent to active Lightcycle systems</li>
-        <li><span class="t">[READY]</span> Awaiting spectrum input from artifact controller</li>
+        <li><span class="t">[BOOT]</span> Relay-77 awakened • uplink established • sector: <code>OFF-GRID / MK</code></li>
+        <li><span class="t">[PING]</span> Imperial bio-signature present • custody chain flagged <code>PENDING</code></li>
+        <li><span class="t">[WINDOW]</span> Arena priority window detected • rapid deployment advised for compliance</li>
+        <li><span class="t">[SYNC]</span> Awaiting spectrum input • recommend <code>BLUE</code> or <code>CYAN</code></li>
+        <li><span class="t">[READY]</span> Call subjects forward • confirm custody transfer • begin digitization</li>
       </ul>
     </div>
 
     <div class="footer">
-      Fan-made prop terminal • Not affiliated with Disney or Marvel • Designed for playful, quick interactions
+      Fan-made prop terminal • Not affiliated with Disney/Marvel/Lucasfilm • Designed for quick, playful roleplay
     </div>
   </div>
 </body>
