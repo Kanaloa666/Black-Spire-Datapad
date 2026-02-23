@@ -359,8 +359,10 @@
         <div class="cardBody">
           <p class="bigline">GREETINGS, USER.</p>
           <p class="sub">
-            Imperial Remnants detained on <b>D’Qar</b>. Espionage against Resistance forces confirmed.<br/>
-            Off-world transport complete. Prisoner transfer to the Grid successful.<br/>
+            Imperial Remnants detained on <b>D’Qar</b>. 
+            Espionage against Resistance forces confirmed.<br/>
+            Off-world transport complete. 
+            Prisoner transfer to the Grid Pending<br/>
             Digitization sequence armed. Arena assignment: <b>The Games</b>.
           </p>
 
@@ -432,11 +434,11 @@
 
 <script>
   // Total time until decay/infection: 1.5 minutes (90 seconds)
-  const totalMs = 90 * 1000;
+  const totalMs = 45 * 1000;
 
   // Stage thresholds
-  const yellowAtMs = 30 * 1000; // 0:30
-  const redAtMs    = 90 * 1000; // 1:30 (also decay hits)
+  const yellowAtMs = 10 * 1000; // 0:30
+  const redAtMs    = 25 * 1000; // 1:30 (also decay hits)
 
   const startAt = Date.now();
   const decayAt = startAt + totalMs;
