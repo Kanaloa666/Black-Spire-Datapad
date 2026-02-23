@@ -1,304 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Resistance Datapad</title>
-  <meta name="theme-color" content="#0b0f14"/>
-
-  <style>
-    :root{
-      --bg:#0b0f14;
-      --panel:#0f1722;
-      --ink:#e7f0ff;
-      --muted:#9fb2c9;
-      --accent:#36d1ff;     /* Resistance teal */
-      --warn:#ffb000;       /* amber */
-      --danger:#ff4d4d;     /* alert red */
-      --line:rgba(54,209,255,.25);
-      --radius:20px;
-      --shadow:0 26px 70px rgba(0,0,0,.65);
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-    }
-
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      min-height:100vh;
-      background:
-        radial-gradient(850px 520px at 12% 0%, rgba(54,209,255,.11), transparent 60%),
-        radial-gradient(600px 420px at 92% 20%, rgba(255,176,0,.06), transparent 60%),
-        linear-gradient(180deg, #06080c 0%, var(--bg) 62%, #06080c 100%);
-      color:var(--ink);
-      font-family:var(--sans);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-
-    .wrap{width:min(760px,100%)}
-
-    .header{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      font-family:var(--mono);
-      font-size:12px;
-      letter-spacing:.09em;
-      color:var(--muted);
-      margin-bottom:16px;
-      opacity:.95;
-    }
-
-    .leftHeader{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      white-space:nowrap;
-    }
-
-    .pulse{
-      width:10px;height:10px;border-radius:50%;
-      background:var(--accent);
-      box-shadow:0 0 0 4px rgba(54,209,255,.10), 0 0 22px rgba(54,209,255,.55);
-      animation:pulse 1.8s infinite;
-      flex:0 0 auto;
-    }
-
-    @keyframes pulse{
-      0%,100%{transform:scale(1);opacity:1}
-      50%{transform:scale(1.28);opacity:.85}
-    }
-
-    .card{
-      background:linear-gradient(180deg, rgba(15,23,34,.96), rgba(10,14,20,.96));
-      border:1px solid var(--line);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      position:relative;
-    }
-
-    /* subtle scanlines */
-    .card::before{
-      content:"";
-      position:absolute; inset:0;
-      background:repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.028),
-        rgba(255,255,255,.028) 1px,
-        transparent 2px,
-        transparent 6px
-      );
-      opacity:.16;
-      pointer-events:none;
-      mix-blend-mode:overlay;
-    }
-
-    .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      padding:16px 18px;
-      border-bottom:1px solid rgba(54,209,255,.20);
-      background:rgba(5,8,12,.35);
-      position:relative;
-      z-index:1;
-    }
-
-    .titleBlock{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-
-    .title{
-      font-family:var(--mono);
-      letter-spacing:.12em;
-      color:var(--accent);
-      font-size:15px;
-      margin:0;
-    }
-
-    .node{
-      font-family:var(--mono);
-      font-size:12px;
-      color:var(--muted);
-      letter-spacing:.08em;
-    }
-
-    .chip{
-      font-family:var(--mono);
-      font-size:12px;
-      letter-spacing:.08em;
-      padding:7px 11px;
-      border:1px solid rgba(255,176,0,.36);
-      border-radius:999px;
-      background:rgba(255,176,0,.09);
-      color:var(--warn);
-      white-space:nowrap;
-    }
-
-    .body{
-      padding:20px 18px 18px;
-      position:relative;
-      z-index:1;
-    }
-
-    .headline{
-      font-family:var(--mono);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:22px;
-      margin:4px 0 14px;
-    }
-
-    .blurb{
-      color:var(--muted);
-      line-height:1.65;
-      margin:0 0 16px;
-    }
-
-    .heroBox{
-      border:1px solid rgba(54,209,255,.20);
-      border-radius:var(--radius);
-      background:rgba(54,209,255,.05);
-      padding:16px;
-      margin-bottom:14px;
-    }
-
-    .console{
-      font-family:var(--mono);
-      font-size:13px;
-      line-height:1.65;
-      background:rgba(0,0,0,.34);
-      border:1px solid rgba(54,209,255,.18);
-      border-radius:14px;
-      padding:16px;
-    }
-
-    .k{color:var(--muted)}
-    .v{color:var(--accent)}
-    .warn{color:var(--warn)}
-    .danger{color:var(--danger)}
-
-    .divider{
-      height:1px;
-      background:linear-gradient(90deg, transparent, rgba(54,209,255,.36), transparent);
-      margin:14px 0;
-    }
-
-    .btnRow{
-      margin-top:14px;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      flex-wrap:wrap;
-    }
-
-    .btn{
-      border:1px solid rgba(54,209,255,.35);
-      background:rgba(54,209,255,.10);
-      color:var(--ink);
-      padding:10px 12px;
-      border-radius:12px;
-      font-family:var(--mono);
-      letter-spacing:.06em;
-      cursor:pointer;
-    }
-
-    .btn:active{transform:translateY(1px)}
-
-    .footer{
-      margin-top:16px;
-      font-family:var(--mono);
-      font-size:11px;
-      color:var(--muted);
-      letter-spacing:.09em;
-      text-align:center;
-      opacity:.9;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nova Corps Artifact Archive</title>
+<style>
+  body{margin:0;font-family:Segoe UI,system-ui,Arial,sans-serif;background:#0b1c2d;color:#f4f4f4}
+  header{background:#122c45;padding:40px 20px;text-align:center;border-bottom:3px solid #d4af37}
+  header h1{margin:0;font-size:28px;letter-spacing:2px;color:#d4af37}
+  header p{margin:10px 0 0;font-size:14px;opacity:.85}
+  .container{max-width:900px;margin:40px auto;padding:0 20px}
+  .artifact{background:#122c45;padding:22px;margin:0 0 18px;border-left:4px solid #d4af37;border-radius:10px}
+  .artifact h2{margin:0 0 8px;color:#d4af37;font-size:18px}
+  .artifact p{margin:0;font-size:14px;line-height:1.6;opacity:.92}
+  .artifact a{display:inline-block;margin-top:12px;padding:9px 14px;text-decoration:none;background:#d4af37;color:#0b1c2d;font-weight:700;border-radius:8px}
+  footer{text-align:center;padding:18px;font-size:12px;opacity:.65}
+</style>
 </head>
-
 <body>
-  <div class="wrap">
+<header>
+  <h1>NOVA CORPS ARTIFACT ARCHIVE</h1>
+  <p>Field Access Terminal • Xandar Reconstruction Initiative</p>
+</header>
 
-    <div class="header">
-      <div class="leftHeader"><span class="pulse"></span>ENCRYPTED LINK ACTIVE</div>
-      <div>RESISTANCE SECURE CHANNEL</div>
-    </div>
+<div class="container">
 
-    <div class="card">
-      <div class="topbar">
-        <div class="titleBlock">
-          <div class="title">RESISTANCE DATAPAD</div>
-          <div class="node">NODE: BATUU • BLACK SPIRE • AUTH: GHOST</div>
-        </div>
-        <div class="chip" id="chip">SILENT RUNNING</div>
-      </div>
-
-      <div class="body">
-        <div class="heroBox">
-          <div class="headline">HIGH VALUE TARGETS IN TOW</div>
-
-          <p class="blurb">
-            Encrypted channel established.<br><br>
-            First Order patrols increasing across Batuu — keep it low. The Empire cannot trace this channel.<br><br>
-            High value detainees secured at Black Spire Outpost. Preparing covert transport to Resistance command on D’Qar.<br><br>
-            <b>If Lightning Lane clearance is granted for part of the route, it would significantly assist extraction.</b>
-          </p>
-        </div>
-
-        <div class="console">
-          <div><span class="k">ORIGIN:</span> <span class="v">BATUU — BLACK SPIRE OUTPOST</span></div>
-          <div><span class="k">DESTINATION:</span> <span class="v">D’QAR — RESISTANCE COMMAND</span></div>
-          <div><span class="k">VESSEL:</span> <span class="v">I-TS TRANSPORT</span></div>
-          <div><span class="k">ESCORT STATUS:</span> <span class="v">BLUE SQUADRON SCRAMBLE READY</span></div>
-          <div><span class="k">THREAT LEVEL:</span> <span class="warn">FIRST ORDER STAR DESTROYER IN SYSTEM</span></div>
-
-          <div class="divider"></div>
-
-          <div><span class="k">MISSION STATUS:</span> <span class="warn">AWAITING CLEARANCE</span></div>
-
-          <div style="margin-top:12px;">
-            <span class="k">PROTOCOL:</span><br>
-            <span class="v">If clearance is granted, call the prisoners forward.</span><br>
-            <span class="v">Scan their bands to confirm custody transfer prior to boarding.</span>
-          </div>
-
-          <div style="margin-top:12px;">
-            <span class="k">IF CHALLENGED, RESPOND:</span><br>
-            <span class="v">“Prisoner transport under Resistance authorization.”</span>
-          </div>
-
-          <div style="margin-top:12px;">
-            <span class="k">CREDITS:</span>
-            <span class="v">Logged for your efforts upon successful transfer.</span>
-          </div>
-        </div>
-
-        <div class="btnRow">
-          <div class="footer">— END TRANSMISSION —</div>
-          <button class="btn" onclick="ping()">REPLAY PING</button>
-        </div>
-      </div>
-    </div>
-
+  <div class="artifact">
+    <h2>Black Spire Datapad — AUTH: GHOST</h2>
+    <p>Outer Rim field intel terminal. Containment notes and access prompts maintained for on-site ops.</p>
+    <a href="star-wars/">Access File</a>
   </div>
 
-  <script>
-    function ping(){
-      const c = document.getElementById('chip');
-      c.textContent = 'PING SENT';
-      setTimeout(()=>c.textContent='SILENT RUNNING', 900);
-    }
-  </script>
+  <div class="artifact">
+    <h2>Xandar Jump Core — Field Stabilization Unit</h2>
+    <p>Nova Corps field device engineered for jump-point calibration and cosmic energy stabilization.</p>
+    <a href="guardians-jump-core/">Access File</a>
+  </div>
+
+</div>
+
+<footer>
+  Fan-created interactive artifacts • Not affiliated with Marvel or Disney
+</footer>
 </body>
 </html>
