@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>GRID NODE // TRANSFER</title>
+<title>GRID NODE // TRANSFER PROTOCOL</title>
 
 <style>
   body{
@@ -15,58 +15,61 @@
 
   .wrap{
     max-width:760px;
-    margin:80px auto;
+    margin:90px auto;
     padding:20px;
   }
 
   .panel{
     border:1px solid rgba(0,255,255,.25);
-    padding:28px;
+    padding:32px;
     border-radius:18px;
-    background:rgba(0,18,28,.65);
+    background:rgba(0,18,28,.7);
   }
 
   h1{
-    margin:0 0 18px 0;
+    margin:0 0 20px 0;
     font-size:16px;
     letter-spacing:2px;
   }
 
   p{
-    margin:10px 0;
+    margin:12px 0;
     font-size:14px;
     line-height:1.6;
     opacity:.9;
   }
 
-  .tag{
-    display:inline-block;
-    margin-top:14px;
-    padding:6px 12px;
-    border-radius:999px;
-    border:1px solid rgba(0,255,255,.35);
-    background:rgba(0,255,255,.08);
-    font-size:12px;
-    letter-spacing:1px;
-  }
-
   .modes{
-    margin-top:26px;
-    border-top:1px solid rgba(255,255,255,.08);
+    margin-top:24px;
     padding-top:18px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:13px;
   }
 
   .mode{
-    margin-bottom:10px;
-    font-size:13px;
+    margin-bottom:8px;
   }
 
   .mode b{
     letter-spacing:1px;
   }
 
+  .cursor{
+    display:inline-block;
+    width:8px;
+    background:#cfffff;
+    margin-left:6px;
+    animation:blink 1s infinite;
+  }
+
+  @keyframes blink{
+    0%{opacity:1;}
+    50%{opacity:0;}
+    100%{opacity:1;}
+  }
+
   .footer{
-    margin-top:50px;
+    margin-top:40px;
     font-size:12px;
     opacity:.6;
   }
@@ -78,32 +81,32 @@
 <div class="wrap">
 
   <div class="panel">
+
     <h1>GREETINGS, USER.</h1>
 
     <p>
-      High value targets delivered.
+      Rogue transfer node active.
     </p>
 
     <p>
-      Imperial combatants queued for digitization.
-      Arena preparation in progress.
+      High value Imperial targets delivered for arena containment.
     </p>
 
-    <div class="tag">
-      Arena Priority Window Active
-    </div>
+    <p>
+      Bio-signatures verified. Custody transfer confirmed.
+      Digitization protocol standing by.
+    </p>
 
     <div class="modes">
       <div class="mode"><b>CYAN</b> — Grid Alignment Stable</div>
-      <div class="mode"><b>BLUE</b> — Lightcycle Synchronization</div>
+      <div class="mode"><b>BLUE</b> — Lightcycle Synchronization Ready</div>
       <div class="mode"><b>WHITE</b> — Containment Idle</div>
       <div class="mode"><b>RED</b> — Aggression Elevated</div>
       <div class="mode"><b>CYCLE</b> — Arena Scan Preview</div>
     </div>
 
     <p class="footer">
-      Transfer protocol awaiting spectrum input.<br>
-      End of line.
+      End of line.<span class="cursor"></span>
     </p>
 
   </div>
