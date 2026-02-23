@@ -10,10 +10,10 @@
     --bg:#02070d;
     --panel: rgba(6, 18, 28, .72);
 
-    /* These will be animated by JS */
-    --accent: rgba(64, 255, 255, .95);     /* cyan -> red */
-    --accentSoft: rgba(64, 255, 255, .22); /* cyan -> red */
-    --accentGlow: rgba(64, 255, 255, .18); /* cyan -> red */
+    /* Animated by JS */
+    --accent: rgba(64, 255, 255, .95);     /* cyan -> yellow -> red */
+    --accentSoft: rgba(64, 255, 255, .22);
+    --accentGlow: rgba(64, 255, 255, .18);
 
     --text:#d8ffff;
     --muted:#86d8e4;
@@ -31,7 +31,6 @@
     overflow-x:hidden;
   }
 
-  /* Subtle animated grid */
   .grid{
     position:fixed; inset:0;
     background:
@@ -47,7 +46,6 @@
     to{background-position:220px 0, 0 220px}
   }
 
-  /* Scanline */
   .scanline{
     position:fixed; left:0; right:0;
     height:120px;
@@ -67,7 +65,6 @@
     100%{top: calc(100vh + 160px)}
   }
 
-  /* Accent vignettes (will feel like cyan -> red takeover) */
   .accentGlow{
     position:fixed; inset:-20%;
     background:
@@ -87,7 +84,6 @@
     z-index:2;
   }
 
-  /* Top bar */
   .topbar{
     display:flex;
     align-items:center;
@@ -236,32 +232,6 @@
     color: rgba(216,255,255,.92);
   }
 
-  .modes{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap:12px;
-  }
-  .mode{
-    border-radius:16px;
-    border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
-    background: rgba(255,255,255,.03);
-    padding:12px;
-  }
-  .mode .k{
-    letter-spacing:1px;
-    font-weight:800;
-    color: var(--text);
-    text-transform: uppercase;
-    font-size:12px;
-  }
-  .mode .d{
-    margin-top:6px;
-    font-family: var(--sans);
-    font-size:13px;
-    color: var(--muted);
-    line-height:1.45;
-  }
-
   .log{
     margin:0;
     padding:0;
@@ -284,6 +254,54 @@
     border:1px solid color-mix(in srgb, var(--accent) 16%, transparent);
     color: var(--text);
     font-family: var(--mono);
+  }
+
+  /* Decay UI */
+  .decayRow{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .decayRow .label{
+    font-family: var(--mono);
+    font-size:12px;
+    letter-spacing:1px;
+    opacity:.9;
+    text-transform: uppercase;
+  }
+  .decayRow .value{
+    font-family: var(--mono);
+    font-weight:800;
+    letter-spacing:1px;
+    color: var(--accent);
+  }
+  .barWrap{
+    margin-top:12px;
+    border-radius:14px;
+    border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    background: rgba(255,255,255,.03);
+    overflow:hidden;
+  }
+  .bar{
+    height:12px;
+    width:100%;
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 75%, transparent),
+      color-mix(in srgb, var(--accent) 25%, transparent));
+    transform-origin:left center;
+    transform: scaleX(1);
+  }
+  .timeline{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-family: var(--sans);
+    color: rgba(216,255,255,.84);
+    font-size:13px;
+    line-height:1.6;
   }
 
   .cursor{
@@ -326,12 +344,13 @@
       </div>
       <div class="statuspill">
         STATUS: <span class="hot" id="statusWord">ARMED</span> •
-        INFECTION: <span class="hot" id="countdown">--:--</span>
+        TIME TO DECAY: <span class="hot" id="countdown">--:--</span>
       </div>
     </div>
 
     <div class="grid2">
 
+      <!-- Primary story card -->
       <section class="card">
         <div class="cardHeader">
           <h2>INTAKE MESSAGE</h2>
@@ -357,53 +376,38 @@
         </div>
       </section>
 
+      <!-- Decay / Integrity card -->
       <section class="card">
         <div class="cardHeader">
-          <h2>TRANSFER SUMMARY</h2>
+          <h2>DECAY MONITOR</h2>
           <span class="chip">NODE: RELAY-77</span>
         </div>
         <div class="cardBody">
-          <table class="kv">
+          <div class="decayRow">
+            <div class="label">DATA INTEGRITY</div>
+            <div class="value"><span id="integrity">100</span>%</div>
+          </div>
+
+          <div class="barWrap" aria-label="Integrity bar">
+            <div class="bar" id="bar"></div>
+          </div>
+
+          <div class="timeline">
+            Thresholds:<br/>
+            <b>T+00:30</b> — WARNING STATE (YELLOW)<br/>
+            <b>T+01:30</b> — ARES DECAY (RED) / INFECTION ACTIVE
+          </div>
+
+          <table class="kv" style="margin-top:10px;">
             <tr><td>Origin</td><td class="val">D’Qar • Resistance perimeter sector</td></tr>
             <tr><td>Subjects</td><td class="val">Imperial Remnants (analog hostiles)</td></tr>
-            <tr><td>Purpose</td><td class="val">Digitize for arena containment</td></tr>
             <tr><td>Destination</td><td class="val">The Games • Lightcycle arena</td></tr>
             <tr><td>System Integration</td><td class="val">None (read-only uplink / local logs)</td></tr>
           </table>
         </div>
       </section>
 
-      <section class="card" style="grid-column: 1 / -1;">
-        <div class="cardHeader">
-          <h2>SYNCHRONIZATION STATES</h2>
-          <span class="chip">SPECTRUM INPUT</span>
-        </div>
-        <div class="cardBody">
-          <div class="modes">
-            <div class="mode">
-              <div class="k">CYAN — GRID ALIGNMENT STABLE</div>
-              <div class="d">Handshake clean. Pathway open for conversion.</div>
-            </div>
-            <div class="mode">
-              <div class="k">BLUE — LIGHTCYCLE SYNC READY</div>
-              <div class="d">Arena staging prepared. Deployment window favorable.</div>
-            </div>
-            <div class="mode">
-              <div class="k">WHITE — CONTAINMENT IDLE</div>
-              <div class="d">Neutral output. Maintain during prisoner movement.</div>
-            </div>
-            <div class="mode">
-              <div class="k">RED — AGGRESSION ELEVATED</div>
-              <div class="d">Hostile temperament detected. Keep transfer brief.</div>
-            </div>
-            <div class="mode">
-              <div class="k">CYCLE — ARENA SCAN PREVIEW</div>
-              <div class="d">Simulated deployment states for demonstration.</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <!-- Field log card -->
       <section class="card" style="grid-column: 1 / -1;">
         <div class="cardHeader">
           <h2>FIELD LOG • LOCAL CACHE</h2>
@@ -427,42 +431,27 @@
   </div>
 
 <script>
-  // ====== CONFIG ======
-  // Set how long until "infection" (in minutes) once the page loads:
-  const minutesUntilInfection = 7;
+  // Total time until decay/infection: 1.5 minutes (90 seconds)
+  const totalMs = 90 * 1000;
 
-  // Accent colors (start: cyan, end: Ares red)
-  const start = { r: 64,  g: 255, b: 255 };   // cyan
-  const end   = { r: 255, g: 47,  b: 79  };   // Ares red
-  // =====================
+  // Stage thresholds
+  const yellowAtMs = 30 * 1000; // 0:30
+  const redAtMs    = 90 * 1000; // 1:30 (also decay hits)
 
-  const infectionAt = Date.now() + minutesUntilInfection * 60 * 1000;
+  const startAt = Date.now();
+  const decayAt = startAt + totalMs;
 
   const countdownEl = document.getElementById("countdown");
   const statusWordEl = document.getElementById("statusWord");
   const threatChipEl = document.getElementById("threatChip");
+  const integrityEl = document.getElementById("integrity");
+  const barEl = document.getElementById("bar");
 
-  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
-  function lerp(a,b,t){ return a + (b-a)*t; }
-  function rgb({r,g,b}){ return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`; }
-
-  function setAccent(t){
-    // t=0 -> cyan; t=1 -> red
-    const c = {
-      r: lerp(start.r, end.r, t),
-      g: lerp(start.g, end.g, t),
-      b: lerp(start.b, end.b, t),
-    };
-
-    // soft variants for borders/glows
-    const soft = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},0.22)`;
-    const glow = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},0.18)`;
-    const strong = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},0.95)`;
-
+  function setFixedAccent(r,g,b){
     const root = document.documentElement.style;
-    root.setProperty("--accent", strong);
-    root.setProperty("--accentSoft", soft);
-    root.setProperty("--accentGlow", glow);
+    root.setProperty("--accent",     `rgba(${r},${g},${b},0.95)`);
+    root.setProperty("--accentSoft", `rgba(${r},${g},${b},0.22)`);
+    root.setProperty("--accentGlow", `rgba(${r},${g},${b},0.18)`);
   }
 
   function fmt(ms){
@@ -474,27 +463,37 @@
 
   function tick(){
     const now = Date.now();
-    const remaining = infectionAt - now;
+    const elapsed = now - startAt;
+    const remaining = decayAt - now;
 
-    // progress 0..1
-    const t = clamp01(1 - (remaining / (minutesUntilInfection * 60 * 1000)));
-    setAccent(t);
-
-    if (remaining <= 0){
-      countdownEl.textContent = "ACTIVE";
+    // Staged color transitions
+    if (elapsed < yellowAtMs){
+      setFixedAccent(64, 255, 255);      // CYAN
+      threatChipEl.textContent = "DARK SECTOR";
+      statusWordEl.textContent = "ARMED";
+    } else if (elapsed < redAtMs){
+      setFixedAccent(255, 215, 0);       // YELLOW
+      threatChipEl.textContent = "ESCALATION DETECTED";
+      statusWordEl.textContent = "UNSTABLE";
+    } else {
+      setFixedAccent(255, 47, 79);       // ARES RED
+      threatChipEl.textContent = "INFECTION ACTIVE";
       statusWordEl.textContent = "INFECTED";
-      threatChipEl.textContent = "ARES INTRUSION";
-      // Lock accent to red at the end
-      setAccent(1);
-      return; // stop updating
+    }
+
+    // Update countdown + integrity
+    if (remaining <= 0){
+      countdownEl.textContent = "00:00";
+      integrityEl.textContent = "0";
+      barEl.style.transform = "scaleX(0)";
+      return;
     }
 
     countdownEl.textContent = fmt(remaining);
 
-    // Optional: increase "threat" label as it gets closer
-    if (t > 0.66) threatChipEl.textContent = "SECTOR COMPROMISED";
-    else if (t > 0.33) threatChipEl.textContent = "ELEVATED RISK";
-    else threatChipEl.textContent = "DARK SECTOR";
+    const integrity = Math.max(0, Math.min(100, Math.round((remaining / totalMs) * 100)));
+    integrityEl.textContent = String(integrity);
+    barEl.style.transform = `scaleX(${integrity/100})`;
 
     requestAnimationFrame(tick);
   }
