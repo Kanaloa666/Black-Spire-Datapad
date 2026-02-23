@@ -6,113 +6,500 @@
 <title>GRID NODE // TRANSFER PROTOCOL</title>
 
 <style>
+  :root{
+    --bg:#02070d;
+    --panel: rgba(6, 18, 28, .72);
+
+    /* These will be animated by JS */
+    --accent: rgba(64, 255, 255, .95);     /* cyan -> red */
+    --accentSoft: rgba(64, 255, 255, .22); /* cyan -> red */
+    --accentGlow: rgba(64, 255, 255, .18); /* cyan -> red */
+
+    --text:#d8ffff;
+    --muted:#86d8e4;
+
+    --mono: ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box}
   body{
     margin:0;
-    background:#03080f;
-    color:#cfffff;
-    font-family: ui-monospace, Menlo, Consolas, monospace;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    overflow-x:hidden;
+  }
+
+  /* Subtle animated grid */
+  .grid{
+    position:fixed; inset:0;
+    background:
+      linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    opacity:.18;
+    animation: drift 14s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes drift{
+    from{background-position:0 0, 0 0}
+    to{background-position:220px 0, 0 220px}
+  }
+
+  /* Scanline */
+  .scanline{
+    position:fixed; left:0; right:0;
+    height:120px;
+    background: linear-gradient(to bottom,
+      transparent,
+      rgba(255,255,255,.04),
+      rgba(255,255,255,.10),
+      rgba(255,255,255,.04),
+      transparent);
+    opacity:.30;
+    animation: scan 6.5s linear infinite;
+    pointer-events:none;
+    mix-blend-mode: screen;
+  }
+  @keyframes scan{
+    0%{top:-160px}
+    100%{top: calc(100vh + 160px)}
+  }
+
+  /* Accent vignettes (will feel like cyan -> red takeover) */
+  .accentGlow{
+    position:fixed; inset:-20%;
+    background:
+      radial-gradient(circle at 28% 20%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 38%),
+      radial-gradient(circle at 80% 62%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 44%),
+      radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 48%);
+    pointer-events:none;
+    filter: blur(2px);
+    opacity:.9;
   }
 
   .wrap{
-    max-width:760px;
-    margin:110px auto;
-    padding:20px;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 22px;
+    position:relative;
+    z-index:2;
   }
 
-  .panel{
-    border:1px solid rgba(0,255,255,.22);
-    padding:40px;
+  /* Top bar */
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:14px 16px;
     border-radius:18px;
-    background:rgba(0,16,24,.8);
+    background: rgba(7,20,35,.75);
+    border:1px solid var(--accentSoft);
+    box-shadow: 0 0 26px var(--accentGlow);
+    backdrop-filter: blur(6px);
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .sig{
+    width:14px; height:14px;
+    border-radius:4px;
+    transform: rotate(45deg);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .title{
+    display:flex; flex-direction:column; gap:2px;
+    line-height:1.15;
+  }
+  .title b{
+    letter-spacing: 1.6px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+  .title span{
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .7px;
+    font-family: var(--sans);
+    opacity:.9;
+  }
+  .statuspill{
+    font-size:12px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--text);
+    white-space:nowrap;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .statuspill .hot{
+    color: var(--accent);
+    font-weight: 800;
+    letter-spacing: .6px;
   }
 
-  h1{
-    margin:0 0 28px 0;
-    font-size:15px;
-    letter-spacing:3px;
+  .grid2{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:16px;
+    margin-top:16px;
+  }
+  @media (max-width: 860px){
+    .grid2{grid-template-columns:1fr}
   }
 
-  p{
-    margin:16px 0;
+  .card{
+    border-radius:18px;
+    background: var(--panel);
+    border:1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+    box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 10%, transparent);
+    overflow:hidden;
+  }
+  .cardHeader{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 40%);
+  }
+  .cardHeader h2{
+    margin:0;
+    font-size:12px;
+    letter-spacing:1.6px;
+    text-transform: uppercase;
+  }
+  .chip{
+    font-size:11px;
+    letter-spacing:.9px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: color-mix(in srgb, var(--text) 75%, var(--accent));
+  }
+
+  .cardBody{ padding:16px; }
+
+  .bigline{
+    margin:0;
+    font-size:16px;
+    letter-spacing:2px;
+    text-transform: uppercase;
+  }
+  .sub{
+    margin:10px 0 0;
+    font-family: var(--sans);
+    color: var(--muted);
     font-size:14px;
-    line-height:1.8;
-    opacity:.92;
+    line-height:1.55;
   }
 
   .divider{
-    margin-top:28px;
-    padding-top:20px;
+    margin-top:14px;
+    padding-top:14px;
     border-top:1px solid rgba(255,255,255,.08);
     font-size:13px;
+    font-family: var(--sans);
+    color: rgba(216,255,255,.84);
+    line-height:1.55;
+  }
+
+  .kv{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  .kv td{
+    padding:10px 8px;
+    border-top:1px solid rgba(255,255,255,.08);
+    vertical-align:top;
+  }
+  .kv td:first-child{
+    width:240px;
+    color: var(--muted);
+    letter-spacing:.4px;
+    font-family: var(--mono);
+  }
+  .kv .val{
+    font-family: var(--sans);
+    color: rgba(216,255,255,.92);
+  }
+
+  .modes{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap:12px;
+  }
+  .mode{
+    border-radius:16px;
+    border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    background: rgba(255,255,255,.03);
+    padding:12px;
+  }
+  .mode .k{
+    letter-spacing:1px;
+    font-weight:800;
+    color: var(--text);
+    text-transform: uppercase;
+    font-size:12px;
+  }
+  .mode .d{
+    margin-top:6px;
+    font-family: var(--sans);
+    font-size:13px;
+    color: var(--muted);
+    line-height:1.45;
+  }
+
+  .log{
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:12px;
+    color: rgba(134,216,228,.92);
+  }
+  .log li{
+    padding:10px 8px;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+  .log b{
+    color: var(--text);
+    letter-spacing:.8px;
+  }
+  code{
+    background: rgba(0,0,0,.28);
+    padding:2px 6px;
+    border-radius:10px;
+    border:1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--text);
+    font-family: var(--mono);
   }
 
   .cursor{
     display:inline-block;
     width:8px;
     height:16px;
-    background:#cfffff;
+    background: var(--text);
     margin-left:6px;
-    animation:blink 1s infinite;
+    animation: blink 1s infinite;
     vertical-align:bottom;
   }
-
   @keyframes blink{
-    0%{opacity:1;}
-    50%{opacity:0;}
-    100%{opacity:1;}
+    0%,100%{opacity:1}
+    50%{opacity:0}
   }
 
   .footer{
-    margin-top:60px;
-    font-size:11px;
-    opacity:.4;
+    margin:18px 0 6px;
     text-align:center;
+    font-family: var(--sans);
+    font-size:12px;
+    opacity:.55;
   }
-
 </style>
 </head>
 
 <body>
-<div class="wrap">
+  <div class="grid"></div>
+  <div class="scanline"></div>
+  <div class="accentGlow"></div>
 
-  <div class="panel">
-
-    <h1>GREETINGS, USER.</h1>
-
-    <p>
-      Imperial Remnants detained on D’Qar.
-      Espionage against Resistance forces confirmed.
-    </p>
-
-    <p>
-      Biological transport complete.
-      Analog entities prepared for conversion.
-      PROTOCOL:
-If clearance is granted, call the prisoners forward.
-Scan their bands to confirm custody transfer prior to boarding
-    </p>
-
-    <p>
-      Digitization sequence armed.
-      Arena assignment: The Games.
-    </p>
-
-    <div class="divider">
-      Lightcycle deployment queued.<br>
-      Compliance probability: increasing.<br>
-      Operator credit recorded.
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="sig" aria-hidden="true"></div>
+        <div class="title">
+          <b>GRID NODE // TRANSFER PROTOCOL</b>
+          <span>ROGUE PROGRAM UPLINK • ARENA INTAKE • READ-ONLY</span>
+        </div>
+      </div>
+      <div class="statuspill">
+        STATUS: <span class="hot" id="statusWord">ARMED</span> •
+        INFECTION: <span class="hot" id="countdown">--:--</span>
+      </div>
     </div>
 
-    <p>
-      End of line.<span class="cursor"></span>
-    </p>
+    <div class="grid2">
 
+      <section class="card">
+        <div class="cardHeader">
+          <h2>INTAKE MESSAGE</h2>
+          <span class="chip" id="threatChip">DARK SECTOR</span>
+        </div>
+        <div class="cardBody">
+          <p class="bigline">GREETINGS, USER.</p>
+          <p class="sub">
+            Imperial Remnants detained on <b>D’Qar</b>. Espionage against Resistance forces confirmed.<br/>
+            Off-world transport complete. Prisoner transfer to the Grid successful.<br/>
+            Digitization sequence armed. Arena assignment: <b>The Games</b>.
+          </p>
+
+          <div class="divider">
+            Lightcycle deployment queued.<br/>
+            Compliance probability: increasing.<br/>
+            Operator credit recorded.
+          </div>
+
+          <div class="divider" style="margin-top:18px;">
+            End of line.<span class="cursor"></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHeader">
+          <h2>TRANSFER SUMMARY</h2>
+          <span class="chip">NODE: RELAY-77</span>
+        </div>
+        <div class="cardBody">
+          <table class="kv">
+            <tr><td>Origin</td><td class="val">D’Qar • Resistance perimeter sector</td></tr>
+            <tr><td>Subjects</td><td class="val">Imperial Remnants (analog hostiles)</td></tr>
+            <tr><td>Purpose</td><td class="val">Digitize for arena containment</td></tr>
+            <tr><td>Destination</td><td class="val">The Games • Lightcycle arena</td></tr>
+            <tr><td>System Integration</td><td class="val">None (read-only uplink / local logs)</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>SYNCHRONIZATION STATES</h2>
+          <span class="chip">SPECTRUM INPUT</span>
+        </div>
+        <div class="cardBody">
+          <div class="modes">
+            <div class="mode">
+              <div class="k">CYAN — GRID ALIGNMENT STABLE</div>
+              <div class="d">Handshake clean. Pathway open for conversion.</div>
+            </div>
+            <div class="mode">
+              <div class="k">BLUE — LIGHTCYCLE SYNC READY</div>
+              <div class="d">Arena staging prepared. Deployment window favorable.</div>
+            </div>
+            <div class="mode">
+              <div class="k">WHITE — CONTAINMENT IDLE</div>
+              <div class="d">Neutral output. Maintain during prisoner movement.</div>
+            </div>
+            <div class="mode">
+              <div class="k">RED — AGGRESSION ELEVATED</div>
+              <div class="d">Hostile temperament detected. Keep transfer brief.</div>
+            </div>
+            <div class="mode">
+              <div class="k">CYCLE — ARENA SCAN PREVIEW</div>
+              <div class="d">Simulated deployment states for demonstration.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>FIELD LOG • LOCAL CACHE</h2>
+          <span class="chip">ROGUE</span>
+        </div>
+        <div class="cardBody" style="padding:0;">
+          <ul class="log">
+            <li><b>[BOOT]</b> Relay-77 awakened • sector: <code>OFF-GRID / MK</code></li>
+            <li><b>[ACQUIRE]</b> Subjects tagged: <code>IMPERIAL REMNANTS</code> • origin: <code>D’Qar</code></li>
+            <li><b>[TRANSFER]</b> Custody chain verified • digitization: <code>ARMED</code></li>
+            <li><b>[QUEUE]</b> Arena assignment: <code>THE GAMES</code> • Lightcycle deployment: <code>PENDING</code></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      Fan-made interactive prop • Not affiliated with Disney
+    </div>
   </div>
 
-  <div class="footer">
-    Fan-made interactive prop • Not affiliated with Disney
-  </div>
+<script>
+  // ====== CONFIG ======
+  // Set how long until "infection" (in minutes) once the page loads:
+  const minutesUntilInfection = 7;
 
-</div>
+  // Accent colors (start: cyan, end: Ares red)
+  const start = { r: 64,  g: 255, b: 255 };   // cyan
+  const end   = { r: 255, g: 47,  b: 79  };   // Ares red
+  // =====================
+
+  const infectionAt = Date.now() + minutesUntilInfection * 60 * 1000;
+
+  const countdownEl = document.getElementById("countdown");
+  const statusWordEl = document.getElementById("statusWord");
+  const threatChipEl = document.getElementById("threatChip");
+
+  function clamp01(x){ return Math.max(0, Math.min(1, x)); }
+  function lerp(a,b,t){ return a + (b-a)*t; }
+  function rgb({r,g,b}){ return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`; }
+
+  function setAccent(t){
+    // t=0 -> cyan; t=1 -> red
+    const c = {
+      r: lerp(start.r, end.r, t),
+      g: lerp(start.g, end.g, t),
+      b: lerp(start.b, end.b, t),
+    };
+
+    // soft variants for borders/glows
+    const soft = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},0.22)`;
+    const glow = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},0.18)`;
+    const strong = `rgba(${Math.round(c.r)},${Math.round(c.g)},${Math.round(c.b)},0.95)`;
+
+    const root = document.documentElement.style;
+    root.setProperty("--accent", strong);
+    root.setProperty("--accentSoft", soft);
+    root.setProperty("--accentGlow", glow);
+  }
+
+  function fmt(ms){
+    const s = Math.max(0, Math.floor(ms/1000));
+    const m = Math.floor(s/60);
+    const r = s % 60;
+    return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
+  }
+
+  function tick(){
+    const now = Date.now();
+    const remaining = infectionAt - now;
+
+    // progress 0..1
+    const t = clamp01(1 - (remaining / (minutesUntilInfection * 60 * 1000)));
+    setAccent(t);
+
+    if (remaining <= 0){
+      countdownEl.textContent = "ACTIVE";
+      statusWordEl.textContent = "INFECTED";
+      threatChipEl.textContent = "ARES INTRUSION";
+      // Lock accent to red at the end
+      setAccent(1);
+      return; // stop updating
+    }
+
+    countdownEl.textContent = fmt(remaining);
+
+    // Optional: increase "threat" label as it gets closer
+    if (t > 0.66) threatChipEl.textContent = "SECTOR COMPROMISED";
+    else if (t > 0.33) threatChipEl.textContent = "ELEVATED RISK";
+    else threatChipEl.textContent = "DARK SECTOR";
+
+    requestAnimationFrame(tick);
+  }
+
+  tick();
+</script>
 </body>
 </html>
