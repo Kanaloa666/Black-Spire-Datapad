@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Resistance Datapad</title>
+  <meta name="theme-color" content="#0b0f14"/>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --panel:#0f1722;
+      --ink:#e7f0ff;
+      --muted:#a9b7d0;
+      --accent:#31d0ff;     /* Resistance teal */
+      --warn:#ffb000;       /* amber */
+      --danger:#ff4d4d;     /* alert red */
+      --line:rgba(49,208,255,.22);
+      --shadow: 0 16px 40px rgba(0,0,0,.55);
+      --radius: 18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; min-height:100vh;
+      background:
+        radial-gradient(900px 500px at 20% 0%, rgba(49,208,255,.10), transparent 60%),
+        radial-gradient(700px 420px at 90% 20%, rgba(255,176,0,.08), transparent 60%),
+        linear-gradient(180deg, #070a0f 0%, var(--bg) 55%, #05070b 100%);
+      color:var(--ink);
+      font-family:var(--sans);
+      display:flex; align-items:center; justify-content:center;
+      padding:22px;
+    }
+    .wrap{width:min(760px,100%)}
+    .hdr{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:14px; gap:12px; opacity:.95;
+      font-family:var(--mono); letter-spacing:.08em; font-size:12px;
+      color:var(--muted);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 0 4px rgba(49,208,255,.10), 0 0 22px rgba(49,208,255,.45);
+      animation:pulse 1.6s infinite;
+      display:inline-block; margin-right:10px;
+    }
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}
+    .card{
+      background: linear-gradient(180deg, rgba(15,23,34,.92), rgba(10,14,22,.92));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .scan::before{
+      content:""; position:absolute; inset:0;
+      background:repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,.03),
+        rgba(255,255,255,.03) 1px,
+        transparent 2px,
+        transparent 6px
+      );
+      opacity:.18; pointer-events:none; mix-blend-mode:overlay;
+    }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      padding:14px 18px;
+      border-bottom:1px solid rgba(49,208,255,.18);
+      background: rgba(5,8,12,.35);
+    }
+    .title h1{
+      margin:0;
+      font-family:var(--mono);
+      font-size:16px;
+      letter-spacing:.10em;
+      color:var(--accent);
+    }
+    .title .sub{
+      margin-top:4px;
+      font-family:var(--mono);
+      font-size:12px;
+      color:rgba(169,183,208,.9);
+      letter-spacing:.06em;
+    }
+    .chip{
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.08em;
+      padding:6px 10px;
+      border:1px solid rgba(255,176,0,.35);
+      border-radius:999px;
+      background: rgba(255,176,0,.08);
+      color:var(--warn);
+      white-space:nowrap;
+    }
+    .body{padding:18px}
+    .hero{
+      border:1px solid rgba(49,208,255,.20);
+      border-radius:var(--radius);
+      background: rgba(49,208,255,.05);
+      padding:16px;
+      margin-bottom:14px;
+    }
+    .hero .big{
+      margin:0 0 6px 0;
+      font-size:22px;
+      letter-spacing:.10em;
+      font-family:var(--mono);
+      text-transform:uppercase;
+    }
+    .hero .sub{
+      margin:0; color:var(--muted); line-height:1.4;
+      font-family:var(--sans);
+    }
+    .console{
+      font-family:var(--mono);
+      font-size:13px;
+      line-height:1.6;
+      color:#d7e7ff;
+      background: rgba(0,0,0,.28);
+      border:1px solid rgba(49,208,255,.16);
+      border-radius:14px;
+      padding:14px;
+    }
+    .k{color:rgba(169,183,208,.9)}
+    .v{color:var(--accent)}
+    .warn{color:var(--warn)}
+    .danger{color:var(--danger)}
+    .divider{
+      height:1px;
+      background: linear-gradient(90deg, transparent, rgba(49,208,255,.35), transparent);
+      margin:14px 0;
+    }
+    .ftr{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      justify-content:space-between; align-items:center;
+      color:rgba(169,183,208,.85);
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.06em;
+    }
+    .btn{
+      border:1px solid rgba(49,208,255,.35);
+      background: rgba(49,208,255,.09);
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:12px;
+      font-family:var(--mono);
+      letter-spacing:.06em;
+      cursor:pointer;
+    }
+    .btn:active{transform:translateY(1px)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hdr">
+      <div><span class="dot"></span>ENCRYPTED LINK ACTIVE</div>
+      <div>RESISTANCE SECURE CHANNEL</div>
+    </div>
+
+    <div class="card scan">
+      <div class="topbar">
+        <div class="title">
+          <h1>RESISTANCE DATAPAD</h1>
+          <div class="sub">NODE: BLACK SPIRE • AUTH: GHOST</div>
+        </div>
+        <div class="chip" id="chip">SILENT RUNNING</div>
+      </div>
+
+      <div class="body">
+        <div class="hero">
+          <p class="big">HIGH VALUE TARGETS IN TOW</p>
+          <p class="sub">
+            Keep it low. The Empire cannot find out.<br/>
+            Extraction window active — smuggling party through Lightning Lane.
+          </p>
+        </div>
+
+        <div class="console">
+          <div><span class="k">SIGNAL:</span> <span class="v">CONFIRMED</span></div>
+          <div><span class="k">COVER:</span> <span class="warn">MAINTAIN</span></div>
+          <div><span class="k">ROUTE:</span> <span class="v">LL / PRIORITY ACCESS</span></div>
+          <div><span class="k">INSTRUCTIONS:</span> Move when prompted. Keep comms short.</div>
+          <div class="divider"></div>
+          <div><span class="k">CHALLENGE PHRASE:</span> <span class="v">“PRISONER TRANSPORT — RESISTANCE AUTH.”</span></div>
+          <div><span class="k">STATUS:</span> <span class="danger">DO NOT DRAW ATTENTION</span></div>
+          <div><span class="k">FOR:</span> <span class="v">BLACK SPIRE</span></div>
+        </div>
+
+        <div class="ftr">
+          <span>— END TRANSMISSION —</span>
+          <button class="btn" onclick="ping()">REPLAY PING</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function ping(){
+      const c = document.getElementById('chip');
+      c.textContent = 'PING SENT';
+      setTimeout(()=>c.textContent='SILENT RUNNING', 900);
+    }
+  </script>
+</body>
+</html>
