@@ -1,1 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Xandar Jump Core — Field Unit</title>
+  <style>
+    body{
+      margin:0;
+      font-family:Segoe UI,system-ui,Arial,sans-serif;
+      background:#071523;
+      color:#eaf0f7;
+    }
+    .wrap{
+      max-width:900px;
+      margin:0 auto;
+      padding:22px;
+    }
+    .banner{
+      background:#0b2238;
+      border-bottom:2px solid #d4af37;
+      padding:22px;
+      border-radius:16px;
+      margin-top:14px;
+    }
+    .banner h1{
+      margin:0;
+      font-size:22px;
+      letter-spacing:1px;
+      color:#d4af37;
+    }
+    .banner p{
+      margin:8px 0 0;
+      opacity:.85;
+      font-size:14px;
+      line-height:1.5;
+    }
+    .card{
+      background:#0b2238;
+      border:1px solid rgba(212,175,55,.25);
+      padding:18px;
+      border-radius:16px;
+      margin-top:16px;
+    }
+    .title{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:baseline;
+      flex-wrap:wrap;
+    }
+    .title h2{
+      margin:0;
+      font-size:16px;
+      color:#d4af37;
+      letter-spacing:.6px;
+    }
+    .tag{
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(212,175,55,.12);
+      border:1px solid rgba(212,175,55,.25);
+      color:#d4af37;
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:14px;
+    }
+    td{
+      padding:10px 8px;
+      border-top:1px solid rgba(255,255,255,.08);
+      vertical-align:top;
+      opacity:.92;
+    }
+    td.key{
+      width:230px;
+      color:#9db2c8;
+      opacity:1;
+    }
+    .modes{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+    .mode{
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .mode strong{
+      color:#d4af37;
+      display:block;
+      margin-bottom:6px;
+      letter-spacing:.4px;
+    }
+    .foot{
+      opacity:.65;
+      font-size:12px;
+      margin:18px 2px 6px;
+      text-align:center;
+    }
+    .btnrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .btn{
+      display:inline-block;
+      text-decoration:none;
+      font-weight:700;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#d4af37;
+      color:#071523;
+    }
+    .btn.secondary{
+      background:transparent;
+      color:#d4af37;
+      border:1px solid rgba(212,175,55,.35);
+    }
+    code{
+      background:rgba(0,0,0,.25);
+      padding:2px 6px;
+      border-radius:8px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px;
+      color:#eaf0f7;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
 
+    <div class="banner">
+      <h1>NOVA CORPS — XANDAR JUMP CORE (FIELD STABILIZATION UNIT)</h1>
+      <p>
+        Status: <b>OPERATIONAL</b> • Clearance: <b>FIELD / TEMPORARY</b><br/>
+        This device is used to calibrate jump-point stability and manage cosmic energy fluctuation during transport and recovery operations.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="title">
+        <h2>DEVICE SUMMARY</h2>
+        <span class="tag">FIELD UNIT • v3.9</span>
+      </div>
+
+      <table>
+        <tr>
+          <td class="key">Designation</td>
+          <td>XJC-FSU-39 “Jump Core”</td>
+        </tr>
+        <tr>
+          <td class="key">Primary Function</td>
+          <td>Stabilize localized energy output during jump recalibration events.</td>
+        </tr>
+        <tr>
+          <td class="key">Operator Notes</td>
+          <td>Unit responds to manual spectrum input (remote control) and proximity changes. Intended for rapid demonstration and morale support during field deployment.</td>
+        </tr>
+        <tr>
+          <td class="key">Handling</td>
+          <td>Keep interaction brief in public areas. Present as “calibration check” and disengage if personnel are occupied.</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="title">
+        <h2>SPECTRUM MODES (REMOTE CONTROL)</h2>
+        <span class="tag">COLOR RESPONSE TABLE</span>
+      </div>
+
+      <div class="modes">
+        <div class="mode">
+          <strong>WHITE — NOVA PRIME</strong>
+          Clean power state. Use as default “tech device” look.
+        </div>
+        <div class="mode">
+          <strong>BLUE — JUMP SYNC</strong>
+          Calibration active. Best for “we’re ready” moments.
+        </div>
+        <div class="mode">
+          <strong>GREEN — TEMPORAL LOCK</strong>
+          Stabilization holding. Good “all systems stable” vibe.
+        </div>
+        <div class="mode">
+          <strong>PURPLE — CONTAINMENT</strong>
+          Energy contained. Use when demonstrating “reactive core.”
+        </div>
+        <div class="mode">
+          <strong>RED — SURGE / ALERT</strong>
+          Use sparingly. Looks intense. Avoid in crowded/security-heavy spots.
+        </div>
+        <div class="mode">
+          <strong>CYCLE — FIELD DEMO</strong>
+          Slow color cycle for show-and-tell moments.
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <a class="btn secondary" href="../">Return to Primary Terminal</a>
+      </div>
+    </div>
+
+    <div class="foot">
+      Fan-made prop page • Not affiliated with Marvel or Disney
+    </div>
+  </div>
+</body>
+</html>
