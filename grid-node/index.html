@@ -1,405 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>GRID NODE // TRANSFER PROTOCOL 77</title>
-  <style>
-    :root{
-      --bg:#040a10;
-      --panel:#071423;
-      --line:rgba(118,255,255,.22);
-      --line2:rgba(118,255,255,.12);
-      --glow:rgba(118,255,255,.35);
-      --text:#d6f7ff;
-      --muted:#86cbd6;
-      --warn:#ff4d6d;
-      --ok:#7CFFCB;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GRID NODE // TRANSFER</title>
 
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--mono);
-      overflow-x:hidden;
-    }
+<style>
+  body{
+    margin:0;
+    background:#040a10;
+    color:#cfffff;
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+  }
 
-    /* subtle animated grid */
-    .grid{
-      position:fixed; inset:0;
-      background:
-        linear-gradient(to right, var(--line2) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--line2) 1px, transparent 1px);
-      background-size: 44px 44px;
-      opacity:.35;
-      filter: drop-shadow(0 0 6px var(--glow));
-      transform: translateZ(0);
-      animation: drift 12s linear infinite;
-      pointer-events:none;
-    }
-    @keyframes drift{
-      from{background-position:0 0, 0 0}
-      to{background-position:220px 0, 0 220px}
-    }
+  .wrap{
+    max-width:760px;
+    margin:80px auto;
+    padding:20px;
+  }
 
-    /* scanline */
-    .scanline{
-      position:fixed; left:0; right:0;
-      height:120px;
-      background: linear-gradient(to bottom,
-        transparent,
-        rgba(118,255,255,.06),
-        rgba(118,255,255,.12),
-        rgba(118,255,255,.06),
-        transparent);
-      opacity:.55;
-      animation: scan 6s linear infinite;
-      pointer-events:none;
-      mix-blend-mode: screen;
-    }
-    @keyframes scan{
-      0%{top:-140px}
-      100%{top: calc(100vh + 140px)}
-    }
+  .panel{
+    border:1px solid rgba(0,255,255,.25);
+    padding:28px;
+    border-radius:18px;
+    background:rgba(0,18,28,.65);
+  }
 
-    .wrap{
-      max-width:980px;
-      margin:0 auto;
-      padding: 22px;
-      position:relative;
-      z-index:2;
-    }
+  h1{
+    margin:0 0 18px 0;
+    font-size:16px;
+    letter-spacing:2px;
+  }
 
-    .topbar{
-      display:flex;
-      gap:14px;
-      align-items:center;
-      justify-content:space-between;
-      padding:14px 16px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      background: rgba(7,20,35,.72);
-      box-shadow: 0 0 24px rgba(118,255,255,.08);
-      backdrop-filter: blur(6px);
-    }
-    .brand{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-    .sig{
-      width:14px; height:14px;
-      border-radius:4px;
-      border:1px solid rgba(118,255,255,.6);
-      box-shadow: 0 0 12px rgba(118,255,255,.35);
-      transform: rotate(45deg);
-      background: rgba(118,255,255,.08);
-    }
-    .title{
-      display:flex; flex-direction:column; gap:2px;
-      line-height:1.2;
-    }
-    .title b{
-      letter-spacing:1.2px;
-      font-size:14px;
-    }
-    .title span{
-      color: var(--muted);
-      font-size:12px;
-      letter-spacing:.6px;
-    }
-    .statuspill{
-      font-family: var(--mono);
-      font-size:12px;
-      padding:8px 12px;
-      border-radius:999px;
-      border:1px solid var(--line);
-      background: rgba(118,255,255,.06);
-      color: var(--text);
-      box-shadow: 0 0 14px rgba(118,255,255,.10);
-      white-space:nowrap;
-    }
+  p{
+    margin:10px 0;
+    font-size:14px;
+    line-height:1.6;
+    opacity:.9;
+  }
 
-    .hero{
-      margin-top:18px;
-      padding:18px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background: rgba(7,20,35,.62);
-    }
+  .tag{
+    display:inline-block;
+    margin-top:14px;
+    padding:6px 12px;
+    border-radius:999px;
+    border:1px solid rgba(0,255,255,.35);
+    background:rgba(0,255,255,.08);
+    font-size:12px;
+    letter-spacing:1px;
+  }
 
-    .hero h1{
-      margin:0 0 8px 0;
-      font-size:18px;
-      letter-spacing:1.4px;
-      text-transform:uppercase;
-    }
-    .hero p{
-      margin:0;
-      color: var(--muted);
-      font-family: var(--sans);
-      font-size:14px;
-      line-height:1.55;
-      max-width: 86ch;
-    }
+  .modes{
+    margin-top:26px;
+    border-top:1px solid rgba(255,255,255,.08);
+    padding-top:18px;
+  }
 
-    .grid2{
-      display:grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap:16px;
-      margin-top:16px;
-    }
-    @media (max-width: 860px){
-      .grid2{grid-template-columns:1fr}
-    }
+  .mode{
+    margin-bottom:10px;
+    font-size:13px;
+  }
 
-    .card{
-      padding:16px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background: rgba(7,20,35,.62);
-    }
-    .card h2{
-      margin:0 0 10px 0;
-      font-size:13px;
-      letter-spacing:1.1px;
-      color: var(--text);
-      text-transform: uppercase;
-    }
+  .mode b{
+    letter-spacing:1px;
+  }
 
-    .kv{
-      width:100%;
-      border-collapse: collapse;
-      font-size:13px;
-    }
-    .kv td{
-      padding:10px 8px;
-      border-top:1px solid rgba(255,255,255,.08);
-      vertical-align:top;
-    }
-    .kv td:first-child{
-      width:220px;
-      color: var(--muted);
-      letter-spacing:.4px;
-    }
+  .footer{
+    margin-top:50px;
+    font-size:12px;
+    opacity:.6;
+  }
 
-    .flag-ok{color: var(--ok)}
-    .flag-warn{color: var(--warn)}
-
-    .chip{
-      display:inline-block;
-      margin-top:10px;
-      padding:6px 10px;
-      border-radius:999px;
-      border:1px solid rgba(118,255,255,.28);
-      background: rgba(118,255,255,.06);
-      color: var(--muted);
-      font-size:12px;
-    }
-
-    .modes{
-      display:grid;
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap:12px;
-    }
-    .mode{
-      border:1px solid rgba(118,255,255,.20);
-      background: rgba(255,255,255,.03);
-      border-radius:16px;
-      padding:12px;
-    }
-    .mode b{
-      display:block;
-      letter-spacing:.9px;
-      font-size:12px;
-      margin-bottom:6px;
-      text-transform:uppercase;
-    }
-    .mode span{
-      color: var(--muted);
-      font-family: var(--sans);
-      font-size:13px;
-      line-height:1.45;
-    }
-
-    .steps{
-      margin:0;
-      padding:0;
-      list-style:none;
-      font-family: var(--sans);
-      font-size:14px;
-      color: var(--muted);
-    }
-    .steps li{
-      padding:10px 8px;
-      border-top:1px solid rgba(255,255,255,.08);
-      line-height:1.55;
-    }
-    .steps b{
-      color: var(--text);
-      font-family: var(--mono);
-      font-size:12px;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-    }
-
-    .log{
-      margin:0;
-      padding:0;
-      list-style:none;
-      font-family: var(--mono);
-      font-size:12px;
-      color: var(--muted);
-    }
-    .log li{
-      padding:10px 8px;
-      border-top:1px solid rgba(255,255,255,.08);
-    }
-    .log .t{color: var(--text)}
-    .log code{
-      background: rgba(0,0,0,.30);
-      padding:2px 6px;
-      border-radius:10px;
-      color: var(--text);
-      border:1px solid rgba(118,255,255,.16);
-    }
-
-    .btnrow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-    a.btn{
-      text-decoration:none;
-      font-weight:700;
-      font-family: var(--mono);
-      font-size:12px;
-      letter-spacing:.6px;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid rgba(118,255,255,.35);
-      background: rgba(118,255,255,.06);
-      color: var(--text);
-      box-shadow: 0 0 18px rgba(118,255,255,.08);
-    }
-    a.btn:hover{
-      box-shadow: 0 0 24px rgba(118,255,255,.14);
-    }
-
-    .footer{
-      margin:16px 0 6px;
-      text-align:center;
-      font-family: var(--sans);
-      font-size:12px;
-      color: rgba(214,247,255,.55);
-    }
-  </style>
+</style>
 </head>
+
 <body>
-  <div class="grid"></div>
-  <div class="scanline"></div>
+<div class="wrap">
 
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="sig" aria-hidden="true"></div>
-        <div class="title">
-          <b>GRID NODE // TRANSFER PROTOCOL 77</b>
-          <span>ROGUE PROGRAM TERMINAL • OFF-GRID DIGITIZATION</span>
-        </div>
-      </div>
-      <div class="statuspill">STATUS: <span class="flag-ok">ARMED</span> • TRACE: <span class="flag-warn">LOW</span></div>
+  <div class="panel">
+    <h1>GREETINGS, USER.</h1>
+
+    <p>
+      High value targets delivered.
+    </p>
+
+    <p>
+      Imperial combatants queued for digitization.
+      Arena preparation in progress.
+    </p>
+
+    <div class="tag">
+      Arena Priority Window Active
     </div>
 
-    <div class="hero">
-      <h1>IMPERIAL DESIGNATION DETECTED // CONVERSION INITIATED</h1>
-      <p>
-        You are the courier. The bounty hunter. The one who brings the analog scum to the Node.
-        Relay-77 captures hostile Imperial bio-signatures, converts them into digital constructs, and deploys them into
-        <b>The Games</b>—a Lightcycle arena containment protocol for high-aggression lifeforms.
-        <br/><br/>
-        This terminal is <b>read-only</b>. It does not control access. It logs custody transfer and monitors synchronization.
-      </p>
-      <div class="chip">Operator hint: hand the artifact over, let them change the spectrum, then call the prisoners forward.</div>
+    <div class="modes">
+      <div class="mode"><b>CYAN</b> — Grid Alignment Stable</div>
+      <div class="mode"><b>BLUE</b> — Lightcycle Synchronization</div>
+      <div class="mode"><b>WHITE</b> — Containment Idle</div>
+      <div class="mode"><b>RED</b> — Aggression Elevated</div>
+      <div class="mode"><b>CYCLE</b> — Arena Scan Preview</div>
     </div>
 
-    <div class="grid2">
-      <div class="card">
-        <h2>DEVICE PROFILE</h2>
-        <table class="kv">
-          <tr><td>Node ID</td><td>RELAY-77 / “TRANSFER NODE”</td></tr>
-          <tr><td>Custody Role</td><td>Chain-of-custody confirmation prior to digitization</td></tr>
-          <tr><td>Destination</td><td>THE GAMES (Lightcycle arena containment)</td></tr>
-          <tr><td>Priority Window</td><td><span class="flag-ok">AVAILABLE</span> — rapid deployment improves subject compliance</td></tr>
-          <tr><td>Failsafe</td><td><span class="flag-ok">ENABLED</span> (no writes • no system integrations)</td></tr>
-        </table>
-        <div class="btnrow">
-          <a class="btn" href="../">← Exit Terminal</a>
-        </div>
-      </div>
+    <p class="footer">
+      Transfer protocol awaiting spectrum input.<br>
+      End of line.
+    </p>
 
-      <div class="card">
-        <h2>SYNCHRONIZATION STATES (SPECTRUM INPUT)</h2>
-        <div class="modes">
-          <div class="mode">
-            <b>CYAN — GRID LINK STABLE</b>
-            <span>Node handshake clean. Digital pathway open.</span>
-          </div>
-          <div class="mode">
-            <b>BLUE — LIGHTCYCLE SYNC</b>
-            <span>Alignment stable. Ideal for “call them forward.”</span>
-          </div>
-          <div class="mode">
-            <b>WHITE — SAFE IDLE</b>
-            <span>Neutral output while transporting custody.</span>
-          </div>
-          <div class="mode">
-            <b>RED — AGGRESSION SURGE</b>
-            <span>Hostile temperament high. Keep transfer brief.</span>
-          </div>
-          <div class="mode">
-            <b>PURPLE — RESIDUAL IMPERIAL SIGNAL</b>
-            <span>Identity noise detected. Quarantine recommended.</span>
-          </div>
-          <div class="mode">
-            <b>CYCLE — ARENA PREVIEW</b>
-            <span>Slow scan mode. Displays simulated deployment states.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>TRANSFER PROCEDURE (FIELD PLAYBOOK)</h2>
-      <ul class="steps">
-        <li><b>STEP 01 — CONFIRM PROXIMITY</b><br/>Move subjects within Node range. Maintain custody posture.</li>
-        <li><b>STEP 02 — STABILIZE OUTPUT</b><br/>Select a spectrum mode (recommend <span style="color:var(--text);font-family:var(--mono)">BLUE</span> or <span style="color:var(--text);font-family:var(--mono)">CYAN</span>).</li>
-        <li><b>STEP 03 — CALL SUBJECTS FORWARD</b><br/>When alignment reads stable, call the prisoners forward for verification.</li>
-        <li><b>STEP 04 — VERIFY CUSTODY TRANSFER</b><br/>Identity confirmation occurs via resonance match (no badges required).</li>
-        <li><b>STEP 05 — DIGITIZATION</b><br/>Conversion initiates. Constructs are queued for arena deployment.</li>
-      </ul>
-    </div>
-
-    <div class="card">
-      <h2>FIELD LOG (LOCAL CACHE)</h2>
-      <ul class="log">
-        <li><span class="t">[BOOT]</span> Relay-77 awakened • uplink established • sector: <code>OFF-GRID / MK</code></li>
-        <li><span class="t">[PING]</span> Imperial bio-signature present • custody chain flagged <code>PENDING</code></li>
-        <li><span class="t">[WINDOW]</span> Arena priority window detected • rapid deployment advised for compliance</li>
-        <li><span class="t">[SYNC]</span> Awaiting spectrum input • recommend <code>BLUE</code> or <code>CYAN</code></li>
-        <li><span class="t">[READY]</span> Call subjects forward • confirm custody transfer • begin digitization</li>
-      </ul>
-    </div>
-
-    <div class="footer">
-      Fan-made prop terminal • Not affiliated with Disney/Marvel/Lucasfilm • Designed for quick, playful roleplay
-    </div>
   </div>
+
+</div>
 </body>
 </html>
