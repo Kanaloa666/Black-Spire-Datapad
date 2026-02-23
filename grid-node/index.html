@@ -15,51 +15,45 @@
 
   .wrap{
     max-width:760px;
-    margin:90px auto;
+    margin:100px auto;
     padding:20px;
   }
 
   .panel{
     border:1px solid rgba(0,255,255,.25);
-    padding:32px;
+    padding:36px;
     border-radius:18px;
-    background:rgba(0,18,28,.7);
+    background:rgba(0,18,28,.75);
   }
 
   h1{
-    margin:0 0 20px 0;
+    margin:0 0 24px 0;
     font-size:16px;
     letter-spacing:2px;
   }
 
   p{
-    margin:12px 0;
+    margin:14px 0;
     font-size:14px;
-    line-height:1.6;
-    opacity:.9;
+    line-height:1.7;
+    opacity:.92;
   }
 
-  .modes{
-    margin-top:24px;
+  .status{
+    margin-top:26px;
     padding-top:18px;
     border-top:1px solid rgba(255,255,255,.08);
     font-size:13px;
   }
 
-  .mode{
-    margin-bottom:8px;
-  }
-
-  .mode b{
-    letter-spacing:1px;
-  }
-
   .cursor{
     display:inline-block;
     width:8px;
+    height:16px;
     background:#cfffff;
     margin-left:6px;
     animation:blink 1s infinite;
+    vertical-align:bottom;
   }
 
   @keyframes blink{
@@ -69,9 +63,10 @@
   }
 
   .footer{
-    margin-top:40px;
-    font-size:12px;
-    opacity:.6;
+    margin-top:50px;
+    font-size:11px;
+    opacity:.5;
+    text-align:center;
   }
 
 </style>
@@ -85,30 +80,33 @@
     <h1>GREETINGS, USER.</h1>
 
     <p>
-      Rogue transfer node active.
+      Imperial Remnants apprehended on D’Qar.
+      Surveillance activity against Resistance forces confirmed.
     </p>
 
     <p>
-      High value Imperial targets delivered for arena containment.
+      Off-world transport complete.
+      Prisoner transfer to the Grid pending.
     </p>
 
     <p>
-      Bio-signatures verified. Custody transfer confirmed.
-      Digitization protocol standing by.
+      Digitization authorized.
+      Arena designation: The Games.
     </p>
 
-    <div class="modes">
-      <div class="mode"><b>CYAN</b> — Grid Alignment Stable</div>
-      <div class="mode"><b>BLUE</b> — Lightcycle Synchronization Ready</div>
-      <div class="mode"><b>WHITE</b> — Containment Idle</div>
-      <div class="mode"><b>RED</b> — Aggression Elevated</div>
-      <div class="mode"><b>CYCLE</b> — Arena Scan Preview</div>
+    <div class="status">
+      Lightcycle deployment pending synchronization.<br>
+      Successful transfer logged to operator record.
     </div>
 
-    <p class="footer">
+    <p>
       End of line.<span class="cursor"></span>
     </p>
 
+  </div>
+
+  <div class="footer">
+    Fan-made interactive prop • Not affiliated with Disney
   </div>
 
 </div>
