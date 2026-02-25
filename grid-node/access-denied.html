@@ -1,0 +1,213 @@
+<!-- ===========================
+FILE: access-denied.html
+=========================== -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ACCESS DENIED // ARES INFECTION</title>
+
+<style>
+:root{
+  --bg:#020409;
+  --amber:#ffcc66;
+  --red:#ff3b3b;
+  --panel:rgba(0,20,30,.62);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(900px 600px at 50% 20%, rgba(255,59,59,.10), transparent 60%),
+    radial-gradient(900px 600px at 20% 80%, rgba(0,229,255,.05), transparent 55%),
+    linear-gradient(180deg, #01020a, #020409 40%, #01020a);
+  color:var(--red);
+  font-family:var(--mono);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:18px;
+  overflow:hidden;
+}
+
+/* grid */
+body:before{
+  content:"";
+  position:fixed; inset:0;
+  background:
+    linear-gradient(rgba(255,59,59,.10) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,59,59,.10) 1px, transparent 1px);
+  background-size:64px 64px;
+  opacity:.12;
+  pointer-events:none;
+}
+
+/* scanlines */
+body:after{
+  content:"";
+  position:fixed; inset:-30%;
+  background:linear-gradient(transparent 0 49%, rgba(0,0,0,.22) 50% 51%, transparent 52% 100%);
+  background-size:100% 5px;
+  opacity:.14;
+  pointer-events:none;
+  animation:scan 3.1s linear infinite;
+}
+@keyframes scan { to{ transform:translateY(140px);} }
+
+/* glitch overlay */
+#glitchFx{
+  position:fixed; inset:0;
+  pointer-events:none;
+  opacity:1;
+  mix-blend-mode:screen;
+  background:
+    linear-gradient(90deg, rgba(255,59,59,.10), rgba(0,229,255,.08), rgba(255,204,102,.06)),
+    radial-gradient(900px 600px at 50% 30%, rgba(255,59,59,.14), transparent 65%);
+  filter:contrast(1.35) saturate(1.25);
+  animation:flicker .09s steps(2,end) infinite;
+}
+@keyframes flicker{
+  0%{ transform:translate(0,0); filter:hue-rotate(0deg) contrast(1.2); }
+  25%{ transform:translate(2px,-1px); filter:hue-rotate(12deg) contrast(1.45); }
+  50%{ transform:translate(-3px,2px); filter:hue-rotate(-10deg) contrast(1.65); }
+  75%{ transform:translate(1px,3px); filter:hue-rotate(8deg) contrast(1.35); }
+  100%{ transform:translate(0,0); filter:hue-rotate(0deg) contrast(1.2); }
+}
+
+/* subtle shake */
+@keyframes shake{
+  0%{transform:translate(0,0)}
+  20%{transform:translate(2px,0)}
+  40%{transform:translate(-2px,1px)}
+  60%{transform:translate(2px,1px)}
+  80%{transform:translate(-2px,0)}
+  100%{transform:translate(0,0)}
+}
+.container{ animation:shake .22s steps(2,end) infinite; }
+
+.container{
+  width:92%;
+  max-width:900px;
+  border:1px solid rgba(255,59,59,.45);
+  padding:18px 18px 16px;
+  background:var(--panel);
+  box-shadow:0 0 55px rgba(255,59,59,.22);
+  border-radius:14px;
+  position:relative;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid rgba(255,59,59,.22);
+  border-radius:12px;
+  background:rgba(0,0,0,.18);
+  margin-bottom:14px;
+}
+.badge{
+  display:flex; gap:10px; align-items:center;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-size:12px;
+  color:rgba(255,190,190,.90);
+}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,59,59,.65);
+  box-shadow:0 0 16px rgba(255,59,59,.38);
+}
+h1{
+  margin:0;
+  font-size:15px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  color:rgba(255,190,190,.95);
+}
+
+.result{
+  margin-top:14px;
+  border:1px solid rgba(255,59,59,.20);
+  border-radius:12px;
+  padding:14px;
+  background:rgba(0,0,0,.16);
+  font-size:13px;
+  line-height:1.65;
+  color:rgba(255,210,210,.92);
+}
+.danger{color:var(--red);}
+.cursor{
+  display:inline-block;
+  width:8px;height:14px;
+  background:rgba(255,59,59,.78);
+  margin-left:6px;
+  vertical-align:-2px;
+  animation:blink .8s steps(2,end) infinite;
+  box-shadow:0 0 12px rgba(255,59,59,.35);
+}
+@keyframes blink{ 50%{opacity:0;} }
+
+pre{
+  margin:10px 0 0;
+  white-space:pre-wrap;
+  font-family:var(--mono);
+  font-size:12px;
+  color:rgba(255,190,190,.92);
+}
+</style>
+</head>
+
+<body>
+  <div id="glitchFx"></div>
+
+  <div class="container">
+    <div class="topbar">
+      <div class="badge"><span class="dot"></span>ARES // INFECTION ACTIVE</div>
+      <div class="badge" style="opacity:.8;">STATUS: DENIED</div>
+    </div>
+
+    <h1>Access Denied // System Fragmenting</h1>
+
+    <div class="result">
+      <div class="danger">
+        ACCESS DENIED.<br>
+        ARES INFECTION ACTIVE.<br>
+        GRID UNSTABLE.<br>
+        ANALOG HOSTILES DETECTED.<br>
+        END OF LINE.<span class="cursor"></span>
+      </div>
+
+      <pre id="malLog"></pre>
+    </div>
+  </div>
+
+<script>
+  const malwareLines = [
+    "TIMEOUT // AUTHORIZATION WINDOW EXPIRED",
+    "INFECTION VECTOR // ARES.WORM.Δ9 // DETECTED",
+    "PAYLOAD // SECTOR ROUTE TABLE CORRUPTION",
+    "HOOK // IDENTITY_DISK.IO // INTERCEPTED",
+    "SPREAD // NODE.CLUSTER // 12%… 34%… 61%",
+    "LOCK // ARENA GATES // FAILSAFE OVERRIDDEN",
+    "INCIDENT // INCURSION EVENT ACTIVATED",
+    "EOL // END OF LINE."
+  ];
+
+  const malLog = document.getElementById("malLog");
+  let k = 0;
+
+  const interval = setInterval(()=>{
+    malLog.textContent += (malLog.textContent ? "\n" : "") + malwareLines[k];
+    k++;
+    if(k >= malwareLines.length){
+      clearInterval(interval);
+      malLog.textContent += "\n";
+    }
+  }, 240);
+</script>
+</body>
+</html>
