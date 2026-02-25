@@ -1,12 +1,10 @@
-<!-- ===========================
-FILE: access-granted.html
-=========================== -->
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>ACCESS GRANTED // GRID STABILIZED</title>
+
 <style>
 :root{
   --bg:#020409;
@@ -117,8 +115,27 @@ h1{
   box-shadow:0 0 10px rgba(0,229,255,.35);
 }
 @keyframes blink{ 50%{opacity:0;} }
+
+/* reset link styling */
+.resetRow{ margin-top:16px; }
+.resetLink{
+  display:inline-block;
+  padding:10px 14px;
+  border-radius:12px;
+  border:1px solid rgba(0,229,255,.35);
+  background:rgba(0,229,255,.06);
+  color:rgba(191,233,255,.92);
+  text-decoration:none;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-family:var(--mono);
+  font-size:12px;
+}
+.resetLink:hover{ background:rgba(0,229,255,.14); }
+.resetLink:active{ transform:translateY(1px); }
 </style>
 </head>
+
 <body>
   <div class="container">
     <div class="topbar">
@@ -136,16 +153,19 @@ h1{
         GRID STABILIZED.<br>
         A VICTORY FOR THE USERS.<br>
         END OF LINE.<span class="cursor"></span>
-        <div style="margin-top:16px;">
-<script>
-  setTimeout(() => {
-    window.location.href = "./index.html";
-  }, 10000); // 10 seconds
-</script>
-  </button>
-</div>
+      </div>
+
+      <div class="resetRow">
+        <a class="resetLink" href="./">RETURN TO GRID NODE</a>
       </div>
     </div>
   </div>
+
+<script>
+  // Auto return to root (loads index.html) after 10 seconds
+  setTimeout(() => {
+    window.location.href = "./";
+  }, 10000);
+</script>
 </body>
 </html>
