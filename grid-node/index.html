@@ -1,628 +1,614 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ARES // GRID ACCESS</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GRID NODE // TRANSFER PROTOCOL</title>
 
 <style>
-:root{
-  --bg:#020409;
-  --cyan:#00e5ff;
-  --amber:#ffcc66;
-  --red:#ff3b3b;
-  --ok:#66ffcc;
-  --panel:rgba(0,20,30,.62);
-  --line:rgba(0,229,255,.18);
-  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-}
+  :root{
+    --bg:#02070d;
+    --panel: rgba(6, 18, 28, .72);
 
-*{box-sizing:border-box}
+    /* Animated by JS */
+    --accent: rgba(64, 255, 255, .95);
+    --accentSoft: rgba(64, 255, 255, .22);
+    --accentGlow: rgba(64, 255, 255, .18);
 
-body{
-  margin:0;
-  background:
-    radial-gradient(900px 600px at 50% 20%, rgba(0,229,255,.08), transparent 60%),
-    radial-gradient(900px 600px at 20% 80%, rgba(255,59,59,.05), transparent 55%),
-    linear-gradient(180deg, #01020a, #020409 40%, #01020a);
-  color:var(--cyan);
-  font-family:var(--mono);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-  padding:18px;
-  overflow:hidden;
-}
+    --text:#d8ffff;
+    --muted:#86d8e4;
 
-/* subtle grid */
-body:before{
-  content:"";
-  position:fixed; inset:0;
-  background:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size:64px 64px;
-  opacity:.14;
-  pointer-events:none;
-}
+    --mono: ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
 
-/* scanlines */
-body:after{
-  content:"";
-  position:fixed; inset:-30%;
-  background:linear-gradient(transparent 0 49%, rgba(0,0,0,.18) 50% 51%, transparent 52% 100%);
-  background-size:100% 6px;
-  opacity:.12;
-  pointer-events:none;
-  animation:scan 6s linear infinite;
-}
-@keyframes scan { to{ transform:translateY(120px);} }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    overflow-x:hidden;
+  }
 
-.container{
-  width:92%;
-  max-width:900px;
-  border:1px solid rgba(0,229,255,.4);
-  padding:18px 18px 16px;
-  background:var(--panel);
-  box-shadow:0 0 50px rgba(0,229,255,.18);
-  border-radius:14px;
-  position:relative;
-}
+  .grid{
+    position:fixed; inset:0;
+    background:
+      linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    opacity:.18;
+    animation: drift 14s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes drift{
+    from{background-position:0 0, 0 0}
+    to{background-position:220px 0, 0 220px}
+  }
 
-/* top bar */
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:10px 12px;
-  border:1px solid rgba(0,229,255,.18);
-  border-radius:12px;
-  background:rgba(0,0,0,.18);
-  margin-bottom:14px;
-}
-.badge{
-  display:flex; gap:10px; align-items:center;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  font-size:12px;
-  color:rgba(191,233,255,.8);
-}
-.dot{
-  width:10px;height:10px;border-radius:50%;
-  background:rgba(0,229,255,.55);
-  box-shadow:0 0 14px rgba(0,229,255,.35);
-}
-.clock{
-  font-size:12px;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  color:rgba(191,233,255,.65);
-}
+  .scanline{
+    position:fixed; left:0; right:0;
+    height:120px;
+    background: linear-gradient(to bottom,
+      transparent,
+      rgba(255,255,255,.04),
+      rgba(255,255,255,.10),
+      rgba(255,255,255,.04),
+      transparent);
+    opacity:.30;
+    animation: scan 6.5s linear infinite;
+    pointer-events:none;
+    mix-blend-mode: screen;
+  }
+  @keyframes scan{
+    0%{top:-160px}
+    100%{top: calc(100vh + 160px)}
+  }
 
-h1{
-  margin:0;
-  font-size:15px;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-}
+  .accentGlow{
+    position:fixed; inset:-20%;
+    background:
+      radial-gradient(circle at 28% 20%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 38%),
+      radial-gradient(circle at 80% 62%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 44%),
+      radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 48%);
+    pointer-events:none;
+    filter: blur(2px);
+    opacity:.9;
+  }
 
-/* boot log */
-.log{
-  height:220px;
-  overflow:hidden;
-  white-space:pre-wrap;
-  font-size:12px;
-  margin-top:12px;
-  border:1px solid rgba(0,229,255,.16);
-  border-radius:12px;
-  padding:12px;
-  background:rgba(0,0,0,.18);
-  box-shadow:inset 0 0 20px rgba(0,229,255,.06);
-}
-.cursor{
-  display:inline-block;
-  width:8px;height:14px;
-  background:rgba(0,229,255,.7);
-  margin-left:6px;
-  vertical-align:-2px;
-  animation:blink 1s steps(2,end) infinite;
-  box-shadow:0 0 10px rgba(0,229,255,.35);
-}
-@keyframes blink{ 50%{opacity:0;} }
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 22px;
+    position:relative;
+    z-index:2;
+  }
 
-.hidden{display:none;}
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:14px 16px;
+    border-radius:18px;
+    background: rgba(7,20,35,.75);
+    border:1px solid var(--accentSoft);
+    box-shadow: 0 0 26px var(--accentGlow);
+    backdrop-filter: blur(6px);
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .sig{
+    width:14px; height:14px;
+    border-radius:4px;
+    transform: rotate(45deg);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .title{
+    display:flex; flex-direction:column; gap:2px;
+    line-height:1.15;
+  }
+  .title b{
+    letter-spacing: 1.6px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+  .title span{
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .7px;
+    font-family: var(--sans);
+    opacity:.9;
+  }
+  .statuspill{
+    font-size:12px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--text);
+    white-space:nowrap;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .statuspill .hot{
+    color: var(--accent);
+    font-weight: 800;
+    letter-spacing: .6px;
+  }
 
-.override{
-  color:var(--amber);
-  margin-top:10px;
-  line-height:1.65;
-  font-size:14px;
-}
+  .grid2{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:16px;
+    margin-top:16px;
+  }
+  @media (max-width: 860px){
+    .grid2{grid-template-columns:1fr}
+  }
 
-.sub{
-  margin-top:10px;
-  color:rgba(191,233,255,.72);
-  font-size:12px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
+  .card{
+    border-radius:18px;
+    background: var(--panel);
+    border:1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+    box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 10%, transparent);
+    overflow:hidden;
+  }
+  .cardHeader{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 40%);
+  }
+  .cardHeader h2{
+    margin:0;
+    font-size:12px;
+    letter-spacing:1.6px;
+    text-transform: uppercase;
+  }
+  .chip{
+    font-size:11px;
+    letter-spacing:.9px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: color-mix(in srgb, var(--text) 75%, var(--accent));
+  }
 
-/* auth window + decay bar */
-.timerRow{
-  margin-top:12px;
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  color:rgba(191,233,255,.75);
-  font-size:12px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-.tag{
-  padding:4px 10px;
-  border-radius:999px;
-  border:1px solid rgba(0,229,255,.22);
-  background:rgba(0,229,255,.06);
-  color:rgba(191,233,255,.8);
-  font-size:11px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-}
-.tag.amber{ border-color:rgba(255,204,102,.35); background:rgba(255,204,102,.08); color:rgba(255,244,220,.95); }
-.tag.red{ border-color:rgba(255,59,59,.35); background:rgba(255,59,59,.08); color:rgba(255,190,190,.95); }
+  .cardBody{ padding:16px; }
 
-.meter{
-  margin-top:10px;
-  height:12px;
-  border-radius:999px;
-  border:1px solid rgba(0,229,255,.16);
-  background:rgba(0,0,0,.22);
-  overflow:hidden;
-}
-.meterFill{
-  height:100%;
-  width:100%;
-  background:linear-gradient(90deg, rgba(0,229,255,.75), rgba(0,229,255,.25));
-  transition:width .35s ease, background .35s ease;
-}
+  .bigline{
+    margin:0;
+    font-size:16px;
+    letter-spacing:2px;
+    text-transform: uppercase;
+  }
+  .sub{
+    margin:10px 0 0;
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size:14px;
+    line-height:1.55;
+  }
 
-/* buttons */
-.btnRow{
-  margin-top:14px;
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-button{
-  padding:10px 14px;
-  border-radius:12px;
-  border:1px solid rgba(0,229,255,.35);
-  background:rgba(0,229,255,.06);
-  color:rgba(191,233,255,.92);
-  cursor:pointer;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  font-size:12px;
-}
-button:hover{ background:rgba(0,229,255,.14); }
-button:active{ transform:translateY(1px); }
-button.deny{
-  border-color:rgba(255,59,59,.35);
-  background:rgba(255,59,59,.07);
-}
-button.deny:hover{
-  background:rgba(255,59,59,.12);
-}
+  .divider{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:13px;
+    font-family: var(--sans);
+    color: rgba(216,255,255,.84);
+    line-height:1.55;
+  }
 
-.result{
-  margin-top:14px;
-  border:1px solid rgba(0,229,255,.16);
-  border-radius:12px;
-  padding:12px;
-  background:rgba(0,0,0,.16);
-  font-size:13px;
-  line-height:1.55;
-}
-.success{color:var(--ok);}
-.danger{color:var(--red);}
+  .kv{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  .kv td{
+    padding:10px 8px;
+    border-top:1px solid rgba(255,255,255,.08);
+    vertical-align:top;
+  }
+  .kv td:first-child{
+    width:240px;
+    color: var(--muted);
+    letter-spacing:.4px;
+    font-family: var(--mono);
+  }
+  .kv .val{
+    font-family: var(--sans);
+    color: rgba(216,255,255,.92);
+  }
 
-/* CM callout */
-.callout{
-  margin-top:14px;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid rgba(255,204,102,.26);
-  background:linear-gradient(180deg, rgba(255,204,102,.08), rgba(0,0,0,.10));
-  box-shadow:inset 0 0 0 1px rgba(255,204,102,.06);
-}
-.callout strong{
-  color:rgba(255,204,102,.95);
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  font-size:12px;
-}
-.callout .line{
-  margin-top:8px;
-  color:rgba(255,244,220,.95);
-  font-size:14px;
-}
+  .log{
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:12px;
+    color: rgba(134,216,228,.92);
+  }
+  .log li{
+    padding:10px 8px;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+  .log b{
+    color: var(--text);
+    letter-spacing:.8px;
+  }
+  code{
+    background: rgba(0,0,0,.28);
+    padding:2px 6px;
+    border-radius:10px;
+    border:1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--text);
+    font-family: var(--mono);
+  }
 
-/* GLITCH flicker overlay */
-#glitchFx{
-  position:fixed; inset:0;
-  pointer-events:none;
-  opacity:0;
-  mix-blend-mode:screen;
-  background:
-    linear-gradient(90deg, rgba(255,59,59,.08), rgba(0,229,255,.10), rgba(255,204,102,.06)),
-    radial-gradient(900px 600px at 50% 30%, rgba(0,229,255,.12), transparent 65%);
-  filter:contrast(1.2) saturate(1.2);
-}
-.flicker #glitchFx{
-  opacity:1;
-  animation:flicker .16s steps(2,end) infinite;
-}
-@keyframes flicker{
-  0%{ transform:translate(0,0); filter:hue-rotate(0deg) contrast(1.1); }
-  25%{ transform:translate(2px,-1px); filter:hue-rotate(12deg) contrast(1.35); }
-  50%{ transform:translate(-3px,2px); filter:hue-rotate(-10deg) contrast(1.55); }
-  75%{ transform:translate(1px,3px); filter:hue-rotate(8deg) contrast(1.3); }
-  100%{ transform:translate(0,0); filter:hue-rotate(0deg) contrast(1.1); }
-}
+  /* Decay UI */
+  .decayRow{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .decayRow .label{
+    font-family: var(--mono);
+    font-size:12px;
+    letter-spacing:1px;
+    opacity:.9;
+    text-transform: uppercase;
+  }
+  .decayRow .value{
+    font-family: var(--mono);
+    font-weight:800;
+    letter-spacing:1px;
+    color: var(--accent);
+  }
+  .barWrap{
+    margin-top:12px;
+    border-radius:14px;
+    border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    background: rgba(255,255,255,.03);
+    overflow:hidden;
+  }
+  .bar{
+    height:12px;
+    width:100%;
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 75%, transparent),
+      color-mix(in srgb, var(--accent) 25%, transparent));
+    transform-origin:left center;
+    transform: scaleX(1);
+  }
+  .timeline{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-family: var(--sans);
+    color: rgba(216,255,255,.84);
+    font-size:13px;
+    line-height:1.6;
+  }
 
-/* extra glitch intensity for denial/malware */
-.hardflicker #glitchFx{
-  opacity:1;
-  animation:flicker .09s steps(2,end) infinite;
-}
+  .cursor{
+    display:inline-block;
+    width:8px;
+    height:16px;
+    background: var(--text);
+    margin-left:6px;
+    animation: blink 1s infinite;
+    vertical-align:bottom;
+  }
+  @keyframes blink{
+    0%,100%{opacity:1}
+    50%{opacity:0}
+  }
 
-/* subtle shake on denial/malware */
-@keyframes shake{
-  0%{transform:translate(0,0)}
-  20%{transform:translate(2px,0)}
-  40%{transform:translate(-2px,1px)}
-  60%{transform:translate(2px,1px)}
-  80%{transform:translate(-2px,0)}
-  100%{transform:translate(0,0)}
-}
-.shake .container{ animation:shake .22s steps(2,end) 8; }
+  /* NEW: override button */
+  .overrideBtn{
+    margin-top: 14px;
+    width: 100%;
+    padding: 14px 14px;
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--text);
+    font-family: var(--mono);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .overrideBtn:active{ transform: translateY(1px); }
+  .overrideBtn[disabled]{
+    opacity:.6;
+    cursor:not-allowed;
+  }
+  .attempts{
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    font-family: var(--mono);
+    opacity: .95;
+  }
+  .footer{
+    margin:18px 0 6px;
+    text-align:center;
+    font-family: var(--sans);
+    font-size:12px;
+    opacity:.55;
+  }
 </style>
 </head>
 
 <body>
-<div id="glitchFx"></div>
+  <div class="grid"></div>
+  <div class="scanline"></div>
+  <div class="accentGlow"></div>
 
-<div class="container">
-  <div class="topbar">
-    <div class="badge"><span class="dot"></span>ARES // GRID ACCESS TERMINAL</div>
-    <div class="clock" id="clock">SYNC: --:--:--</div>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="sig" aria-hidden="true"></div>
+        <div class="title">
+          <b>GRID NODE // TRANSFER PROTOCOL</b>
+          <span>ROGUE PROGRAM UPLINK • ARENA INTAKE • READ-ONLY</span>
+        </div>
+      </div>
+      <div class="statuspill">
+        STATUS: <span class="hot" id="statusWord">ARMED</span> •
+        TIME TO DECAY: <span class="hot" id="countdown">--:--</span>
+      </div>
+    </div>
+
+    <div class="grid2">
+
+      <!-- Primary story card -->
+      <section class="card">
+        <div class="cardHeader">
+          <h2>INTAKE MESSAGE</h2>
+          <span class="chip" id="threatChip">DARK SECTOR</span>
+        </div>
+        <div class="cardBody">
+          <p class="bigline">GREETINGS, USER.</p>
+          <p class="sub">
+            Imperial Remnants detained on <b>D’Qar</b>.
+            Espionage against Resistance forces confirmed.<br/>
+            Off-world transport complete.
+            Prisoner transfer to the Grid pending.<br/>
+            Digitization sequence armed.
+            Arena assignment: <b>The Games</b>.
+          </p>
+
+          <div class="divider">
+            Master Control authority confirmed.<br/>
+            Ares Override invoked.<br/><br/>
+
+            <span style="
+              display:inline-block;
+              padding:6px 10px;
+              border:1px solid var(--accent);
+              border-radius:6px;
+              letter-spacing:2px;
+              font-weight:800;
+              color:var(--accent);
+            ">
+              REQUEST FOR EXPEDITED ARENA INTAKE (LL Override Procedure)
+            </span><br/><br/>
+
+            Prisoner resistance escalating.<br/>
+            Control systems destabilizing.<br/>
+            Forced digitization authorized.<br/><br/>
+
+            Arena Marshal R-17 (CM) — confirmation required.<br/>
+            If authorized, call prisoners forward.<br/>
+            Prisoners: scan identity disk to confirm custody transfer.<br/>
+            Awaiting verification...
+            <button id="overrideBtn" type="button" class="overrideBtn">
+              AUTHORIZE LL OVERRIDE
+            </button>
+            <div class="attempts" id="attemptsText">OVERRIDE ATTEMPTS: 0/3</div>
+          </div>
+
+          <div class="divider" style="margin-top:18px;">
+            End of line.<span class="cursor"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Decay / Integrity card -->
+      <section class="card">
+        <div class="cardHeader">
+          <h2>DECAY MONITOR</h2>
+          <span class="chip">NODE: RELAY-77</span>
+        </div>
+        <div class="cardBody">
+          <div class="decayRow">
+            <div class="label">DATA INTEGRITY</div>
+            <div class="value"><span id="integrity">100</span>%</div>
+          </div>
+
+          <div class="barWrap" aria-label="Integrity bar">
+            <div class="bar" id="bar"></div>
+          </div>
+
+          <div class="timeline">
+            Thresholds:<br/>
+            <b>T+00:10</b> — WARNING STATE (YELLOW)<br/>
+            <b>T+00:25</b> — ARES DECAY (RED) / INFECTION ACTIVE
+          </div>
+
+          <table class="kv" style="margin-top:10px;">
+            <tr><td>Origin</td><td class="val">D’Qar • Resistance perimeter sector</td></tr>
+            <tr><td>Subjects</td><td class="val">Imperial Remnants (analog hostiles)</td></tr>
+            <tr><td>Destination</td><td class="val">The Games • Lightcycle arena</td></tr>
+            <tr><td>System Integration</td><td class="val">None (read-only uplink / local logs)</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- Field log card -->
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>FIELD LOG • LOCAL CACHE</h2>
+          <span class="chip">ROGUE</span>
+        </div>
+        <div class="cardBody" style="padding:0;">
+          <ul class="log">
+            <li><b>[BOOT]</b> Relay-77 awakened • sector: <code>OFF-GRID / MK</code></li>
+            <li><b>[ACQUIRE]</b> Subjects tagged: <code>IMPERIAL REMNANTS</code> • origin: <code>D’Qar</code></li>
+            <li><b>[TRANSFER]</b> Custody chain verified • digitization: <code>ARMED</code></li>
+            <li><b>[QUEUE]</b> Arena assignment: <code>THE GAMES</code> • Lightcycle deployment: <code>PENDING</code></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      Fan-made interactive prop • Not affiliated with Disney
+    </div>
   </div>
-
-  <!-- BOOT -->
-  <div id="boot">
-    <h1>Hacked Boot Sequence</h1>
-    <div class="sub">tap once anywhere to arm audio // then proceed</div>
-    <div class="log"><span id="log"></span><span class="cursor"></span></div>
-  </div>
-
-  <!-- OVERRIDE -->
-  <div id="override" class="hidden">
-    <h1>Arena Intake Authorization</h1>
-    <div class="sub">Greetings, User. // End of Line.</div>
-
-    <div class="override">
-      ARES OVERRIDE // ARENA INTAKE PRIORITY 01<br>
-      NON-COMPLIANT SUBJECTS DETECTED<br>
-      REQUEST EXPEDITED ARENA INTAKE<br>
-      AWAITING GRID AUTHORIZATION
-    </div>
-
-    <div class="timerRow">
-      <div>authorization window: <span id="timeLeft">45</span>s</div>
-      <div class="tag" id="stateTag">stable</div>
-    </div>
-
-    <div class="meter" aria-label="authorization decay bar">
-      <div class="meterFill" id="meterFill"></div>
-    </div>
-
-    <div class="callout">
-      <strong>Cast Member Confirmation</strong>
-      <div class="line" id="cmLine">(CM: QUORRA) Prisoners, scan identity disk to confirm custody transfer.</div>
-    </div>
-
-    <div class="btnRow">
-      <button id="grantBtn" type="button">ACCESS GRANTED</button>
-      <button id="denyBtn" class="deny" type="button">ACCESS DENIED</button>
-    </div>
-
-    <div id="result" class="result hidden"></div>
-  </div>
-</div>
 
 <script>
-/* ----------------- CLOCK ----------------- */
-const clockEl = document.getElementById("clock");
-function tick(){
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  clockEl.textContent = `SYNC: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-}
-setInterval(tick, 500); tick();
+  // ==========================
+  // CONFIG
+  // ==========================
+  const totalMs = 45 * 1000;
 
-/* ----------------- AUDIO (WebAudio) -----------------
-   Browsers require a user gesture (tap/click) to start audio.
-*/
-let audioCtx = null;
-let primed = false;
+  // Stage thresholds (elapsed time)
+  const yellowAtMs = 10 * 1000;
+  const redAtMs    = 25 * 1000;
 
-function primeAudio(){
-  if(primed) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  primed = true;
-}
+  // Multi-click confirm
+  const REQUIRED_CLICKS = 3;
 
-document.addEventListener("pointerdown", () => primeAudio(), { once:true });
+  // Optional drama: deny chance (0 = always grant)
+  const DENY_CHANCE = 0.0;
 
-function tronChirp(){
-  if(!primed) return;
-  const t0 = audioCtx.currentTime;
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = "sawtooth";
-  o.frequency.setValueAtTime(220, t0);
-  o.frequency.exponentialRampToValueAtTime(880, t0 + 0.12);
-  o.frequency.exponentialRampToValueAtTime(330, t0 + 0.22);
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(0.12, t0 + 0.02);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.28);
-  o.connect(g).connect(audioCtx.destination);
-  o.start(t0);
-  o.stop(t0 + 0.30);
-}
+  // ==========================
+  // DOM
+  // ==========================
+  const startAt = Date.now();
+  const decayAt = startAt + totalMs;
 
-function warningBeep(){
-  if(!primed) return;
-  const t0 = audioCtx.currentTime;
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = "sine";
-  o.frequency.setValueAtTime(660, t0);
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(0.08, t0 + 0.01);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.10);
-  o.connect(g).connect(audioCtx.destination);
-  o.start(t0);
-  o.stop(t0 + 0.11);
-}
+  const countdownEl = document.getElementById("countdown");
+  const statusWordEl = document.getElementById("statusWord");
+  const threatChipEl = document.getElementById("threatChip");
+  const integrityEl = document.getElementById("integrity");
+  const barEl = document.getElementById("bar");
 
-function malwareBuzz(){
-  if(!primed) return;
-  const t0 = audioCtx.currentTime;
-  const o = audioCtx.createOscillator();
-  const g = audioCtx.createGain();
-  o.type = "square";
-  o.frequency.setValueAtTime(95, t0);
-  o.frequency.linearRampToValueAtTime(55, t0 + 0.35);
-  g.gain.setValueAtTime(0.0001, t0);
-  g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.03);
-  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.45);
-  o.connect(g).connect(audioCtx.destination);
-  o.start(t0);
-  o.stop(t0 + 0.48);
-}
+  const overrideBtn = document.getElementById("overrideBtn");
+  const attemptsText = document.getElementById("attemptsText");
 
-/* ----------------- GLITCH HELPERS ----------------- */
-function glitchSoft(ms=650){
-  document.body.classList.add("flicker");
-  setTimeout(()=>document.body.classList.remove("flicker"), ms);
-}
-function glitchHard(ms=1200){
-  document.body.classList.add("hardflicker","shake");
-  setTimeout(()=>document.body.classList.remove("hardflicker","shake"), ms);
-}
-
-/* ----------------- BOOT SEQUENCE ----------------- */
-const logEl = document.getElementById("log");
-const bootLines = [
-  "INIT // ARES.NODE.BOOTSTRAP()",
-  "LINK // GRID.TRANSPORT.BUS // OK",
-  "CHECK // IDENTITY_DISK.READER // ONLINE",
-  "VERIFY // MCP.AUTHORITY // SPOOFED",
-  "WARN // UNAUTHORIZED SIGNAL DETECTED",
-  "INJECT // OVERRIDE PAYLOAD // ARES-INTAKE-01",
-  "BYPASS // QUEUE.GATEKEEPER // SUCCESS",
-  "SCAN // SUBJECTS // NON-COMPLIANT",
-  "ROUTE // LIGHTCYCLE.RUN ACCESS CHANNEL // NEGOTIATING",
-  "REQUEST // GRID AUTHORIZATION // PENDING",
-  "EOL // END OF LINE."
-];
-
-let bootIndex = 0;
-function appendBootLine(txt){
-  logEl.textContent += (logEl.textContent ? "\n" : "") + txt;
-  const arr = logEl.textContent.split("\n");
-  if(arr.length > 16){
-    logEl.textContent = arr.slice(arr.length - 16).join("\n");
+  // ==========================
+  // Helpers
+  // ==========================
+  function setFixedAccent(r,g,b){
+    const root = document.documentElement.style;
+    root.setProperty("--accent",     `rgba(${r},${g},${b},0.95)`);
+    root.setProperty("--accentSoft", `rgba(${r},${g},${b},0.22)`);
+    root.setProperty("--accentGlow", `rgba(${r},${g},${b},0.18)`);
   }
-}
 
-function runBoot(){
-  const interval = setInterval(()=>{
-    appendBootLine(bootLines[bootIndex % bootLines.length]);
-    bootIndex++;
-    if(bootIndex === 7){ glitchSoft(500); }
-    if(bootIndex >= bootLines.length){
-      clearInterval(interval);
-      glitchSoft(750);
-      setTimeout(showOverride, 650);
-    }
-  }, 520);
-}
-runBoot();
-
-function showOverride(){
-  document.getElementById("boot").classList.add("hidden");
-  document.getElementById("override").classList.remove("hidden");
-  startAuthWindow();
-}
-
-/* ----------------- AUTH WINDOW + DECAY ----------------- */
-const totalSeconds = 45;
-let timeLeft = totalSeconds;
-let timerInterval = null;
-let resolved = false;
-
-const timeLeftEl = document.getElementById("timeLeft");
-const meterFill = document.getElementById("meterFill");
-const stateTag = document.getElementById("stateTag");
-const resultEl = document.getElementById("result");
-
-function setState(mode){
-  if(mode === "stable"){
-    stateTag.className = "tag";
-    stateTag.textContent = "stable";
-    meterFill.style.background = "linear-gradient(90deg, rgba(0,229,255,.75), rgba(0,229,255,.25))";
-  } else if(mode === "warning"){
-    stateTag.className = "tag amber";
-    stateTag.textContent = "warning";
-    meterFill.style.background = "linear-gradient(90deg, rgba(255,204,102,.95), rgba(255,204,102,.35))";
-  } else if(mode === "critical"){
-    stateTag.className = "tag red";
-    stateTag.textContent = "critical";
-    meterFill.style.background = "linear-gradient(90deg, rgba(255,59,59,.95), rgba(255,59,59,.35))";
+  function fmt(ms){
+    const s = Math.max(0, Math.floor(ms/1000));
+    const m = Math.floor(s/60);
+    const r = s % 60;
+    return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
   }
-}
 
-function updateDecayUI(){
-  timeLeftEl.textContent = String(timeLeft);
-  const pct = Math.max(0, Math.min(100, (timeLeft / totalSeconds) * 100));
-  meterFill.style.width = pct + "%";
+  // ==========================
+  // Override click-to-route
+  // ==========================
+  let clicks = 0;
+  let locked = false;
 
-  if(timeLeft <= 10){
-    setState("critical");
-  } else if(timeLeft <= 18){
-    setState("warning");
-  } else {
-    setState("stable");
+  function updateAttempts(){
+    if (attemptsText) attemptsText.textContent = `OVERRIDE ATTEMPTS: ${clicks}/${REQUIRED_CLICKS}`;
   }
-}
 
-function startAuthWindow(){
-  resolved = false;
-  timeLeft = totalSeconds;
-  updateDecayUI();
+  function routeOutcome(){
+    const denied = Math.random() < DENY_CHANCE;
+    window.location.href = denied ? "access-denied.html" : "access-granted.html";
+  }
 
-  // subtle warning beeps at 18 and 10 seconds (if audio is primed)
-  let beep18 = false;
-  let beep10 = false;
+  if (overrideBtn && attemptsText){
+    updateAttempts();
 
-  timerInterval = setInterval(()=>{
-    if(resolved) return;
-    timeLeft--;
-    if(timeLeft < 0) timeLeft = 0;
-    updateDecayUI();
+    overrideBtn.addEventListener("click", () => {
+      if (locked) return;
 
-    if(timeLeft === 18 && !beep18){
-      beep18 = true;
-      glitchSoft(450);
-      warningBeep();
+      clicks++;
+      updateAttempts();
+
+      if (clicks < REQUIRED_CLICKS){
+        overrideBtn.textContent = "CONFIRMING… TAP AGAIN";
+      } else {
+        locked = true;
+        overrideBtn.textContent = "OVERRIDE CONFIRMED";
+        overrideBtn.disabled = true;
+        setTimeout(routeOutcome, 450);
+      }
+    });
+  }
+
+  // ==========================
+  // Timer / Decay animation
+  // ==========================
+  function tick(){
+    const now = Date.now();
+    const elapsed = now - startAt;
+    const remaining = decayAt - now;
+
+    if (elapsed < yellowAtMs){
+      setFixedAccent(64, 255, 255);      // CYAN
+      threatChipEl.textContent = "DARK SECTOR";
+      statusWordEl.textContent = "ARMED";
+    } else if (elapsed < redAtMs){
+      setFixedAccent(255, 215, 0);       // YELLOW
+      threatChipEl.textContent = "ESCALATION DETECTED";
+      statusWordEl.textContent = "UNSTABLE";
+    } else {
+      setFixedAccent(255, 47, 79);       // ARES RED
+      threatChipEl.textContent = "INFECTION ACTIVE";
+      statusWordEl.textContent = "INFECTED";
     }
-    if(timeLeft === 10 && !beep10){
-      beep10 = true;
-      glitchSoft(650);
-      warningBeep();
-      warningBeep();
+
+    if (remaining <= 0){
+      countdownEl.textContent = "00:00";
+      integrityEl.textContent = "0";
+      barEl.style.transform = "scaleX(0)";
+      // Optional: auto-send to denied once it fully decays
+      // window.location.href = "access-denied.html";
+      return;
     }
 
-    if(timeLeft <= 0){
-      clearInterval(timerInterval);
-      malwareEvent();
-    }
-  }, 1000);
-}
+    countdownEl.textContent = fmt(remaining);
 
-/* ----------------- BUTTONS ----------------- */
-document.getElementById("grantBtn").addEventListener("click", ()=>{
-  if(resolved) return;
-  primeAudio();
-  resolved = true;
-  clearInterval(timerInterval);
-  glitchSoft(700);
-  tronChirp();
+    const integrity = Math.max(0, Math.min(100, Math.round((remaining / totalMs) * 100)));
+    integrityEl.textContent = String(integrity);
+    barEl.style.transform = `scaleX(${integrity/100})`;
 
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML =
-    `<div class="success">
-      ACCESS GRANTED.<br>
-      GRID STABILIZED.<br>
-      Thank you for stabilizing the Grid, User.<br>
-      End of Line.
-    </div>`;
-});
+    requestAnimationFrame(tick);
+  }
 
-document.getElementById("denyBtn").addEventListener("click", ()=>{
-  if(resolved) return;
-  primeAudio();
-  resolved = true;
-  clearInterval(timerInterval);
-  glitchHard(1400);
-  malwareBuzz();
-
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML =
-    `<div class="danger">
-      ACCESS DENIED.<br>
-      GRID DESTABILIZING…<br>
-      INCURSION EVENT ACTIVATED.<br>
-      System adapting. Remain calm, User.<br>
-      End of Line.
-    </div>`;
-});
-
-/* ----------------- MALWARE TIMEOUT ----------------- */
-function malwareEvent(){
-  if(resolved) return;
-  resolved = true;
-
-  glitchHard(1600);
-  malwareBuzz();
-
-  // append "malware" lines into the result
-  const malwareLines = [
-    "TIMEOUT // AUTHORIZATION WINDOW EXPIRED",
-    "INFECTION VECTOR // ARES.WORM.Δ9 // DETECTED",
-    "PAYLOAD // SECTOR ROUTE TABLE CORRUPTION",
-    "HOOK // IDENTITY_DISK.IO // INTERCEPTED",
-    "SPREAD // NODE.CLUSTER // 12%… 34%… 61%",
-    "LOCK // ARENA GATES // FAILSAFE OVERRIDDEN",
-    "INCIDENT // INCURSION EVENT ACTIVATED",
-    "EOL // END OF LINE."
-  ];
-
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML =
-    `<div class="danger">
-      AUTHORIZATION TIMEOUT.<br>
-      MALWARE INJECTION DETECTED…<br><br>
-      <span id="malLog"></span>
-    </div>`;
-
-  const malLog = document.getElementById("malLog");
-  let k = 0;
-  const malInterval = setInterval(()=>{
-    malLog.textContent += (malLog.textContent ? "\n" : "") + malwareLines[k];
-    k++;
-    if(k >= malwareLines.length){
-      clearInterval(malInterval);
-      malLog.textContent += "\n\nEnd of Line.";
-    }
-  }, 260);
-}
+  tick();
 </script>
 </body>
 </html>
