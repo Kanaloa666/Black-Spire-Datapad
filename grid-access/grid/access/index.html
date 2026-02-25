@@ -11,7 +11,7 @@
     --panel: rgba(6, 18, 28, .72);
 
     /* Animated by JS */
-    --accent: rgba(64, 255, 255, .95);     /* cyan -> yellow -> red */
+    --accent: rgba(64, 255, 255, .95);
     --accentSoft: rgba(64, 255, 255, .22);
     --accentGlow: rgba(64, 255, 255, .18);
 
@@ -318,6 +318,34 @@
     50%{opacity:0}
   }
 
+  /* NEW: override button */
+  .overrideBtn{
+    margin-top: 14px;
+    width: 100%;
+    padding: 14px 14px;
+    border-radius: 14px;
+    border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--text);
+    font-family: var(--mono);
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+  .overrideBtn:active{ transform: translateY(1px); }
+  .overrideBtn[disabled]{
+    opacity:.6;
+    cursor:not-allowed;
+  }
+  .attempts{
+    margin-top: 10px;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    font-family: var(--mono);
+    opacity: .95;
+  }
   .footer{
     margin:18px 0 6px;
     text-align:center;
@@ -359,39 +387,43 @@
         <div class="cardBody">
           <p class="bigline">GREETINGS, USER.</p>
           <p class="sub">
-            Imperial Remnants detained on <b>D’Qar</b>. 
+            Imperial Remnants detained on <b>D’Qar</b>.
             Espionage against Resistance forces confirmed.<br/>
-            Off-world transport complete. 
-            Prisoner transfer to the Grid Pending<br/>
-            Digitization sequence armed. 
+            Off-world transport complete.
+            Prisoner transfer to the Grid pending.<br/>
+            Digitization sequence armed.
             Arena assignment: <b>The Games</b>.
           </p>
 
-<div class="divider">
-Master Control authority confirmed.<br/>
-Ares Override invoked.<br/><br/>
+          <div class="divider">
+            Master Control authority confirmed.<br/>
+            Ares Override invoked.<br/><br/>
 
-<span style="
-  display:inline-block;
-  padding:6px 10px;
-  border:1px solid var(--accent);
-  border-radius:6px;
-  letter-spacing:2px;
-  font-weight:800;
-  color:var(--accent);
-">
-REQUEST FOR EXPEDITED ARENA INTAKE (LL Override Procedure)
-</span><br/><br/>
+            <span style="
+              display:inline-block;
+              padding:6px 10px;
+              border:1px solid var(--accent);
+              border-radius:6px;
+              letter-spacing:2px;
+              font-weight:800;
+              color:var(--accent);
+            ">
+              REQUEST FOR EXPEDITED ARENA INTAKE (LL Override Procedure)
+            </span><br/><br/>
 
-Prisoner resistance escalating.<br/>
-Control systems destabilizing.<br/>
-Forced digitization authorized.<br/><br/>
+            Prisoner resistance escalating.<br/>
+            Control systems destabilizing.<br/>
+            Forced digitization authorized.<br/><br/>
 
-Arena Marshal R-17 (CM) — confirmation required.<br/>
-If authorized, call prisoners forward.<br/>
-Prisoners: scan identity disk to confirm custody transfer.<br/>
-Awaiting verification...
-</div>
+            Arena Marshal R-17 (CM) — confirmation required.<br/>
+            If authorized, call prisoners forward.<br/>
+            Prisoners: scan identity disk to confirm custody transfer.<br/>
+            Awaiting verification...
+            <button id="overrideBtn" type="button" class="overrideBtn">
+              AUTHORIZE LL OVERRIDE
+            </button>
+            <div class="attempts" id="attemptsText">OVERRIDE ATTEMPTS: 0/3</div>
+          </div>
 
           <div class="divider" style="margin-top:18px;">
             End of line.<span class="cursor"></span>
@@ -417,8 +449,8 @@ Awaiting verification...
 
           <div class="timeline">
             Thresholds:<br/>
-            <b>T+00:30</b> — WARNING STATE (YELLOW)<br/>
-            <b>T+01:30</b> — ARES DECAY (RED) / INFECTION ACTIVE
+            <b>T+00:10</b> — WARNING STATE (YELLOW)<br/>
+            <b>T+00:25</b> — ARES DECAY (RED) / INFECTION ACTIVE
           </div>
 
           <table class="kv" style="margin-top:10px;">
@@ -454,13 +486,24 @@ Awaiting verification...
   </div>
 
 <script>
-  // Total time until decay/infection: 1.5 minutes (90 seconds)
+  // ==========================
+  // CONFIG
+  // ==========================
   const totalMs = 45 * 1000;
 
-  // Stage thresholds
-  const yellowAtMs = 10 * 1000; // 0:30
-  const redAtMs    = 25 * 1000; // 1:30 (also decay hits)
+  // Stage thresholds (elapsed time)
+  const yellowAtMs = 10 * 1000;
+  const redAtMs    = 25 * 1000;
 
+  // Multi-click confirm
+  const REQUIRED_CLICKS = 3;
+
+  // Optional drama: deny chance (0 = always grant)
+  const DENY_CHANCE = 0.0;
+
+  // ==========================
+  // DOM
+  // ==========================
   const startAt = Date.now();
   const decayAt = startAt + totalMs;
 
@@ -470,6 +513,12 @@ Awaiting verification...
   const integrityEl = document.getElementById("integrity");
   const barEl = document.getElementById("bar");
 
+  const overrideBtn = document.getElementById("overrideBtn");
+  const attemptsText = document.getElementById("attemptsText");
+
+  // ==========================
+  // Helpers
+  // ==========================
   function setFixedAccent(r,g,b){
     const root = document.documentElement.style;
     root.setProperty("--accent",     `rgba(${r},${g},${b},0.95)`);
@@ -484,12 +533,49 @@ Awaiting verification...
     return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
   }
 
+  // ==========================
+  // Override click-to-route
+  // ==========================
+  let clicks = 0;
+  let locked = false;
+
+  function updateAttempts(){
+    if (attemptsText) attemptsText.textContent = `OVERRIDE ATTEMPTS: ${clicks}/${REQUIRED_CLICKS}`;
+  }
+
+  function routeOutcome(){
+    const denied = Math.random() < DENY_CHANCE;
+    window.location.href = denied ? "access-denied.html" : "access-granted.html";
+  }
+
+  if (overrideBtn && attemptsText){
+    updateAttempts();
+
+    overrideBtn.addEventListener("click", () => {
+      if (locked) return;
+
+      clicks++;
+      updateAttempts();
+
+      if (clicks < REQUIRED_CLICKS){
+        overrideBtn.textContent = "CONFIRMING… TAP AGAIN";
+      } else {
+        locked = true;
+        overrideBtn.textContent = "OVERRIDE CONFIRMED";
+        overrideBtn.disabled = true;
+        setTimeout(routeOutcome, 450);
+      }
+    });
+  }
+
+  // ==========================
+  // Timer / Decay animation
+  // ==========================
   function tick(){
     const now = Date.now();
     const elapsed = now - startAt;
     const remaining = decayAt - now;
 
-    // Staged color transitions
     if (elapsed < yellowAtMs){
       setFixedAccent(64, 255, 255);      // CYAN
       threatChipEl.textContent = "DARK SECTOR";
@@ -504,11 +590,12 @@ Awaiting verification...
       statusWordEl.textContent = "INFECTED";
     }
 
-    // Update countdown + integrity
     if (remaining <= 0){
       countdownEl.textContent = "00:00";
       integrityEl.textContent = "0";
       barEl.style.transform = "scaleX(0)";
+      // Optional: auto-send to denied once it fully decays
+      // window.location.href = "access-denied.html";
       return;
     }
 
