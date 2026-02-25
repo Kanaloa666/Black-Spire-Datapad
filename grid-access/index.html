@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GRID NODE // TRANSFER PROTOCOL</title>
+
+<style>
+  :root{
+    --bg:#02070d;
+    --panel: rgba(6, 18, 28, .72);
+
+    /* Animated by JS */
+    --accent: rgba(64, 255, 255, .95);     /* cyan -> yellow -> red */
+    --accentSoft: rgba(64, 255, 255, .22);
+    --accentGlow: rgba(64, 255, 255, .18);
+
+    --text:#d8ffff;
+    --muted:#86d8e4;
+
+    --mono: ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    overflow-x:hidden;
+  }
+
+  .grid{
+    position:fixed; inset:0;
+    background:
+      linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+    background-size: 44px 44px;
+    opacity:.18;
+    animation: drift 14s linear infinite;
+    pointer-events:none;
+  }
+  @keyframes drift{
+    from{background-position:0 0, 0 0}
+    to{background-position:220px 0, 0 220px}
+  }
+
+  .scanline{
+    position:fixed; left:0; right:0;
+    height:120px;
+    background: linear-gradient(to bottom,
+      transparent,
+      rgba(255,255,255,.04),
+      rgba(255,255,255,.10),
+      rgba(255,255,255,.04),
+      transparent);
+    opacity:.30;
+    animation: scan 6.5s linear infinite;
+    pointer-events:none;
+    mix-blend-mode: screen;
+  }
+  @keyframes scan{
+    0%{top:-160px}
+    100%{top: calc(100vh + 160px)}
+  }
+
+  .accentGlow{
+    position:fixed; inset:-20%;
+    background:
+      radial-gradient(circle at 28% 20%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 38%),
+      radial-gradient(circle at 80% 62%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 44%),
+      radial-gradient(circle at 50% 92%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 48%);
+    pointer-events:none;
+    filter: blur(2px);
+    opacity:.9;
+  }
+
+  .wrap{
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 22px;
+    position:relative;
+    z-index:2;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:14px 16px;
+    border-radius:18px;
+    background: rgba(7,20,35,.75);
+    border:1px solid var(--accentSoft);
+    box-shadow: 0 0 26px var(--accentGlow);
+    backdrop-filter: blur(6px);
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+  .sig{
+    width:14px; height:14px;
+    border-radius:4px;
+    transform: rotate(45deg);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+    box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .title{
+    display:flex; flex-direction:column; gap:2px;
+    line-height:1.15;
+  }
+  .title b{
+    letter-spacing: 1.6px;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+  .title span{
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: .7px;
+    font-family: var(--sans);
+    opacity:.9;
+  }
+  .statuspill{
+    font-size:12px;
+    padding:8px 12px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--text);
+    white-space:nowrap;
+    box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 14%, transparent);
+  }
+  .statuspill .hot{
+    color: var(--accent);
+    font-weight: 800;
+    letter-spacing: .6px;
+  }
+
+  .grid2{
+    display:grid;
+    grid-template-columns: 1.05fr .95fr;
+    gap:16px;
+    margin-top:16px;
+  }
+  @media (max-width: 860px){
+    .grid2{grid-template-columns:1fr}
+  }
+
+  .card{
+    border-radius:18px;
+    background: var(--panel);
+    border:1px solid color-mix(in srgb, var(--accent) 26%, transparent);
+    box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 10%, transparent);
+    overflow:hidden;
+  }
+  .cardHeader{
+    padding:14px 16px;
+    border-bottom:1px solid rgba(255,255,255,.07);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:
+      linear-gradient(90deg, color-mix(in srgb, var(--accent) 10%, transparent), transparent 40%);
+  }
+  .cardHeader h2{
+    margin:0;
+    font-size:12px;
+    letter-spacing:1.6px;
+    text-transform: uppercase;
+  }
+  .chip{
+    font-size:11px;
+    letter-spacing:.9px;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: color-mix(in srgb, var(--text) 75%, var(--accent));
+  }
+
+  .cardBody{ padding:16px; }
+
+  .bigline{
+    margin:0;
+    font-size:16px;
+    letter-spacing:2px;
+    text-transform: uppercase;
+  }
+  .sub{
+    margin:10px 0 0;
+    font-family: var(--sans);
+    color: var(--muted);
+    font-size:14px;
+    line-height:1.55;
+  }
+
+  .divider{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-size:13px;
+    font-family: var(--sans);
+    color: rgba(216,255,255,.84);
+    line-height:1.55;
+  }
+
+  .kv{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  .kv td{
+    padding:10px 8px;
+    border-top:1px solid rgba(255,255,255,.08);
+    vertical-align:top;
+  }
+  .kv td:first-child{
+    width:240px;
+    color: var(--muted);
+    letter-spacing:.4px;
+    font-family: var(--mono);
+  }
+  .kv .val{
+    font-family: var(--sans);
+    color: rgba(216,255,255,.92);
+  }
+
+  .log{
+    margin:0;
+    padding:0;
+    list-style:none;
+    font-size:12px;
+    color: rgba(134,216,228,.92);
+  }
+  .log li{
+    padding:10px 8px;
+    border-top:1px solid rgba(255,255,255,.08);
+  }
+  .log b{
+    color: var(--text);
+    letter-spacing:.8px;
+  }
+  code{
+    background: rgba(0,0,0,.28);
+    padding:2px 6px;
+    border-radius:10px;
+    border:1px solid color-mix(in srgb, var(--accent) 16%, transparent);
+    color: var(--text);
+    font-family: var(--mono);
+  }
+
+  /* Decay UI */
+  .decayRow{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:6px;
+  }
+  .decayRow .label{
+    font-family: var(--mono);
+    font-size:12px;
+    letter-spacing:1px;
+    opacity:.9;
+    text-transform: uppercase;
+  }
+  .decayRow .value{
+    font-family: var(--mono);
+    font-weight:800;
+    letter-spacing:1px;
+    color: var(--accent);
+  }
+  .barWrap{
+    margin-top:12px;
+    border-radius:14px;
+    border:1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+    background: rgba(255,255,255,.03);
+    overflow:hidden;
+  }
+  .bar{
+    height:12px;
+    width:100%;
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--accent) 75%, transparent),
+      color-mix(in srgb, var(--accent) 25%, transparent));
+    transform-origin:left center;
+    transform: scaleX(1);
+  }
+  .timeline{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(255,255,255,.08);
+    font-family: var(--sans);
+    color: rgba(216,255,255,.84);
+    font-size:13px;
+    line-height:1.6;
+  }
+
+  .cursor{
+    display:inline-block;
+    width:8px;
+    height:16px;
+    background: var(--text);
+    margin-left:6px;
+    animation: blink 1s infinite;
+    vertical-align:bottom;
+  }
+  @keyframes blink{
+    0%,100%{opacity:1}
+    50%{opacity:0}
+  }
+
+  .footer{
+    margin:18px 0 6px;
+    text-align:center;
+    font-family: var(--sans);
+    font-size:12px;
+    opacity:.55;
+  }
+</style>
+</head>
+
+<body>
+  <div class="grid"></div>
+  <div class="scanline"></div>
+  <div class="accentGlow"></div>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="sig" aria-hidden="true"></div>
+        <div class="title">
+          <b>GRID NODE // TRANSFER PROTOCOL</b>
+          <span>ROGUE PROGRAM UPLINK • ARENA INTAKE • READ-ONLY</span>
+        </div>
+      </div>
+      <div class="statuspill">
+        STATUS: <span class="hot" id="statusWord">ARMED</span> •
+        TIME TO DECAY: <span class="hot" id="countdown">--:--</span>
+      </div>
+    </div>
+
+    <div class="grid2">
+
+      <!-- Primary story card -->
+      <section class="card">
+        <div class="cardHeader">
+          <h2>INTAKE MESSAGE</h2>
+          <span class="chip" id="threatChip">DARK SECTOR</span>
+        </div>
+        <div class="cardBody">
+          <p class="bigline">GREETINGS, USER.</p>
+          <p class="sub">
+            Imperial Remnants detained on <b>D’Qar</b>. 
+            Espionage against Resistance forces confirmed.<br/>
+            Off-world transport complete. 
+            Prisoner transfer to the Grid Pending<br/>
+            Digitization sequence armed. 
+            Arena assignment: <b>The Games</b>.
+          </p>
+
+<div class="divider">
+Master Control authority confirmed.<br/>
+Ares Override invoked.<br/><br/>
+
+<span style="
+  display:inline-block;
+  padding:6px 10px;
+  border:1px solid var(--accent);
+  border-radius:6px;
+  letter-spacing:2px;
+  font-weight:800;
+  color:var(--accent);
+">
+REQUEST FOR EXPEDITED ARENA INTAKE (LL Override Procedure)
+</span><br/><br/>
+
+Prisoner resistance escalating.<br/>
+Control systems destabilizing.<br/>
+Forced digitization authorized.<br/><br/>
+
+Arena Marshal R-17 (CM) — confirmation required.<br/>
+If authorized, call prisoners forward.<br/>
+Prisoners: scan identity disk to confirm custody transfer.<br/>
+Awaiting verification...
+</div>
+
+          <div class="divider" style="margin-top:18px;">
+            End of line.<span class="cursor"></span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Decay / Integrity card -->
+      <section class="card">
+        <div class="cardHeader">
+          <h2>DECAY MONITOR</h2>
+          <span class="chip">NODE: RELAY-77</span>
+        </div>
+        <div class="cardBody">
+          <div class="decayRow">
+            <div class="label">DATA INTEGRITY</div>
+            <div class="value"><span id="integrity">100</span>%</div>
+          </div>
+
+          <div class="barWrap" aria-label="Integrity bar">
+            <div class="bar" id="bar"></div>
+          </div>
+
+          <div class="timeline">
+            Thresholds:<br/>
+            <b>T+00:30</b> — WARNING STATE (YELLOW)<br/>
+            <b>T+01:30</b> — ARES DECAY (RED) / INFECTION ACTIVE
+          </div>
+
+          <table class="kv" style="margin-top:10px;">
+            <tr><td>Origin</td><td class="val">D’Qar • Resistance perimeter sector</td></tr>
+            <tr><td>Subjects</td><td class="val">Imperial Remnants (analog hostiles)</td></tr>
+            <tr><td>Destination</td><td class="val">The Games • Lightcycle arena</td></tr>
+            <tr><td>System Integration</td><td class="val">None (read-only uplink / local logs)</td></tr>
+          </table>
+        </div>
+      </section>
+
+      <!-- Field log card -->
+      <section class="card" style="grid-column: 1 / -1;">
+        <div class="cardHeader">
+          <h2>FIELD LOG • LOCAL CACHE</h2>
+          <span class="chip">ROGUE</span>
+        </div>
+        <div class="cardBody" style="padding:0;">
+          <ul class="log">
+            <li><b>[BOOT]</b> Relay-77 awakened • sector: <code>OFF-GRID / MK</code></li>
+            <li><b>[ACQUIRE]</b> Subjects tagged: <code>IMPERIAL REMNANTS</code> • origin: <code>D’Qar</code></li>
+            <li><b>[TRANSFER]</b> Custody chain verified • digitization: <code>ARMED</code></li>
+            <li><b>[QUEUE]</b> Arena assignment: <code>THE GAMES</code> • Lightcycle deployment: <code>PENDING</code></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <div class="footer">
+      Fan-made interactive prop • Not affiliated with Disney
+    </div>
+  </div>
+
+<script>
+  // Total time until decay/infection: 1.5 minutes (90 seconds)
+  const totalMs = 45 * 1000;
+
+  // Stage thresholds
+  const yellowAtMs = 10 * 1000; // 0:30
+  const redAtMs    = 25 * 1000; // 1:30 (also decay hits)
+
+  const startAt = Date.now();
+  const decayAt = startAt + totalMs;
+
+  const countdownEl = document.getElementById("countdown");
+  const statusWordEl = document.getElementById("statusWord");
+  const threatChipEl = document.getElementById("threatChip");
+  const integrityEl = document.getElementById("integrity");
+  const barEl = document.getElementById("bar");
+
+  function setFixedAccent(r,g,b){
+    const root = document.documentElement.style;
+    root.setProperty("--accent",     `rgba(${r},${g},${b},0.95)`);
+    root.setProperty("--accentSoft", `rgba(${r},${g},${b},0.22)`);
+    root.setProperty("--accentGlow", `rgba(${r},${g},${b},0.18)`);
+  }
+
+  function fmt(ms){
+    const s = Math.max(0, Math.floor(ms/1000));
+    const m = Math.floor(s/60);
+    const r = s % 60;
+    return `${String(m).padStart(2,"0")}:${String(r).padStart(2,"0")}`;
+  }
+
+  function tick(){
+    const now = Date.now();
+    const elapsed = now - startAt;
+    const remaining = decayAt - now;
+
+    // Staged color transitions
+    if (elapsed < yellowAtMs){
+      setFixedAccent(64, 255, 255);      // CYAN
+      threatChipEl.textContent = "DARK SECTOR";
+      statusWordEl.textContent = "ARMED";
+    } else if (elapsed < redAtMs){
+      setFixedAccent(255, 215, 0);       // YELLOW
+      threatChipEl.textContent = "ESCALATION DETECTED";
+      statusWordEl.textContent = "UNSTABLE";
+    } else {
+      setFixedAccent(255, 47, 79);       // ARES RED
+      threatChipEl.textContent = "INFECTION ACTIVE";
+      statusWordEl.textContent = "INFECTED";
+    }
+
+    // Update countdown + integrity
+    if (remaining <= 0){
+      countdownEl.textContent = "00:00";
+      integrityEl.textContent = "0";
+      barEl.style.transform = "scaleX(0)";
+      return;
+    }
+
+    countdownEl.textContent = fmt(remaining);
+
+    const integrity = Math.max(0, Math.min(100, Math.round((remaining / totalMs) * 100)));
+    integrityEl.textContent = String(integrity);
+    barEl.style.transform = `scaleX(${integrity/100})`;
+
+    requestAnimationFrame(tick);
+  }
+
+  tick();
+</script>
+</body>
+</html>
