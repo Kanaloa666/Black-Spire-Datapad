@@ -1,6 +1,3 @@
-<!-- ===========================
-FILE: index.html
-=========================== -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -220,10 +217,6 @@ button.deny{
 button.deny:hover{
   background:rgba(255,59,59,.12);
 }
-button[disabled]{
-  opacity:.55;
-  cursor:not-allowed;
-}
 
 .result{
   margin-top:14px;
@@ -345,10 +338,6 @@ button[disabled]{
     <div class="btnRow">
       <button id="grantBtn" type="button">ACCESS GRANTED</button>
       <button id="denyBtn" class="deny" type="button">ACCESS DENIED</button>
-    </div>
-
-    <div class="sub" id="clickHint">
-      CM CONFIRMATION REQUIRED // GRANT: 0/3 • DENY: 0/3
     </div>
 
     <div id="result" class="result hidden"></div>
@@ -557,86 +546,42 @@ function startAuthWindow(){
   }, 1000);
 }
 
-/* ----------------- BUTTONS (MULTI-CLICK CONFIRM + REDIRECT) ----------------- */
-const REQUIRED_CLICKS = 3;
-const CLICK_LOCK_MS = 450;
-
-const grantBtn = document.getElementById("grantBtn");
-const denyBtn  = document.getElementById("denyBtn");
-const clickHint = document.getElementById("clickHint");
-
-let grantClicks = 0;
-let denyClicks = 0;
-
-function updateClickHint(){
-  if(!clickHint) return;
-  clickHint.textContent = `CM CONFIRMATION REQUIRED // GRANT: ${grantClicks}/${REQUIRED_CLICKS} • DENY: ${denyClicks}/${REQUIRED_CLICKS}`;
-}
-
-function lockButtons(){
-  grantBtn.disabled = true;
-  denyBtn.disabled = true;
-}
-
-function routeGranted(){ window.location.href = "access-granted.html"; }
-function routeDenied(){ window.location.href = "access-denied.html"; }
-
-function tapFeedback(){
-  tronChirp();
-  glitchSoft(420);
-}
-
-updateClickHint();
-
-grantBtn.addEventListener("click", ()=>{
+/* ----------------- BUTTONS ----------------- */
+document.getElementById("grantBtn").addEventListener("click", ()=>{
   if(resolved) return;
   primeAudio();
-
-  if(denyClicks > 0) denyClicks = 0;
-
-  grantClicks++;
-  updateClickHint();
-
-  if(grantClicks < REQUIRED_CLICKS){
-    tapFeedback();
-    grantBtn.textContent = "CONFIRM… TAP AGAIN";
-    return;
-  }
-
   resolved = true;
   clearInterval(timerInterval);
-  lockButtons();
-
-  glitchSoft(800);
+  glitchSoft(700);
   tronChirp();
 
-  setTimeout(routeGranted, CLICK_LOCK_MS);
+  resultEl.classList.remove("hidden");
+  resultEl.innerHTML =
+    `<div class="success">
+      ACCESS GRANTED.<br>
+      GRID STABILIZED.<br>
+      Thank you for stabilizing the Grid, User.<br>
+      End of Line.
+    </div>`;
 });
 
-denyBtn.addEventListener("click", ()=>{
+document.getElementById("denyBtn").addEventListener("click", ()=>{
   if(resolved) return;
   primeAudio();
-
-  if(grantClicks > 0) grantClicks = 0;
-
-  denyClicks++;
-  updateClickHint();
-
-  if(denyClicks < REQUIRED_CLICKS){
-    glitchHard(700);
-    warningBeep();
-    denyBtn.textContent = "CONFIRM… TAP AGAIN";
-    return;
-  }
-
   resolved = true;
   clearInterval(timerInterval);
-  lockButtons();
-
   glitchHard(1400);
   malwareBuzz();
 
-  setTimeout(routeDenied, CLICK_LOCK_MS);
+  resultEl.classList.remove("hidden");
+  resultEl.innerHTML =
+    `<div class="danger">
+      ACCESS DENIED.<br>
+      GRID DESTABILIZING…<br>
+      INCURSION EVENT ACTIVATED.<br>
+      System adapting. Remain calm, User.<br>
+      End of Line.
+    </div>`;
 });
 
 /* ----------------- MALWARE TIMEOUT ----------------- */
@@ -644,15 +589,39 @@ function malwareEvent(){
   if(resolved) return;
   resolved = true;
 
-  clearInterval(timerInterval);
-  lockButtons();
-  primeAudio();
-
   glitchHard(1600);
   malwareBuzz();
 
-  // cinematic beat then redirect to the "fragged" page
-  setTimeout(routeDenied, 700);
+  // append "malware" lines into the result
+  const malwareLines = [
+    "TIMEOUT // AUTHORIZATION WINDOW EXPIRED",
+    "INFECTION VECTOR // ARES.WORM.Δ9 // DETECTED",
+    "PAYLOAD // SECTOR ROUTE TABLE CORRUPTION",
+    "HOOK // IDENTITY_DISK.IO // INTERCEPTED",
+    "SPREAD // NODE.CLUSTER // 12%… 34%… 61%",
+    "LOCK // ARENA GATES // FAILSAFE OVERRIDDEN",
+    "INCIDENT // INCURSION EVENT ACTIVATED",
+    "EOL // END OF LINE."
+  ];
+
+  resultEl.classList.remove("hidden");
+  resultEl.innerHTML =
+    `<div class="danger">
+      AUTHORIZATION TIMEOUT.<br>
+      MALWARE INJECTION DETECTED…<br><br>
+      <span id="malLog"></span>
+    </div>`;
+
+  const malLog = document.getElementById("malLog");
+  let k = 0;
+  const malInterval = setInterval(()=>{
+    malLog.textContent += (malLog.textContent ? "\n" : "") + malwareLines[k];
+    k++;
+    if(k >= malwareLines.length){
+      clearInterval(malInterval);
+      malLog.textContent += "\n\nEnd of Line.";
+    }
+  }, 260);
 }
 </script>
 </body>
