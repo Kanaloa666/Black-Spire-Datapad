@@ -1,0 +1,143 @@
+<!-- ===========================
+FILE: access-granted.html
+=========================== -->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ACCESS GRANTED // GRID STABILIZED</title>
+<style>
+:root{
+  --bg:#020409;
+  --cyan:#00e5ff;
+  --ok:#66ffcc;
+  --panel:rgba(0,20,30,.62);
+  --line:rgba(0,229,255,.18);
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:
+    radial-gradient(900px 600px at 50% 20%, rgba(0,229,255,.10), transparent 60%),
+    linear-gradient(180deg, #01020a, #020409 40%, #01020a);
+  color:var(--cyan);
+  font-family:var(--mono);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:18px;
+  overflow:hidden;
+}
+body:before{
+  content:"";
+  position:fixed; inset:0;
+  background:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size:64px 64px;
+  opacity:.14;
+  pointer-events:none;
+}
+body:after{
+  content:"";
+  position:fixed; inset:-30%;
+  background:linear-gradient(transparent 0 49%, rgba(0,0,0,.18) 50% 51%, transparent 52% 100%);
+  background-size:100% 6px;
+  opacity:.12;
+  pointer-events:none;
+  animation:scan 6s linear infinite;
+}
+@keyframes scan { to{ transform:translateY(120px);} }
+
+.container{
+  width:92%;
+  max-width:900px;
+  border:1px solid rgba(0,229,255,.4);
+  padding:18px 18px 16px;
+  background:var(--panel);
+  box-shadow:0 0 50px rgba(0,229,255,.18);
+  border-radius:14px;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 12px;
+  border:1px solid rgba(0,229,255,.18);
+  border-radius:12px;
+  background:rgba(0,0,0,.18);
+  margin-bottom:14px;
+}
+.badge{
+  display:flex; gap:10px; align-items:center;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-size:12px;
+  color:rgba(191,233,255,.8);
+}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(0,229,255,.55);
+  box-shadow:0 0 14px rgba(0,229,255,.35);
+}
+h1{
+  margin:0;
+  font-size:15px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+.sub{
+  margin-top:10px;
+  color:rgba(191,233,255,.72);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.result{
+  margin-top:14px;
+  border:1px solid rgba(0,229,255,.16);
+  border-radius:12px;
+  padding:14px;
+  background:rgba(0,0,0,.16);
+  font-size:13px;
+  line-height:1.65;
+  color:rgba(191,233,255,.92);
+}
+.success{color:var(--ok);}
+.cursor{
+  display:inline-block;
+  width:8px;height:14px;
+  background:rgba(0,229,255,.7);
+  margin-left:6px;
+  vertical-align:-2px;
+  animation:blink 1s steps(2,end) infinite;
+  box-shadow:0 0 10px rgba(0,229,255,.35);
+}
+@keyframes blink{ 50%{opacity:0;} }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="badge"><span class="dot"></span>GRID STATUS // AUTHORIZED</div>
+      <div class="sub">SYNC ESTABLISHED</div>
+    </div>
+
+    <h1>Access Granted // Grid Stabilized</h1>
+    <div class="sub">Greetings, User. // End of Line.</div>
+
+    <div class="result">
+      <div class="success">
+        ACCESS GRANTED.<br>
+        SCAN YOUR LIGHT DISCS.<br>
+        GRID STABILIZED.<br>
+        A VICTORY FOR THE USERS.<br>
+        END OF LINE.<span class="cursor"></span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
