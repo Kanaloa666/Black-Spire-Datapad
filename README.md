@@ -43,3 +43,24 @@ The system functions as a fictional cross-realm access console — a courier dev
 ---
 
 ## 🧠 Structure
+
+Each folder contains a self-contained `index.html` page.
+
+---
+
+## 🔊 Audio Notes
+
+Audio uses the Web Audio API and requires a user gesture (tap/click) to initialize.
+
+---
+
+## 🚀 Future Expansions
+
+- Additional ride nodes
+- Enhanced glitch transitions
+- Countdown decay mechanics
+- Expanded lore continuity
+
+---
+
+End of Line.
