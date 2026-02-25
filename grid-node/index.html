@@ -11,7 +11,6 @@
   --cyan:#00e5ff;
   --amber:#ffcc66;
   --red:#ff3b3b;
-  --ok:#66ffcc;
   --panel:rgba(0,20,30,.62);
   --line:rgba(0,229,255,.18);
   --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
@@ -210,46 +209,13 @@ button{
 }
 button:hover{ background:rgba(0,229,255,.14); }
 button:active{ transform:translateY(1px); }
+button:disabled{ opacity:.55; cursor:not-allowed; }
+
 button.deny{
   border-color:rgba(255,59,59,.35);
   background:rgba(255,59,59,.07);
 }
-button.deny:hover{
-  background:rgba(255,59,59,.12);
-}
-
-.result{
-  margin-top:14px;
-  border:1px solid rgba(0,229,255,.16);
-  border-radius:12px;
-  padding:12px;
-  background:rgba(0,0,0,.16);
-  font-size:13px;
-  line-height:1.55;
-}
-.success{color:var(--ok);}
-.danger{color:var(--red);}
-
-/* CM callout */
-.callout{
-  margin-top:14px;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid rgba(255,204,102,.26);
-  background:linear-gradient(180deg, rgba(255,204,102,.08), rgba(0,0,0,.10));
-  box-shadow:inset 0 0 0 1px rgba(255,204,102,.06);
-}
-.callout strong{
-  color:rgba(255,204,102,.95);
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  font-size:12px;
-}
-.callout .line{
-  margin-top:8px;
-  color:rgba(255,244,220,.95);
-  font-size:14px;
-}
+button.deny:hover{ background:rgba(255,59,59,.12); }
 
 /* GLITCH flicker overlay */
 #glitchFx{
@@ -274,13 +240,13 @@ button.deny:hover{
   100%{ transform:translate(0,0); filter:hue-rotate(0deg) contrast(1.1); }
 }
 
-/* extra glitch intensity for denial/malware */
+/* extra glitch intensity */
 .hardflicker #glitchFx{
   opacity:1;
   animation:flicker .09s steps(2,end) infinite;
 }
 
-/* subtle shake on denial/malware */
+/* subtle shake on denial */
 @keyframes shake{
   0%{transform:translate(0,0)}
   20%{transform:translate(2px,0)}
@@ -330,33 +296,26 @@ button.deny:hover{
       <div class="meterFill" id="meterFill"></div>
     </div>
 
-    <div class="callout">
-      <strong>Cast Member Confirmation</strong>
-      <div class="line" id="cmLine">(CM: QUORRA) Prisoners, scan identity disk to confirm custody transfer.</div>
-    </div>
+    <div class="sub" id="clickHint">CM CONFIRMATION REQUIRED</div>
 
     <div class="btnRow">
       <button id="grantBtn" type="button">ACCESS GRANTED</button>
       <button id="denyBtn" class="deny" type="button">ACCESS DENIED</button>
     </div>
-
-    <div id="result" class="result hidden"></div>
   </div>
 </div>
 
 <script>
 /* ----------------- CLOCK ----------------- */
 const clockEl = document.getElementById("clock");
-function tick(){
+function tickClock(){
   const d = new Date();
   const pad = n => String(n).padStart(2,'0');
   clockEl.textContent = `SYNC: ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
-setInterval(tick, 500); tick();
+setInterval(tickClock, 500); tickClock();
 
-/* ----------------- AUDIO (WebAudio) -----------------
-   Browsers require a user gesture (tap/click) to start audio.
-*/
+/* ----------------- AUDIO (WebAudio) ----------------- */
 let audioCtx = null;
 let primed = false;
 
@@ -365,7 +324,6 @@ function primeAudio(){
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   primed = true;
 }
-
 document.addEventListener("pointerdown", () => primeAudio(), { once:true });
 
 function tronChirp(){
@@ -480,7 +438,6 @@ let resolved = false;
 const timeLeftEl = document.getElementById("timeLeft");
 const meterFill = document.getElementById("meterFill");
 const stateTag = document.getElementById("stateTag");
-const resultEl = document.getElementById("result");
 
 function setState(mode){
   if(mode === "stable"){
@@ -491,7 +448,7 @@ function setState(mode){
     stateTag.className = "tag amber";
     stateTag.textContent = "warning";
     meterFill.style.background = "linear-gradient(90deg, rgba(255,204,102,.95), rgba(255,204,102,.35))";
-  } else if(mode === "critical"){
+  } else {
     stateTag.className = "tag red";
     stateTag.textContent = "critical";
     meterFill.style.background = "linear-gradient(90deg, rgba(255,59,59,.95), rgba(255,59,59,.35))";
@@ -503,13 +460,9 @@ function updateDecayUI(){
   const pct = Math.max(0, Math.min(100, (timeLeft / totalSeconds) * 100));
   meterFill.style.width = pct + "%";
 
-  if(timeLeft <= 10){
-    setState("critical");
-  } else if(timeLeft <= 18){
-    setState("warning");
-  } else {
-    setState("stable");
-  }
+  if(timeLeft <= 10) setState("critical");
+  else if(timeLeft <= 18) setState("warning");
+  else setState("stable");
 }
 
 function startAuthWindow(){
@@ -517,7 +470,6 @@ function startAuthWindow(){
   timeLeft = totalSeconds;
   updateDecayUI();
 
-  // subtle warning beeps at 18 and 10 seconds (if audio is primed)
   let beep18 = false;
   let beep10 = false;
 
@@ -535,93 +487,105 @@ function startAuthWindow(){
     if(timeLeft === 10 && !beep10){
       beep10 = true;
       glitchSoft(650);
-      warningBeep();
-      warningBeep();
+      warningBeep(); warningBeep();
     }
 
     if(timeLeft <= 0){
       clearInterval(timerInterval);
-      malwareEvent();
+      malwareTimeout();
     }
   }, 1000);
 }
 
-/* ----------------- BUTTONS ----------------- */
-document.getElementById("grantBtn").addEventListener("click", ()=>{
+/* ----------------- MULTI-CLICK CONFIRM + ROUTE ----------------- */
+const REQUIRED_CLICKS = 3; // set 1 to test quickly
+const CLICK_LOCK_MS = 450;
+
+const grantBtn = document.getElementById("grantBtn");
+const denyBtn  = document.getElementById("denyBtn");
+const clickHint = document.getElementById("clickHint");
+
+let grantClicks = 0;
+let denyClicks  = 0;
+
+function updateHint(){
+  clickHint.textContent = `CM CONFIRMATION REQUIRED // GRANT: ${grantClicks}/${REQUIRED_CLICKS} • DENY: ${denyClicks}/${REQUIRED_CLICKS}`;
+}
+
+function lockButtons(){
+  grantBtn.disabled = true;
+  denyBtn.disabled  = true;
+}
+
+function routeGranted(){
+  window.location.href = "./access-granted.html?v=" + Date.now();
+}
+function routeDenied(){
+  window.location.href = "./access-denied.html?v=" + Date.now();
+}
+
+updateHint();
+
+grantBtn.addEventListener("click", ()=>{
   if(resolved) return;
   primeAudio();
+
+  // reset opposite path
+  if(denyClicks > 0) denyClicks = 0;
+
+  grantClicks++;
+  updateHint();
+
+  if(grantClicks < REQUIRED_CLICKS){
+    glitchSoft(420);
+    tronChirp();
+    grantBtn.textContent = "CONFIRM… TAP AGAIN";
+    return;
+  }
+
   resolved = true;
   clearInterval(timerInterval);
-  glitchSoft(700);
+  lockButtons();
+
+  glitchSoft(800);
   tronChirp();
-
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML =
-    `<div class="success">
-      ACCESS GRANTED.<br>
-      GRID STABILIZED.<br>
-      Thank you for stabilizing the Grid, User.<br>
-      End of Line.
-    </div>`;
+  setTimeout(routeGranted, CLICK_LOCK_MS);
 });
 
-document.getElementById("denyBtn").addEventListener("click", ()=>{
+denyBtn.addEventListener("click", ()=>{
   if(resolved) return;
   primeAudio();
+
+  // reset opposite path
+  if(grantClicks > 0) grantClicks = 0;
+
+  denyClicks++;
+  updateHint();
+
+  if(denyClicks < REQUIRED_CLICKS){
+    glitchHard(650);
+    warningBeep();
+    denyBtn.textContent = "CONFIRM… TAP AGAIN";
+    return;
+  }
+
   resolved = true;
   clearInterval(timerInterval);
-  glitchHard(1400);
-  malwareBuzz();
+  lockButtons();
 
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML =
-    `<div class="danger">
-      ACCESS DENIED.<br>
-      GRID DESTABILIZING…<br>
-      INCURSION EVENT ACTIVATED.<br>
-      System adapting. Remain calm, User.<br>
-      End of Line.
-    </div>`;
+  glitchHard(1200);
+  malwareBuzz();
+  setTimeout(routeDenied, CLICK_LOCK_MS);
 });
 
-/* ----------------- MALWARE TIMEOUT ----------------- */
-function malwareEvent(){
+function malwareTimeout(){
   if(resolved) return;
   resolved = true;
-
+  lockButtons();
+  primeAudio();
   glitchHard(1600);
   malwareBuzz();
-
-  // append "malware" lines into the result
-  const malwareLines = [
-    "TIMEOUT // AUTHORIZATION WINDOW EXPIRED",
-    "INFECTION VECTOR // ARES.WORM.Δ9 // DETECTED",
-    "PAYLOAD // SECTOR ROUTE TABLE CORRUPTION",
-    "HOOK // IDENTITY_DISK.IO // INTERCEPTED",
-    "SPREAD // NODE.CLUSTER // 12%… 34%… 61%",
-    "LOCK // ARENA GATES // FAILSAFE OVERRIDDEN",
-    "INCIDENT // INCURSION EVENT ACTIVATED",
-    "EOL // END OF LINE."
-  ];
-
-  resultEl.classList.remove("hidden");
-  resultEl.innerHTML =
-    `<div class="danger">
-      AUTHORIZATION TIMEOUT.<br>
-      MALWARE INJECTION DETECTED…<br><br>
-      <span id="malLog"></span>
-    </div>`;
-
-  const malLog = document.getElementById("malLog");
-  let k = 0;
-  const malInterval = setInterval(()=>{
-    malLog.textContent += (malLog.textContent ? "\n" : "") + malwareLines[k];
-    k++;
-    if(k >= malwareLines.length){
-      clearInterval(malInterval);
-      malLog.textContent += "\n\nEnd of Line.";
-    }
-  }, 260);
+  setTimeout(routeDenied, 700);
 }
 </script>
 </body>
