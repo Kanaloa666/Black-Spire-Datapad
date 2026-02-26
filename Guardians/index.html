@@ -12,8 +12,13 @@
     --good:#5dffb2;
     --warn:#ffd65d;
     --bg:#000;
+
     --panel: rgba(0,0,0,0.38);
     --border: rgba(0,234,255,0.28);
+
+    /* Orb decay controls (0..1) */
+    --decay: 0;
+    --decayGlow: 0.35; /* base glow intensity */
   }
 
   *{ box-sizing:border-box; }
@@ -170,26 +175,42 @@
     }
   }
 
-  /* ===== Orb ===== */
+  /* ===== Orb (DECAY) ===== */
+  .orbWrap{
+    width: fit-content;
+    margin: 0 auto;
+    position:relative;
+  }
+
   .orb{
     width: 190px;
     height: 190px;
     border-radius: 50%;
     margin: 0 auto;
+    position:relative;
+    overflow:hidden;
+    transition: filter .2s ease, transform .2s ease;
+
+    /* Decay dims and shifts */
+    filter:
+      brightness(calc(1 - (var(--decay) * 0.22)))
+      saturate(calc(1 - (var(--decay) * 0.18)))
+      contrast(calc(1 + (var(--decay) * 0.10)));
+
+    /* Base surface */
     background:
       radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85), rgba(0,234,255,0.35) 25%, rgba(0,0,0,0.95) 70%),
       radial-gradient(circle at 70% 70%, rgba(255,0,200,0.18), transparent 55%);
     box-shadow:
-      0 0 18px rgba(0,234,255,0.35),
-      0 0 48px rgba(0,234,255,0.18);
-    position:relative;
-    overflow:hidden;
-    transition: filter .2s ease, transform .2s ease;
+      0 0 calc(18px - (var(--decay) * 7px)) rgba(0,234,255, calc(0.35 - (var(--decay) * 0.15))),
+      0 0 calc(48px - (var(--decay) * 18px)) rgba(0,234,255, calc(0.18 - (var(--decay) * 0.08)));
   }
+
   @media (min-width: 860px){
     .orb{ width: 210px; height: 210px; }
   }
 
+  /* Internal swirl */
   .orb::before{
     content:"";
     position:absolute; inset:-30%;
@@ -203,8 +224,10 @@
         rgba(0,234,255,0.0));
     animation: spin 4.2s linear infinite;
     filter: blur(1px) contrast(1.1);
-    opacity:0.85;
+    opacity: calc(0.85 - (var(--decay) * 0.25));
   }
+
+  /* Glow pulse (weakens with decay, but flickers more) */
   .orb::after{
     content:"";
     position:absolute; inset:0;
@@ -214,12 +237,91 @@
       radial-gradient(circle at 50% 50%, rgba(0,0,0,0.1), transparent 60%);
     mix-blend-mode: screen;
     animation: pulse 1.6s ease-in-out infinite;
+    opacity: calc(0.60 - (var(--decay) * 0.18));
   }
+
   @keyframes spin{ to{ transform: rotate(360deg); } }
   @keyframes pulse{
-    0%, 100%{ opacity:0.55; transform: scale(1); }
-    50%{ opacity:0.95; transform: scale(1.02); }
+    0%, 100%{ transform: scale(1); }
+    50%{ transform: scale(1.02); }
   }
+
+  /* Crack layer (fades IN as decay rises) */
+  .cracks{
+    position:absolute;
+    inset: -10%;
+    border-radius: 50%;
+    pointer-events:none;
+    opacity: calc(var(--decay) * 0.95);
+    mix-blend-mode: screen;
+    filter: blur(0.2px);
+    background:
+      repeating-linear-gradient(120deg,
+        rgba(255,255,255,0.0) 0px,
+        rgba(255,255,255,0.0) 18px,
+        rgba(0,234,255,0.30) 19px,
+        rgba(0,234,255,0.0) 21px
+      ),
+      repeating-linear-gradient(35deg,
+        rgba(255,255,255,0.0) 0px,
+        rgba(255,255,255,0.0) 26px,
+        rgba(255,0,200,0.20) 27px,
+        rgba(255,255,255,0.0) 29px
+      );
+    transform: rotate(-12deg);
+    animation: crackDrift 3.4s ease-in-out infinite;
+  }
+  @keyframes crackDrift{
+    0%,100%{ transform: rotate(-12deg) translate(0,0); }
+    50%{ transform: rotate(-10deg) translate(2px,-2px); }
+  }
+
+  /* Decay “embers” (tiny particles) */
+  .embers{
+    position:absolute;
+    inset:0;
+    border-radius:50%;
+    pointer-events:none;
+    opacity: calc(var(--decay) * 0.65);
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.35), transparent 60%),
+      radial-gradient(1px 1px at 65% 40%, rgba(255,0,200,0.25), transparent 60%),
+      radial-gradient(1px 1px at 50% 75%, rgba(0,234,255,0.30), transparent 60%),
+      radial-gradient(2px 2px at 75% 70%, rgba(255,255,255,0.25), transparent 60%),
+      radial-gradient(1px 1px at 35% 60%, rgba(255,43,43,0.22), transparent 60%);
+    animation: emberFloat 2.2s linear infinite;
+    mix-blend-mode: screen;
+  }
+  @keyframes emberFloat{
+    0%{ transform: translateY(0); }
+    100%{ transform: translateY(-10px); }
+  }
+
+  /* Glitch shimmer band (appears late decay) */
+  .shimmer{
+    position:absolute;
+    inset:-10%;
+    border-radius:50%;
+    pointer-events:none;
+    opacity: calc((var(--decay) - 0.55) * 1.8);
+    background:
+      linear-gradient(90deg,
+        rgba(0,0,0,0) 0%,
+        rgba(0,234,255,0.18) 45%,
+        rgba(255,255,255,0.10) 50%,
+        rgba(255,43,43,0.10) 55%,
+        rgba(0,0,0,0) 100%);
+    transform: rotate(18deg) translateX(-30%);
+    animation: shimmerMove 0.9s linear infinite;
+    mix-blend-mode: screen;
+    filter: blur(0.6px);
+  }
+  @keyframes shimmerMove{
+    0%{ transform: rotate(18deg) translateX(-40%); }
+    100%{ transform: rotate(18deg) translateX(40%); }
+  }
+
+  /* Shake is driven by JS at critical threshold */
   .shake{ animation: shake 0.2s infinite; }
   @keyframes shake{
     0%{ transform: translate(0,0); }
@@ -231,7 +333,7 @@
 
   /* Orb “stabilize” flash */
   .stabilize{
-    filter: brightness(1.15) saturate(1.2);
+    filter: brightness(1.15) saturate(1.2) !important;
     transform: scale(1.01);
   }
 
@@ -614,7 +716,13 @@
 
     <div class="coreRow">
       <div>
-        <div class="orb" id="orb"></div>
+        <div class="orbWrap">
+          <div class="orb" id="orb"></div>
+          <div class="cracks" id="cracks"></div>
+          <div class="embers" id="embers"></div>
+          <div class="shimmer" id="shimmer"></div>
+        </div>
+
         <div class="statusBar">
           <div>CORE STATUS: <span id="coreStatus" class="warn">UNSTABLE</span></div>
           <div>INSTABILITY: <span id="timer" class="bad">45s</span></div>
@@ -671,7 +779,7 @@
         </div>
       </div>
 
-      <!-- ===== Denied: Guardians playful + token orb + end easter egg ===== -->
+      <!-- ===== Denied ===== -->
       <div class="panel" id="panelDeniedGift" style="display:none;">
         <h2>Access Denied • Containment Courtesy</h2>
 
@@ -732,7 +840,8 @@
 
 <script>
   // ===== State =====
-  let timeLeft = 45;
+  const MAX_TIME = 45;
+  let timeLeft = MAX_TIME;
   let interval = null;
   let authorized = false;
 
@@ -788,10 +897,45 @@
       setTimeout(()=>{
         boot.style.display = "none";
         document.getElementById("ui").style.display = "block";
+        applyDecay();          // initialize visuals
         startCountdown();
       }, 450);
     }
   }, 260);
+
+  // ===== Decay driver (0..1) =====
+  function getDecay(){
+    // 0 at 45s, 1 at 0s
+    const d = 1 - (timeLeft / MAX_TIME);
+    return Math.max(0, Math.min(1, d));
+  }
+
+  function applyDecay(){
+    const d = getDecay();
+    document.documentElement.style.setProperty("--decay", d.toFixed(3));
+
+    // Status text progression (optional flavor)
+    if(!authorized){
+      if(d < 0.33){
+        coreStatus.textContent = "UNSTABLE";
+        coreStatus.className = "warn";
+      }else if(d < 0.66){
+        coreStatus.textContent = "DEGRADING";
+        coreStatus.className = "warn";
+      }else{
+        coreStatus.textContent = "CRITICAL";
+        coreStatus.className = "bad";
+      }
+    }
+
+    // Late-stage micro-flicker (orb “jitters” without full shake)
+    if(d > 0.72 && !authorized){
+      const jitter = (Math.random() * 2 - 1) * 0.6; // -0.6..0.6
+      orb.style.transform = `translate(${jitter}px, ${-jitter}px)`;
+    } else {
+      orb.style.transform = "";
+    }
+  }
 
   // ===== Countdown (no auto reset) =====
   function startCountdown(){
@@ -800,10 +944,10 @@
       timeLeft--;
       timerEl.textContent = `${timeLeft}s`;
 
-      if(timeLeft <= 15 && timeLeft > 0){
+      applyDecay();
+
+      if(timeLeft <= 15 && timeLeft > 0 && !authorized){
         orb.classList.add("shake");
-        coreStatus.textContent = "CRITICAL";
-        coreStatus.className = "bad";
         rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: DEGRADED<br/>MODE: EMERGENCY`;
       }
 
@@ -845,6 +989,8 @@
       }
       timerEl.textContent = "LOCKED";
       orb.classList.remove("shake");
+      orb.style.transform = "";
+      document.documentElement.style.setProperty("--decay", "0.05"); // looks “contained”, not dead
     }, 650);
   }
 
@@ -866,6 +1012,8 @@
     panelBoarding.style.display = "none";
     panelDeniedGift.style.display = "none";
 
+    authorized = false;
+
     coreStatus.textContent = "UNSTABLE";
     coreStatus.className = "warn";
 
@@ -873,9 +1021,17 @@
 
     statusText.innerHTML =
       "STATUS: <span class='warn'>AWAITING AUTHORIZATION</span><br/>NOTE: THIS CONSOLE DOES NOT AUTO-RESET.";
+
+    // If countdown had ended previously, restart fresh
+    if(timeLeft <= 0){
+      timeLeft = MAX_TIME;
+      timerEl.textContent = `${timeLeft}s`;
+      applyDecay();
+      startCountdown();
+    }
   }
 
-  // ===== HOLD POSITION (Guardians flavor + subtle orb stabilize) =====
+  // ===== HOLD POSITION (Guardians flavor + orb stabilize “decay rollback” moment) =====
   function holdPosition(){
     const lines = [
       "COOL. WE’LL JUST STAND HERE<br/>HOLDING A REALITY-BENDING SPACE MARBLE.<br/>NO PRESSURE.",
@@ -885,8 +1041,16 @@
     ];
     holdText.innerHTML = lines[Math.floor(Math.random() * lines.length)];
 
+    // Make it feel like containment stabilizes for a moment
     orb.classList.add("stabilize");
-    setTimeout(()=>orb.classList.remove("stabilize"), 1400);
+    const currentDecay = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--decay")) || getDecay();
+    const rolledBack = Math.max(0, currentDecay - 0.08);
+    document.documentElement.style.setProperty("--decay", rolledBack.toFixed(3));
+
+    setTimeout(()=>{
+      orb.classList.remove("stabilize");
+      applyDecay(); // returns to true decay based on timer
+    }, 1400);
 
     showOverlay(overlayHold, 1400);
   }
