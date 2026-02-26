@@ -12,16 +12,16 @@
       --ink:#e7f0ff;
       --muted:#9fb2c9;
 
-      --accent:#36d1ff;     /* Resistance teal */
-      --warn:#ffb000;       /* amber */
-      --danger:#ff4d4d;     /* alert red */
+      --accent:#36d1ff;
+      --warn:#ffb000;
+      --danger:#ff4d4d;
       --ok:#66ffcc;
 
       --line:rgba(54,209,255,.22);
       --panel:rgba(15,23,34,.95);
       --panel2:rgba(10,14,20,.95);
 
-      --radius:20px;
+      --radius:18px;
       --shadow:0 26px 70px rgba(0,0,0,.65);
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -43,28 +43,27 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:24px;
+      padding:14px;                 /* tighter */
       overflow:hidden;
     }
 
-    .wrap{width:min(780px,100%)}
+    .wrap{width:min(760px,100%)}
 
-    /* header */
     .header{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:12px;
+      gap:10px;
       font-family:var(--mono);
-      font-size:12px;
+      font-size:11px;               /* smaller */
       letter-spacing:.09em;
       color:var(--muted);
-      margin-bottom:16px;
+      margin-bottom:10px;           /* tighter */
       opacity:.95;
     }
     .leftHeader{display:flex;align-items:center;gap:10px;white-space:nowrap}
     .pulse{
-      width:10px;height:10px;border-radius:50%;
+      width:9px;height:9px;border-radius:50%;
       background:var(--accent);
       box-shadow:0 0 0 4px rgba(54,209,255,.10), 0 0 22px rgba(54,209,255,.55);
       animation:pulse 1.8s infinite;
@@ -72,10 +71,9 @@
     }
     @keyframes pulse{
       0%,100%{transform:scale(1);opacity:1}
-      50%{transform:scale(1.28);opacity:.85}
+      50%{transform:scale(1.22);opacity:.85}
     }
 
-    /* card */
     .card{
       background:linear-gradient(180deg, var(--panel), var(--panel2));
       border:1px solid var(--line);
@@ -86,65 +84,43 @@
       isolation:isolate;
     }
 
-    /* “field-used” overlays */
     .card::before{
       content:"";
       position:absolute; inset:0;
       background:
-        /* scanlines */
-        repeating-linear-gradient(
-          to bottom,
-          rgba(255,255,255,.028),
-          rgba(255,255,255,.028) 1px,
-          transparent 2px,
-          transparent 6px
-        ),
-        /* micro scratches */
-        repeating-linear-gradient(
-          115deg,
-          rgba(255,255,255,.03) 0 1px,
-          transparent 1px 8px
-        ),
-        /* “tape residue” */
+        repeating-linear-gradient(to bottom, rgba(255,255,255,.028), rgba(255,255,255,.028) 1px, transparent 2px, transparent 6px),
+        repeating-linear-gradient(115deg, rgba(255,255,255,.03) 0 1px, transparent 1px 8px),
         radial-gradient(240px 90px at 18% 12%, rgba(255,244,220,.07), transparent 70%),
         radial-gradient(220px 80px at 84% 18%, rgba(255,244,220,.05), transparent 70%),
-        /* burn/scorch */
-        radial-gradient(380px 240px at 85% 95%, rgba(255,77,77,.08), transparent 68%),
-        radial-gradient(420px 280px at 12% 92%, rgba(54,209,255,.05), transparent 70%);
+        radial-gradient(380px 240px at 85% 95%, rgba(255,77,77,.08), transparent 68%);
       opacity:.18;
       pointer-events:none;
       mix-blend-mode:overlay;
       z-index:0;
     }
 
-    /* Aurebesh-ish fake glyph strip */
     .glyphStrip{
       position:absolute;
-      left:-8%;
-      right:-8%;
-      top:84px;
-      height:26px;
-      opacity:.28;
+      left:-8%; right:-8%;
+      top:74px;                     /* moved up */
+      height:22px;                  /* smaller */
+      opacity:.26;
       transform:rotate(-1.2deg);
       z-index:0;
       pointer-events:none;
-      background:
-        linear-gradient(90deg,
-          transparent,
-          rgba(54,209,255,.25),
-          transparent);
+      background:linear-gradient(90deg, transparent, rgba(54,209,255,.25), transparent);
       border-top:1px dashed rgba(54,209,255,.25);
       border-bottom:1px dashed rgba(54,209,255,.18);
     }
     .glyphStrip::after{
-      content:"⟟⋔⟊  ⟒⟟⟟  ⋔⟟⟊  ⟟⟊⟒  ⋔⟟⟊  ⟒⋔⟒  ⟟⟟⋔  ⟊⟒⟊  ⟟⋔⟊  ⟒⟟⟟";
+      content:"⟟⋔⟊  ⟒⟟⟟  ⋔⟟⟊  ⟟⟊⟒  ⋔⟟⟊  ⟒⋔⟒  ⟟⟟⋔  ⟊⟒⟊  ⟟⋔⟊";
       position:absolute; inset:0;
       display:flex; align-items:center; justify-content:center;
       font-family:var(--mono);
-      letter-spacing:.38em;
+      letter-spacing:.34em;
       color:rgba(54,209,255,.9);
       text-shadow:0 0 18px rgba(54,209,255,.15);
-      font-size:12px;
+      font-size:11px;
       white-space:nowrap;
     }
 
@@ -152,36 +128,36 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:14px;
-      padding:16px 18px;
+      gap:12px;
+      padding:12px 14px;            /* tighter */
       border-bottom:1px solid rgba(54,209,255,.20);
       background:rgba(5,8,12,.35);
       position:relative;
       z-index:2;
     }
 
-    .titleBlock{display:flex;flex-direction:column;gap:4px}
     .title{
       font-family:var(--mono);
       letter-spacing:.12em;
       color:var(--accent);
-      font-size:15px;
+      font-size:13px;               /* smaller */
       margin:0;
       text-transform:uppercase;
     }
     .node{
       font-family:var(--mono);
-      font-size:12px;
+      font-size:11px;               /* smaller */
       color:var(--muted);
       letter-spacing:.08em;
       display:flex;
-      gap:10px;
+      gap:8px;
       flex-wrap:wrap;
       align-items:center;
+      margin-top:4px;
     }
     .stamp{
-      font-size:11px;
-      padding:4px 8px;
+      font-size:10px;
+      padding:3px 7px;
       border-radius:999px;
       border:1px solid rgba(255,176,0,.34);
       background:rgba(255,176,0,.08);
@@ -192,9 +168,9 @@
 
     .chip{
       font-family:var(--mono);
-      font-size:12px;
+      font-size:11px;               /* smaller */
       letter-spacing:.08em;
-      padding:7px 11px;
+      padding:6px 10px;
       border:1px solid rgba(255,176,0,.36);
       border-radius:999px;
       background:rgba(255,176,0,.09);
@@ -209,38 +185,40 @@
     }
 
     .body{
-      padding:20px 18px 18px;
+      padding:14px;                 /* tighter */
       position:relative;
       z-index:2;
     }
-
-    .headline{
-      font-family:var(--mono);
-      text-transform:uppercase;
-      letter-spacing:.14em;
-      font-size:22px;
-      margin:4px 0 14px;
-    }
-
-    .blurb{color:var(--muted);line-height:1.65;margin:0 0 16px}
 
     .heroBox{
       border:1px solid rgba(54,209,255,.20);
       border-radius:var(--radius);
       background:rgba(54,209,255,.05);
-      padding:16px;
-      margin-bottom:14px;
+      padding:12px;                 /* tighter */
+      margin-bottom:10px;           /* tighter */
       position:relative;
       overflow:hidden;
     }
+    .headline{
+      font-family:var(--mono);
+      text-transform:uppercase;
+      letter-spacing:.14em;
+      font-size:16px;               /* smaller */
+      margin:2px 0 8px;
+    }
+    .blurb{
+      color:var(--muted);
+      line-height:1.55;
+      margin:0;
+      font-size:13px;               /* smaller */
+    }
 
-    /* “handwritten” hack note */
     .hackNote{
       position:absolute;
-      right:12px;
-      bottom:12px;
+      right:10px;
+      bottom:10px;
       font-family:var(--mono);
-      font-size:11px;
+      font-size:10px;               /* smaller */
       letter-spacing:.12em;
       color:rgba(255,244,220,.85);
       transform:rotate(-2deg);
@@ -250,17 +228,25 @@
 
     .console{
       font-family:var(--mono);
-      font-size:13px;
-      line-height:1.65;
+      font-size:12px;               /* smaller */
+      line-height:1.55;
       background:rgba(0,0,0,.34);
       border:1px solid rgba(54,209,255,.18);
       border-radius:14px;
-      padding:16px;
+      padding:12px;                 /* tighter */
       position:relative;
       overflow:hidden;
     }
 
-    /* slicer “burst” overlay inside console */
+    /* Make console scroll on short screens so buttons remain reachable */
+    @media (max-height: 760px){
+      .console{
+        max-height: 54vh;
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+      }
+    }
+
     .consoleBurst{
       position:absolute; inset:-40%;
       background:
@@ -286,24 +272,22 @@
     .k{color:var(--muted)}
     .v{color:var(--accent)}
     .warn{color:var(--warn)}
-    .danger{color:var(--danger)}
 
     .divider{
       height:1px;
       background:linear-gradient(90deg, transparent, rgba(54,209,255,.36), transparent);
-      margin:14px 0;
+      margin:10px 0;
     }
 
-    /* countdown */
     .countRow{
-      margin-top:14px;
+      margin-top:10px;
       display:flex;
       justify-content:space-between;
       gap:10px;
       align-items:center;
       flex-wrap:wrap;
       font-family:var(--mono);
-      font-size:12px;
+      font-size:11px;
       letter-spacing:.08em;
       color:rgba(231,240,255,.85);
       text-transform:uppercase;
@@ -311,7 +295,7 @@
     .pill{
       border:1px solid rgba(54,209,255,.25);
       background:rgba(54,209,255,.07);
-      padding:6px 10px;
+      padding:5px 9px;
       border-radius:999px;
       color:rgba(231,240,255,.90);
     }
@@ -325,9 +309,10 @@
       background:rgba(255,77,77,.10);
       color:rgba(255,210,210,.95);
     }
+
     .bar{
-      margin-top:10px;
-      height:10px;
+      margin-top:8px;
+      height:9px;
       border-radius:999px;
       background:rgba(255,255,255,.06);
       border:1px solid rgba(54,209,255,.18);
@@ -340,15 +325,23 @@
       transition:width .35s ease, background .35s ease;
     }
 
-    /* buttons */
+    /* buttons area stays visible when console scrolls */
     .btnRow{
-      margin-top:14px;
+      margin-top:12px;
       display:flex;
       justify-content:space-between;
       align-items:center;
-      gap:12px;
+      gap:10px;
       flex-wrap:wrap;
     }
+    .stickyBtns{
+      position:sticky;
+      bottom:0;
+      padding-top:10px;
+      background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.35) 35%, rgba(0,0,0,.55));
+      margin-top:10px;
+    }
+
     .btn{
       border:1px solid rgba(54,209,255,.35);
       background:rgba(54,209,255,.10);
@@ -369,16 +362,15 @@
     .btn:disabled{opacity:.55; cursor:not-allowed}
 
     .footer{
-      margin-top:16px;
+      margin-top:12px;
       font-family:var(--mono);
-      font-size:11px;
+      font-size:10px;
       color:var(--muted);
       letter-spacing:.09em;
       text-align:center;
       opacity:.9;
     }
 
-    /* full-page “slicer interference” flash */
     #slicerFx{
       position:fixed; inset:0;
       pointer-events:none;
@@ -415,7 +407,7 @@
       <div class="glyphStrip" aria-hidden="true"></div>
 
       <div class="topbar">
-        <div class="titleBlock">
+        <div>
           <div class="title">RESISTANCE DATAPAD</div>
           <div class="node">
             NODE: BATUU • BLACK SPIRE • AUTH: GHOST
@@ -428,14 +420,11 @@
       <div class="body">
         <div class="heroBox">
           <div class="headline">HIGH VALUE TARGETS IN TOW</div>
-
           <p class="blurb">
-            Encrypted channel established.<br><br>
-            First Order patrols increasing across Batuu — keep it low. They cannot trace this channel… if we stay clean.<br><br>
-            High value detainees secured at Black Spire Outpost. Preparing covert transport to Resistance command on <b>D’Qar</b>.<br><br>
+            Encrypted channel established. First Order patrols increasing — keep it low.<br><br>
+            Detainees secured at Black Spire. Covert transport to <b>D’Qar</b> pending.<br><br>
             <b>If Lightning Lane clearance is granted for part of the route, it would significantly assist extraction.</b>
           </p>
-
           <div class="hackNote">
             PATCH NOTE: <b>// bounty uplink //</b><br>
             “Don’t ask where I got this key.”
@@ -448,27 +437,27 @@
           <div><span class="k">ORIGIN:</span> <span class="v">BATUU — BLACK SPIRE OUTPOST</span></div>
           <div><span class="k">DESTINATION:</span> <span class="v">D’QAR — RESISTANCE COMMAND</span></div>
           <div><span class="k">VESSEL:</span> <span class="v">I-TS TRANSPORT</span></div>
-          <div><span class="k">ESCORT STATUS:</span> <span class="v">BLUE SQUADRON SCRAMBLE READY</span></div>
-          <div><span class="k">THREAT LEVEL:</span> <span class="warn">FIRST ORDER STAR DESTROYER IN SYSTEM</span></div>
+          <div><span class="k">ESCORT STATUS:</span> <span class="v">BLUE SQUADRON READY</span></div>
+          <div><span class="k">THREAT:</span> <span class="warn">STAR DESTROYER IN SYSTEM</span></div>
 
           <div class="divider"></div>
 
-          <div><span class="k">MISSION STATUS:</span> <span class="warn" id="mission">AWAITING CLEARANCE</span></div>
+          <div><span class="k">MISSION:</span> <span class="warn" id="mission">AWAITING CLEARANCE</span></div>
 
-          <div style="margin-top:12px;">
+          <div style="margin-top:10px;">
             <span class="k">PROTOCOL:</span><br>
             <span class="v">If clearance is granted, call the prisoners forward.</span><br>
-            <span class="v">Scan their bands to confirm custody transfer prior to boarding.</span>
+            <span class="v">Scan bands to confirm custody transfer.</span>
           </div>
 
-          <div style="margin-top:12px;">
-            <span class="k">IF CHALLENGED, RESPOND:</span><br>
+          <div style="margin-top:10px;">
+            <span class="k">IF CHALLENGED:</span><br>
             <span class="v">“Prisoner transport under Resistance authorization.”</span>
           </div>
 
-          <div style="margin-top:12px;">
+          <div style="margin-top:10px;">
             <span class="k">CREDITS:</span>
-            <span class="v">Logged for your efforts upon successful transfer.</span>
+            <span class="v">Logged for your efforts upon transfer.</span>
           </div>
 
           <div class="divider"></div>
@@ -479,14 +468,17 @@
           </div>
           <div class="bar"><div class="fill" id="fill"></div></div>
 
-          <div class="btnRow">
-            <button class="btn" id="grantBtn" type="button">CLEARANCE GRANTED</button>
-            <button class="btn deny" id="denyBtn" type="button">CLEARANCE DENIED</button>
-          </div>
+          <!-- sticky buttons so they stay reachable on short screens -->
+          <div class="stickyBtns">
+            <div class="btnRow">
+              <button class="btn" id="grantBtn" type="button">CLEARANCE GRANTED</button>
+              <button class="btn deny" id="denyBtn" type="button">CLEARANCE DENIED</button>
+            </div>
 
-          <div class="btnRow" style="margin-top:12px;">
-            <div class="footer">— END TRANSMISSION —</div>
-            <button class="btn" type="button" onclick="ping()">REPLAY PING</button>
+            <div class="btnRow" style="margin-top:10px;">
+              <div class="footer">— END TRANSMISSION —</div>
+              <button class="btn" type="button" onclick="ping()">REPLAY PING</button>
+            </div>
           </div>
         </div>
 
@@ -503,11 +495,9 @@
       consoleBurst(280);
     }
 
-    /* routing */
     function goGranted(){ window.location.href = "./access-granted.html?v=" + Date.now(); }
     function goDenied(){ window.location.href = "./access-denied.html?v=" + Date.now(); }
 
-    /* slicer FX */
     function slicerFlash(ms=320){
       document.body.classList.add("fxOn");
       setTimeout(()=>document.body.classList.remove("fxOn"), ms);
@@ -518,7 +508,6 @@
       setTimeout(()=>c.classList.remove("burstOn"), ms);
     }
 
-    /* countdown */
     const totalSeconds = 45;
     let timeLeft = totalSeconds;
     let resolved = false;
@@ -543,15 +532,15 @@
         fillEl.style.background = "linear-gradient(90deg, rgba(255,176,0,.95), rgba(255,176,0,.35))";
         chipEl.className = "chip";
         chipEl.textContent = "LOW PROFILE";
-        slicerFlash(180);
+        slicerFlash(160);
       } else {
         pillEl.className = "pill danger";
         pillEl.textContent = "CHANNEL HOT";
         fillEl.style.background = "linear-gradient(90deg, rgba(255,77,77,.95), rgba(255,77,77,.35))";
         chipEl.className = "chip danger";
         chipEl.textContent = "TRACE DETECTED";
-        slicerFlash(260);
-        consoleBurst(260);
+        slicerFlash(240);
+        consoleBurst(240);
       }
     }
 
@@ -572,7 +561,6 @@
         timeLeft--;
         if(timeLeft < 0) timeLeft = 0;
         update();
-
         if(timeLeft <= 0){
           clearInterval(interval);
           resolved = true;
@@ -585,7 +573,6 @@
     }
     start();
 
-    /* one tap confirm */
     const grantBtn = document.getElementById("grantBtn");
     const denyBtn  = document.getElementById("denyBtn");
 
@@ -600,8 +587,8 @@
       clearInterval(interval);
       lock();
       mission.textContent = "CLEARANCE GRANTED — PROCEED";
-      slicerFlash(240);
-      consoleBurst(280);
+      slicerFlash(220);
+      consoleBurst(260);
       setTimeout(goGranted, 350);
     });
 
@@ -611,8 +598,8 @@
       clearInterval(interval);
       lock();
       mission.textContent = "CLEARANCE DENIED — ABORT";
-      slicerFlash(320);
-      consoleBurst(320);
+      slicerFlash(260);
+      consoleBurst(260);
       setTimeout(goDenied, 350);
     });
   </script>
