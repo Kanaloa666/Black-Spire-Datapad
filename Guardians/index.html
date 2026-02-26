@@ -8,9 +8,9 @@
   :root{
     --cyan:#00eaff;
     --red:#ff2b2b;
+    --good:#5dffb2;
+    --warn:#ffd65d;
     --bg:#000;
-    --glass: rgba(0, 234, 255, 0.08);
-    --glass2: rgba(0, 0, 0, 0.55);
   }
 
   html,body{
@@ -24,8 +24,7 @@
 
   /* ===== Galaxy Background ===== */
   .galaxy{
-    position:fixed;
-    inset:0;
+    position:fixed; inset:0;
     background:
       radial-gradient(1200px 800px at 20% 30%, rgba(0,234,255,0.10), transparent 55%),
       radial-gradient(900px 600px at 80% 70%, rgba(255,255,255,0.06), transparent 60%),
@@ -43,10 +42,8 @@
     100%{ transform: scale(1) translate(0,0); }
   }
 
-  /* Star layers */
   .stars, .stars2{
-    position:fixed;
-    inset:-200px;
+    position:fixed; inset:-200px;
     background-image:
       radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.7), transparent 60%),
       radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.6), transparent 60%),
@@ -73,23 +70,10 @@
     100%{ transform: translateY(120px); }
   }
 
-  /* ===== UI Container ===== */
-  .wrap{
-    width:min(920px, 92vw);
-    margin: 36px auto 0;
-    padding: 20px 22px 28px;
-    border:1px solid rgba(0,234,255,0.35);
-    border-radius: 18px;
-    background: linear-gradient(180deg, rgba(0,234,255,0.08), rgba(0,0,0,0.55));
-    box-shadow: 0 0 30px rgba(0,234,255,0.12);
-    position:relative;
-  }
-
   /* ===== Glitch Overlay ===== */
   .glitch-lines{
     pointer-events:none;
-    position:absolute;
-    inset:0;
+    position:absolute; inset:0;
     background:
       repeating-linear-gradient(
         to bottom,
@@ -108,18 +92,26 @@
     100%{ transform: translateY(12px); }
   }
 
+  /* ===== Console Wrapper ===== */
+  .wrap{
+    width:min(920px, 92vw);
+    margin: 36px auto 0;
+    padding: 20px 22px 28px;
+    border:1px solid rgba(0,234,255,0.35);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(0,234,255,0.08), rgba(0,0,0,0.55));
+    box-shadow: 0 0 30px rgba(0,234,255,0.12);
+    position:relative;
+  }
+
   .header{
-    display:flex;
-    gap:16px;
+    display:flex; gap:16px;
     align-items:flex-start;
     justify-content:space-between;
     flex-wrap:wrap;
   }
 
-  .title{
-    text-align:left;
-    line-height:1.1;
-  }
+  .title{ text-align:left; line-height:1.1; }
   .title h1{
     margin:0;
     font-size: 22px;
@@ -149,7 +141,7 @@
     color: rgba(255,255,255,0.7);
   }
 
-  /* ===== Orb / Core ===== */
+  /* ===== Orb ===== */
   .coreRow{
     display:grid;
     grid-template-columns: 240px 1fr;
@@ -162,8 +154,7 @@
   }
 
   .orb{
-    width: 210px;
-    height: 210px;
+    width: 210px; height: 210px;
     border-radius: 50%;
     margin: 0 auto;
     background:
@@ -175,24 +166,24 @@
     position:relative;
     overflow:hidden;
   }
-
-  /* rotating "galaxy" inside */
   .orb::before{
     content:"";
-    position:absolute;
-    inset:-30%;
+    position:absolute; inset:-30%;
     background:
-      conic-gradient(from 90deg, rgba(0,234,255,0.0), rgba(0,234,255,0.25), rgba(255,255,255,0.12), rgba(0,0,0,0), rgba(255,0,200,0.15), rgba(0,234,255,0.0));
+      conic-gradient(from 90deg,
+        rgba(0,234,255,0.0),
+        rgba(0,234,255,0.25),
+        rgba(255,255,255,0.12),
+        rgba(0,0,0,0),
+        rgba(255,0,200,0.15),
+        rgba(0,234,255,0.0));
     animation: spin 4.2s linear infinite;
     filter: blur(1px) contrast(1.1);
     opacity:0.85;
   }
-
-  /* crackle energy */
   .orb::after{
     content:"";
-    position:absolute;
-    inset:0;
+    position:absolute; inset:0;
     background:
       radial-gradient(circle at 40% 55%, rgba(0,234,255,0.35), transparent 55%),
       radial-gradient(circle at 60% 35%, rgba(255,255,255,0.14), transparent 55%),
@@ -200,14 +191,11 @@
     mix-blend-mode: screen;
     animation: pulse 1.6s ease-in-out infinite;
   }
-
   @keyframes spin{ to{ transform: rotate(360deg); } }
   @keyframes pulse{
     0%, 100%{ opacity:0.55; transform: scale(1); }
     50%{ opacity:0.95; transform: scale(1.02); }
   }
-
-  /* instability shake when low time */
   .shake{ animation: shake 0.2s infinite; }
   @keyframes shake{
     0%{ transform: translate(0,0); }
@@ -224,7 +212,6 @@
     padding:16px 16px 14px;
     background: rgba(0,0,0,0.35);
   }
-
   .panel h2{
     margin:0 0 10px;
     font-size:14px;
@@ -232,7 +219,6 @@
     color: rgba(0,234,255,0.9);
     text-transform: uppercase;
   }
-
   .grid{
     display:grid;
     grid-template-columns: 1fr 1fr;
@@ -241,7 +227,6 @@
   @media (max-width: 720px){
     .grid{ grid-template-columns: 1fr; }
   }
-
   .field{
     display:flex;
     flex-direction:column;
@@ -254,7 +239,6 @@
     color: rgba(255,255,255,0.68);
     text-transform: uppercase;
   }
-
   input{
     background: rgba(0,0,0,0.7);
     border:1px solid rgba(0,234,255,0.35);
@@ -268,7 +252,6 @@
     border-color: rgba(0,234,255,0.75);
     box-shadow: 0 0 0 2px rgba(0,234,255,0.15);
   }
-
   .actions{
     margin-top: 10px;
     display:flex;
@@ -314,18 +297,126 @@
     text-align:left;
   }
 
-  .good{ color: #5dffb2; }
+  .good{ color: var(--good); }
   .bad{ color: var(--red); }
-  .warn{ color: #ffd65d; }
+  .warn{ color: var(--warn); }
 
-  /* ===== Fullscreen takeover ===== */
+  /* ===== Loading Screen ===== */
+  .boot{
+    position:fixed; inset:0;
+    display:grid;
+    place-items:center;
+    background:#000;
+    z-index: 9998;
+  }
+  .bootBox{
+    width:min(760px, 92vw);
+    border:1px solid rgba(0,234,255,0.35);
+    border-radius:18px;
+    padding: 20px 20px 18px;
+    background: rgba(0,0,0,0.55);
+    box-shadow: 0 0 30px rgba(0,234,255,0.12);
+    position:relative;
+    overflow:hidden;
+  }
+  .bootTitle{
+    text-transform:uppercase;
+    letter-spacing:3px;
+    font-size:18px;
+    margin:0 0 8px;
+    animation: flicker 3.2s infinite;
+  }
+  .bootLog{
+    margin:0;
+    font-size:12px;
+    letter-spacing:2px;
+    color: rgba(255,255,255,0.75);
+    line-height:1.6;
+    min-height: 140px;
+  }
+  .bar{
+    margin-top:14px;
+    height: 10px;
+    border-radius: 999px;
+    border:1px solid rgba(0,234,255,0.35);
+    overflow:hidden;
+  }
+  .fill{
+    height:100%;
+    width:0%;
+    background: rgba(0,234,255,0.9);
+    transition: width 0.25s linear;
+  }
+  .bootHint{
+    margin-top: 12px;
+    font-size:11px;
+    letter-spacing:2px;
+    color: rgba(255,255,255,0.6);
+  }
+
+  /* ===== Granted / Denied Overlays ===== */
+  .overlay{
+    position:fixed; inset:0;
+    display:none;
+    place-items:center;
+    z-index: 9999;
+    text-align:center;
+    backdrop-filter: blur(2px);
+  }
+  .overlay .card{
+    width:min(820px, 92vw);
+    border-radius: 18px;
+    padding: 24px 18px;
+    border:1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.65);
+    box-shadow: 0 0 40px rgba(0,0,0,0.6);
+  }
+  .overlay h1{
+    margin:0 0 10px;
+    font-size:34px;
+    letter-spacing:5px;
+    text-transform: uppercase;
+  }
+  .overlay p{
+    margin:0;
+    font-size:12px;
+    letter-spacing:2px;
+    line-height:1.7;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .granted{
+    background: radial-gradient(900px 700px at 50% 50%, rgba(93,255,178,0.12), transparent 60%);
+  }
+  .granted h1{ color: var(--good); }
+  .granted .card{
+    border-color: rgba(93,255,178,0.35);
+    box-shadow: 0 0 50px rgba(93,255,178,0.12);
+  }
+
+  .denied{
+    background: radial-gradient(900px 700px at 50% 50%, rgba(255,43,43,0.12), transparent 60%);
+    animation: denyPulse 0.18s infinite;
+  }
+  @keyframes denyPulse{
+    0%{ filter: contrast(1.1); }
+    50%{ filter: contrast(1.4); }
+    100%{ filter: contrast(1.1); }
+  }
+  .denied h1{ color: var(--red); }
+  .denied .card{
+    border-color: rgba(255,43,43,0.35);
+    box-shadow: 0 0 50px rgba(255,43,43,0.12);
+  }
+
+  /* ===== Takeover breach ===== */
   .takeover{
     position:fixed;
     inset:0;
     display:none;
     place-items:center;
     background:#000;
-    z-index: 9999;
+    z-index: 10000;
     color: var(--red);
     text-align:center;
   }
@@ -351,22 +442,11 @@
     75%{ opacity:0.35; transform: translateX(-1px); }
     100%{ opacity:1; }
   }
-  .breachFlash{
-    animation: flash 0.12s infinite;
-  }
+  .breachFlash{ animation: flash 0.12s infinite; }
   @keyframes flash{
     0%{ background:#000; }
     50%{ background:#290000; }
     100%{ background:#000; }
-  }
-
-  /* small footer */
-  .foot{
-    margin-top: 12px;
-    font-size: 11px;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.55);
-    text-align:left;
   }
 </style>
 </head>
@@ -376,13 +456,42 @@
   <div class="stars"></div>
   <div class="stars2"></div>
 
-  <!-- Audio (drop your files in the same folder or update paths) -->
-  <audio id="hum" src="orb-hum.mp3" loop></audio>
-  <audio id="sfxDenied" src="denied.mp3"></audio>
-  <audio id="sfxGranted" src="jump-sound.mp3"></audio>
-  <audio id="sfxAlarm" src="alarm.mp3"></audio>
+  <!-- LOADING / BOOT -->
+  <div class="boot" id="boot">
+    <div class="bootBox">
+      <div class="glitch-lines" style="border-radius:18px;"></div>
+      <div class="bootTitle">NOVA CORPS HANDSHAKE • INIT</div>
+      <pre class="bootLog" id="bootLog"></pre>
+      <div class="bar"><div class="fill" id="bootFill"></div></div>
+      <div class="bootHint">Link established → Loading containment console…</div>
+    </div>
+  </div>
 
-  <div class="wrap" id="ui">
+  <!-- GRANTED / DENIED overlays -->
+  <div class="overlay granted" id="overlayGranted">
+    <div class="card">
+      <h1>ACCESS GRANTED</h1>
+      <p>
+        NOVA CORPS CLEARANCE VERIFIED<br/>
+        JUMP POINT STABILIZATION AUTHORIZED<br/>
+        CONTAINMENT TRANSFER: ENABLED
+      </p>
+    </div>
+  </div>
+
+  <div class="overlay denied" id="overlayDenied">
+    <div class="card">
+      <h1>ACCESS DENIED</h1>
+      <p>
+        CLEARANCE FAILURE DETECTED<br/>
+        CORE SURGE INCREASING<br/>
+        REAUTHORIZATION REQUIRED
+      </p>
+    </div>
+  </div>
+
+  <!-- Main UI -->
+  <div class="wrap" id="ui" style="display:none;">
     <div class="glitch-lines"></div>
 
     <div class="header">
@@ -422,17 +531,12 @@
 
         <div class="actions">
           <button onclick="authorize()">AUTHORIZE</button>
-          <button class="secondary" onclick="primeAudio()">ENABLE AUDIO</button>
-          <button class="secondary" onclick="toggleHum()">TOGGLE HUM</button>
+          <button class="secondary" onclick="relock()">LOCKDOWN</button>
         </div>
 
         <div class="statusText" id="statusText">
           STATUS: <span class="warn">AWAITING CLEARANCE</span><br/>
           NOTE: CORE WILL NOT AUTO-RESET. FAILURE RESULTS IN SYSTEM TAKEOVER.
-        </div>
-
-        <div class="foot">
-          Tip: “ENABLE AUDIO” is required on most phones before sound will play.
         </div>
       </div>
 
@@ -463,12 +567,12 @@
       </div>
 
       <div class="panel" id="panelGranted" style="display:none;">
-        <h2>Access Granted</h2>
+        <h2>Console Status</h2>
         <div class="statusText">
-          <span class="good">JUMP AUTHORIZATION ACCEPTED</span><br/>
+          <span class="good">AUTHORIZATION COMPLETE</span><br/>
           CONTAINMENT FIELD: <span class="good">STABLE</span><br/>
           CLEARANCE: <span class="good">GRANTED</span><br/><br/>
-          NEXT: Proceed to temporal jump intake. Maintain visual contact with the orb.
+          NEXT: Proceed to intake. Maintain visual contact with the orb.
         </div>
         <div class="actions" style="margin-top:14px;">
           <button class="secondary" onclick="relock()">LOCK DOWN</button>
@@ -498,19 +602,12 @@
   const VALID_BAND_CODES = ["AURA-01", "PRISONER-7", "BAND-LOCK", "TRANSFER-OK"];
   const VALID_TRANSFER_KEYS = ["JUMPPOINT-OK", "CONTAIN-LOCK", "FIELD-STABLE"];
 
-  // Countdown + state
+  // State
   let timeLeft = 45;
   let interval = null;
   let authorized = false;
-  let transferConfirmed = false;
-  let humOn = false;
 
-  // Audio refs
-  const hum = document.getElementById("hum");
-  const sfxDenied = document.getElementById("sfxDenied");
-  const sfxGranted = document.getElementById("sfxGranted");
-  const sfxAlarm = document.getElementById("sfxAlarm");
-
+  // Elements
   const orb = document.getElementById("orb");
   const coreStatus = document.getElementById("coreStatus");
   const timerEl = document.getElementById("timer");
@@ -525,25 +622,60 @@
   const takeover = document.getElementById("takeover");
   const takeoverBox = document.getElementById("takeoverBox");
 
-  // Start countdown immediately (no auto reset)
-  startCountdown();
+  const boot = document.getElementById("boot");
+  const bootLog = document.getElementById("bootLog");
+  const bootFill = document.getElementById("bootFill");
 
+  const overlayGranted = document.getElementById("overlayGranted");
+  const overlayDenied = document.getElementById("overlayDenied");
+
+  // ===== Boot sequence (loading screen) =====
+  const bootLines = [
+    "LINK: XANDAR-RELAY-07 … CONNECTING",
+    "HANDSHAKE: NOVA CORPS PROTOCOL v7.9",
+    "AUTH LAYER: ONLINE",
+    "CORE SIGNAL: UNSTABLE • TELEMETRY STREAMING",
+    "JUMP POINT MODEL: LOADING",
+    "CONTAINMENT SUBROUTINES: READY",
+    "CONSOLE: UNLOCK PENDING CLEARANCE"
+  ];
+
+  let bootIndex = 0;
+  let bootPct = 0;
+
+  const bootTimer = setInterval(()=>{
+    // print a line
+    if(bootIndex < bootLines.length){
+      bootLog.textContent += bootLines[bootIndex] + "\n";
+      bootIndex++;
+    }
+    // progress
+    bootPct = Math.min(100, bootPct + 8 + Math.floor(Math.random()*8));
+    bootFill.style.width = bootPct + "%";
+
+    // finish
+    if(bootPct >= 100){
+      clearInterval(bootTimer);
+      setTimeout(()=>{
+        boot.style.display = "none";
+        document.getElementById("ui").style.display = "block";
+        startCountdown(); // countdown starts AFTER boot
+      }, 450);
+    }
+  }, 260);
+
+  // ===== Countdown (no auto reset) =====
   function startCountdown(){
     if(interval) return;
     interval = setInterval(() => {
       timeLeft--;
       timerEl.textContent = `${timeLeft}s`;
 
-      // escalate visuals as time drops
       if(timeLeft <= 15 && timeLeft > 0){
         orb.classList.add("shake");
         coreStatus.textContent = "CRITICAL";
         coreStatus.className = "bad";
         rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: DEGRADED<br/>MODE: EMERGENCY`;
-      }
-      if(timeLeft <= 7 && timeLeft > 0){
-        // make the UI feel more broken
-        document.getElementById("ui").style.boxShadow = "0 0 50px rgba(255,43,43,0.15)";
       }
 
       if(timeLeft <= 0){
@@ -554,30 +686,10 @@
     }, 1000);
   }
 
-  // Must be user-initiated on mobile
-  function primeAudio(){
-    // tiny play/pause to unlock audio
-    try{
-      hum.volume = 0.35;
-      hum.play().then(()=>{ hum.pause(); hum.currentTime = 0; });
-      sfxGranted.play().then(()=>{ sfxGranted.pause(); sfxGranted.currentTime=0; });
-      sfxDenied.play().then(()=>{ sfxDenied.pause(); sfxDenied.currentTime=0; });
-      sfxAlarm.play().then(()=>{ sfxAlarm.pause(); sfxAlarm.currentTime=0; });
-      statusText.innerHTML = "STATUS: <span class='good'>AUDIO ARMED</span><br/>Proceed with clearance.";
-    }catch(e){
-      statusText.innerHTML = "STATUS: <span class='warn'>AUDIO ARMED (PARTIAL)</span><br/>Some browsers require another tap.";
-    }
-  }
-
-  function toggleHum(){
-    humOn = !humOn;
-    if(humOn){
-      hum.volume = 0.35;
-      hum.play().catch(()=>{});
-    }else{
-      hum.pause();
-      hum.currentTime = 0;
-    }
+  // ===== Access overlays =====
+  function showOverlay(el, ms=900){
+    el.style.display = "grid";
+    setTimeout(()=>{ el.style.display = "none"; }, ms);
   }
 
   function authorize(){
@@ -589,32 +701,32 @@
 
     if(idOk && codeOk){
       authorized = true;
+
+      showOverlay(overlayGranted, 1100);
+
       coreStatus.textContent = "STABILIZING";
       coreStatus.className = "warn";
 
       statusText.innerHTML =
         "STATUS: <span class='good'>CLEARANCE ACCEPTED</span><br/>NEXT: Wristband scan required to complete containment transfer.";
 
-      // SFX
-      safePlay(sfxGranted, 0.7);
-
-      // move to scan phase
       panelAuth.style.display = "none";
       panelScan.style.display = "block";
 
       rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: VERIFIED<br/>MODE: TRANSFER`;
 
     } else {
+      showOverlay(overlayDenied, 900);
+
       statusText.innerHTML =
         "STATUS: <span class='bad'>ACCESS DENIED</span><br/>Nova Corps verification failed. Core surge increasing.";
-      safePlay(sfxDenied, 0.7);
     }
   }
 
   function confirmTransfer(){
     if(!authorized){
+      showOverlay(overlayDenied, 900);
       scanStatus.innerHTML = "STATUS: <span class='bad'>DENIED</span><br/>Nova ID verification required first.";
-      safePlay(sfxDenied, 0.7);
       return;
     }
 
@@ -625,9 +737,8 @@
     const keyOk  = VALID_TRANSFER_KEYS.includes(transferKey);
 
     if(bandOk && keyOk){
-      transferConfirmed = true;
+      showOverlay(overlayGranted, 1200);
 
-      // Stop escalation visuals
       orb.classList.remove("shake");
       coreStatus.textContent = "STABLE";
       coreStatus.className = "good";
@@ -635,17 +746,12 @@
       scanStatus.innerHTML =
         "STATUS: <span class='good'>TRANSFER CONFIRMED</span><br/>Containment field locked. Jump Point stabilized.";
 
-      // SFX
-      safePlay(sfxGranted, 0.75);
-
-      // Show granted panel
       panelScan.style.display = "none";
       panelGranted.style.display = "block";
 
       rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: GREEN<br/>MODE: AUTHORIZED`;
 
-      // Optional: freeze timer display (no reset, just stop threatening)
-      // If you want the countdown to continue even after success, remove these lines:
+      // Stop timer threat on success (optional). Keep “no reset.”
       if(interval){
         clearInterval(interval);
         interval = null;
@@ -653,39 +759,25 @@
       timerEl.textContent = "LOCKED";
 
     } else {
+      showOverlay(overlayDenied, 900);
       scanStatus.innerHTML =
         "STATUS: <span class='bad'>SCAN FAILED</span><br/>Band mismatch or invalid transfer key.";
-      safePlay(sfxDenied, 0.7);
     }
   }
 
   function relock(){
-    // No auto reset per your instruction — this just hardens the screen
     rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: LOCKED<br/>MODE: HOLD`;
-    document.getElementById("ui").style.filter = "saturate(1.1) contrast(1.15)";
     statusText.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
-    scanStatus.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
+    if(scanStatus) scanStatus.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
   }
 
-  function forceBreach(){
-    meltdown(true);
-  }
+  function forceBreach(){ meltdown(true); }
 
   function meltdown(forced=false){
-    // "malware type takeover" vibe
     takeover.style.display = "grid";
     takeover.classList.add("breachFlash");
-
-    // Alarm SFX loops
-    try{
-      sfxAlarm.loop = true;
-      safePlay(sfxAlarm, 0.85);
-    }catch(e){}
-
-    // Hide UI
     document.getElementById("ui").style.display = "none";
 
-    // Corrupt text feed
     const lines = [
       "OVERRIDE: CONTAINMENT FAILED",
       "TEMPORAL SHEAR DETECTED",
@@ -700,26 +792,16 @@
 
     let i = 0;
     setInterval(()=>{
-      const noise = randomNoise(42 + Math.floor(Math.random()*22));
       takeoverBox.querySelector("p").innerHTML =
         lines.slice(0, Math.min(i, lines.length)).join("<br/>") +
         "<br/><br/>" +
-        "<span style='color:rgba(255,255,255,0.65)'>" + noise + "</span>";
+        "<span style='color:rgba(255,255,255,0.65)'>" + randomNoise(60) + "</span>";
       if(i < lines.length) i++;
     }, 180);
 
-    // background strobe
     setInterval(()=>{
       takeover.style.background = (takeover.style.background === "rgb(0, 0, 0)") ? "#120000" : "#000";
     }, 120);
-  }
-
-  function safePlay(audioEl, volume=0.6){
-    try{
-      audioEl.volume = volume;
-      audioEl.currentTime = 0;
-      audioEl.play().catch(()=>{});
-    }catch(e){}
   }
 
   function randomNoise(n){
@@ -731,15 +813,12 @@
     return out;
   }
 
-  // Quality-of-life: Enter key submits on each phase
+  // Enter submits whichever panel is visible
   document.addEventListener("keydown", (e)=>{
     if(e.key !== "Enter") return;
 
-    if(panelAuth.style.display !== "none"){
-      authorize();
-    } else if(panelScan.style.display !== "none"){
-      confirmTransfer();
-    }
+    if(panelAuth.style.display !== "none") authorize();
+    else if(panelScan.style.display !== "none") confirmTransfer();
   });
 </script>
 </body>
