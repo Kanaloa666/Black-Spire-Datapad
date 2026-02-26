@@ -1,217 +1,746 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Xandar Jump Core — Field Unit</title>
-  <style>
-    body{
-      margin:0;
-      font-family:Segoe UI,system-ui,Arial,sans-serif;
-      background:#071523;
-      color:#eaf0f7;
-    }
-    .wrap{
-      max-width:900px;
-      margin:0 auto;
-      padding:22px;
-    }
-    .banner{
-      background:#0b2238;
-      border-bottom:2px solid #d4af37;
-      padding:22px;
-      border-radius:16px;
-      margin-top:14px;
-    }
-    .banner h1{
-      margin:0;
-      font-size:22px;
-      letter-spacing:1px;
-      color:#d4af37;
-    }
-    .banner p{
-      margin:8px 0 0;
-      opacity:.85;
-      font-size:14px;
-      line-height:1.5;
-    }
-    .card{
-      background:#0b2238;
-      border:1px solid rgba(212,175,55,.25);
-      padding:18px;
-      border-radius:16px;
-      margin-top:16px;
-    }
-    .title{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      align-items:baseline;
-      flex-wrap:wrap;
-    }
-    .title h2{
-      margin:0;
-      font-size:16px;
-      color:#d4af37;
-      letter-spacing:.6px;
-    }
-    .tag{
-      font-size:12px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:rgba(212,175,55,.12);
-      border:1px solid rgba(212,175,55,.25);
-      color:#d4af37;
-    }
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:10px;
-      font-size:14px;
-    }
-    td{
-      padding:10px 8px;
-      border-top:1px solid rgba(255,255,255,.08);
-      vertical-align:top;
-      opacity:.92;
-    }
-    td.key{
-      width:230px;
-      color:#9db2c8;
-      opacity:1;
-    }
-    .modes{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-      gap:12px;
-      margin-top:10px;
-    }
-    .mode{
-      border-radius:14px;
-      padding:12px;
-      background:rgba(255,255,255,.03);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .mode strong{
-      color:#d4af37;
-      display:block;
-      margin-bottom:6px;
-      letter-spacing:.4px;
-    }
-    .foot{
-      opacity:.65;
-      font-size:12px;
-      margin:18px 2px 6px;
-      text-align:center;
-    }
-    .btnrow{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:12px;
-    }
-    .btn{
-      display:inline-block;
-      text-decoration:none;
-      font-weight:700;
-      padding:10px 12px;
-      border-radius:12px;
-      background:#d4af37;
-      color:#071523;
-    }
-    .btn.secondary{
-      background:transparent;
-      color:#d4af37;
-      border:1px solid rgba(212,175,55,.35);
-    }
-    code{
-      background:rgba(0,0,0,.25);
-      padding:2px 6px;
-      border-radius:8px;
-      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size:12px;
-      color:#eaf0f7;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NOVA CORPS // INFINITY CORE CONTAINMENT</title>
+<style>
+  :root{
+    --cyan:#00eaff;
+    --red:#ff2b2b;
+    --bg:#000;
+    --glass: rgba(0, 234, 255, 0.08);
+    --glass2: rgba(0, 0, 0, 0.55);
+  }
+
+  html,body{
+    margin:0;
+    height:100%;
+    background:var(--bg);
+    color:var(--cyan);
+    font-family: "Courier New", monospace;
+    overflow:hidden;
+  }
+
+  /* ===== Galaxy Background ===== */
+  .galaxy{
+    position:fixed;
+    inset:0;
+    background:
+      radial-gradient(1200px 800px at 20% 30%, rgba(0,234,255,0.10), transparent 55%),
+      radial-gradient(900px 600px at 80% 70%, rgba(255,255,255,0.06), transparent 60%),
+      radial-gradient(700px 700px at 50% 50%, rgba(255,0,200,0.05), transparent 60%),
+      radial-gradient(900px 900px at 10% 90%, rgba(0,80,255,0.08), transparent 60%),
+      radial-gradient(900px 900px at 90% 10%, rgba(0,255,140,0.06), transparent 60%),
+      #000;
+    animation: drift 18s linear infinite;
+    filter: saturate(1.2) contrast(1.1);
+    z-index:-3;
+  }
+  @keyframes drift{
+    0%{ transform: scale(1) translate(0,0); }
+    50%{ transform: scale(1.05) translate(-1.5%, 1.5%); }
+    100%{ transform: scale(1) translate(0,0); }
+  }
+
+  /* Star layers */
+  .stars, .stars2{
+    position:fixed;
+    inset:-200px;
+    background-image:
+      radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.7), transparent 60%),
+      radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.6), transparent 60%),
+      radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.55), transparent 60%),
+      radial-gradient(2px 2px at 90% 70%, rgba(255,255,255,0.7), transparent 60%),
+      radial-gradient(1px 1px at 55% 15%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1px 1px at 15% 65%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(2px 2px at 45% 55%, rgba(255,255,255,0.65), transparent 60%),
+      radial-gradient(1px 1px at 80% 25%, rgba(255,255,255,0.5), transparent 60%);
+    background-size: 900px 900px;
+    opacity:0.55;
+    animation: starScroll 28s linear infinite;
+    z-index:-2;
+  }
+  .stars2{
+    background-size: 650px 650px;
+    opacity:0.35;
+    animation-duration: 42s;
+    filter: blur(0.4px);
+    z-index:-1;
+  }
+  @keyframes starScroll{
+    0%{ transform: translateY(0); }
+    100%{ transform: translateY(120px); }
+  }
+
+  /* ===== UI Container ===== */
+  .wrap{
+    width:min(920px, 92vw);
+    margin: 36px auto 0;
+    padding: 20px 22px 28px;
+    border:1px solid rgba(0,234,255,0.35);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(0,234,255,0.08), rgba(0,0,0,0.55));
+    box-shadow: 0 0 30px rgba(0,234,255,0.12);
+    position:relative;
+  }
+
+  /* ===== Glitch Overlay ===== */
+  .glitch-lines{
+    pointer-events:none;
+    position:absolute;
+    inset:0;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(0,234,255,0.03),
+        rgba(0,234,255,0.03) 1px,
+        transparent 2px,
+        transparent 6px
+      );
+    mix-blend-mode: screen;
+    opacity:0.35;
+    animation: scan 2.8s linear infinite;
+    border-radius: 18px;
+  }
+  @keyframes scan{
+    0%{ transform: translateY(-12px); }
+    100%{ transform: translateY(12px); }
+  }
+
+  .header{
+    display:flex;
+    gap:16px;
+    align-items:flex-start;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+
+  .title{
+    text-align:left;
+    line-height:1.1;
+  }
+  .title h1{
+    margin:0;
+    font-size: 22px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: flicker 3.2s infinite;
+  }
+  .title .sub{
+    margin-top:6px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: rgba(0,234,255,0.8);
+  }
+
+  @keyframes flicker{
+    0%, 100%{ opacity: 1; }
+    50%{ opacity: 0.68; }
+    52%{ opacity: 0.9; }
+    55%{ opacity: 0.62; }
+    58%{ opacity: 0.95; }
+  }
+
+  .rightStatus{
+    text-align:right;
+    font-size:12px;
+    letter-spacing:2px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  /* ===== Orb / Core ===== */
+  .coreRow{
+    display:grid;
+    grid-template-columns: 240px 1fr;
+    gap: 22px;
+    margin-top: 18px;
+    align-items:center;
+  }
+  @media (max-width: 720px){
+    .coreRow{ grid-template-columns: 1fr; }
+  }
+
+  .orb{
+    width: 210px;
+    height: 210px;
+    border-radius: 50%;
+    margin: 0 auto;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(255,255,255,0.85), rgba(0,234,255,0.35) 25%, rgba(0,0,0,0.95) 70%),
+      radial-gradient(circle at 70% 70%, rgba(255,0,200,0.18), transparent 55%);
+    box-shadow:
+      0 0 18px rgba(0,234,255,0.35),
+      0 0 48px rgba(0,234,255,0.18);
+    position:relative;
+    overflow:hidden;
+  }
+
+  /* rotating "galaxy" inside */
+  .orb::before{
+    content:"";
+    position:absolute;
+    inset:-30%;
+    background:
+      conic-gradient(from 90deg, rgba(0,234,255,0.0), rgba(0,234,255,0.25), rgba(255,255,255,0.12), rgba(0,0,0,0), rgba(255,0,200,0.15), rgba(0,234,255,0.0));
+    animation: spin 4.2s linear infinite;
+    filter: blur(1px) contrast(1.1);
+    opacity:0.85;
+  }
+
+  /* crackle energy */
+  .orb::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(circle at 40% 55%, rgba(0,234,255,0.35), transparent 55%),
+      radial-gradient(circle at 60% 35%, rgba(255,255,255,0.14), transparent 55%),
+      radial-gradient(circle at 50% 50%, rgba(0,0,0,0.1), transparent 60%);
+    mix-blend-mode: screen;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @keyframes pulse{
+    0%, 100%{ opacity:0.55; transform: scale(1); }
+    50%{ opacity:0.95; transform: scale(1.02); }
+  }
+
+  /* instability shake when low time */
+  .shake{ animation: shake 0.2s infinite; }
+  @keyframes shake{
+    0%{ transform: translate(0,0); }
+    25%{ transform: translate(1px,-1px); }
+    50%{ transform: translate(-1px,1px); }
+    75%{ transform: translate(1px,1px); }
+    100%{ transform: translate(-1px,-1px); }
+  }
+
+  /* ===== Panels ===== */
+  .panel{
+    border:1px solid rgba(0,234,255,0.25);
+    border-radius:14px;
+    padding:16px 16px 14px;
+    background: rgba(0,0,0,0.35);
+  }
+
+  .panel h2{
+    margin:0 0 10px;
+    font-size:14px;
+    letter-spacing:2px;
+    color: rgba(0,234,255,0.9);
+    text-transform: uppercase;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 720px){
+    .grid{ grid-template-columns: 1fr; }
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    text-align:left;
+  }
+  .field label{
+    font-size:12px;
+    letter-spacing:1px;
+    color: rgba(255,255,255,0.68);
+    text-transform: uppercase;
+  }
+
+  input{
+    background: rgba(0,0,0,0.7);
+    border:1px solid rgba(0,234,255,0.35);
+    color: var(--cyan);
+    padding: 10px 10px;
+    border-radius: 10px;
+    outline:none;
+    font-size: 14px;
+  }
+  input:focus{
+    border-color: rgba(0,234,255,0.75);
+    box-shadow: 0 0 0 2px rgba(0,234,255,0.15);
+  }
+
+  .actions{
+    margin-top: 10px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+  }
+  button{
+    background: rgba(0,234,255,0.95);
+    color:#000;
+    border:none;
+    padding:10px 14px;
+    border-radius: 12px;
+    cursor:pointer;
+    font-weight:700;
+    letter-spacing:1px;
+  }
+  button.secondary{
+    background: rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.9);
+    border: 1px solid rgba(255,255,255,0.18);
+  }
+  button.danger{
+    background: rgba(255,43,43,0.95);
+    color:#000;
+  }
+
+  .statusBar{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    font-size:12px;
+    letter-spacing:2px;
+    color: rgba(255,255,255,0.7);
+  }
+  .statusText{
+    font-size: 14px;
+    letter-spacing: 2px;
+    margin-top:10px;
+    text-align:left;
+  }
+
+  .good{ color: #5dffb2; }
+  .bad{ color: var(--red); }
+  .warn{ color: #ffd65d; }
+
+  /* ===== Fullscreen takeover ===== */
+  .takeover{
+    position:fixed;
+    inset:0;
+    display:none;
+    place-items:center;
+    background:#000;
+    z-index: 9999;
+    color: var(--red);
+    text-align:center;
+  }
+  .takeover h1{
+    font-size: 34px;
+    letter-spacing: 4px;
+    margin:0 0 12px;
+    text-transform: uppercase;
+    animation: breachFlicker 0.8s infinite;
+  }
+  .takeover p{
+    margin:0;
+    width:min(820px, 90vw);
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 2px;
+    line-height:1.6;
+    font-size: 12px;
+  }
+  @keyframes breachFlicker{
+    0%{ opacity:1; }
+    25%{ opacity:0.25; }
+    50%{ opacity:0.9; transform: translateX(1px); }
+    75%{ opacity:0.35; transform: translateX(-1px); }
+    100%{ opacity:1; }
+  }
+  .breachFlash{
+    animation: flash 0.12s infinite;
+  }
+  @keyframes flash{
+    0%{ background:#000; }
+    50%{ background:#290000; }
+    100%{ background:#000; }
+  }
+
+  /* small footer */
+  .foot{
+    margin-top: 12px;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.55);
+    text-align:left;
+  }
+</style>
 </head>
+
 <body>
-  <div class="wrap">
+  <div class="galaxy"></div>
+  <div class="stars"></div>
+  <div class="stars2"></div>
 
-    <div class="banner">
-      <h1>NOVA CORPS — XANDAR JUMP CORE (FIELD STABILIZATION UNIT)</h1>
-      <p>
-        Status: <b>OPERATIONAL</b> • Clearance: <b>FIELD / TEMPORARY</b><br/>
-        This device is used to calibrate jump-point stability and manage cosmic energy fluctuation during transport and recovery operations.
-      </p>
-    </div>
+  <!-- Audio (drop your files in the same folder or update paths) -->
+  <audio id="hum" src="orb-hum.mp3" loop></audio>
+  <audio id="sfxDenied" src="denied.mp3"></audio>
+  <audio id="sfxGranted" src="jump-sound.mp3"></audio>
+  <audio id="sfxAlarm" src="alarm.mp3"></audio>
 
-    <div class="card">
+  <div class="wrap" id="ui">
+    <div class="glitch-lines"></div>
+
+    <div class="header">
       <div class="title">
-        <h2>DEVICE SUMMARY</h2>
-        <span class="tag">FIELD UNIT • v3.9</span>
+        <h1>NOVA CORPS // INFINITY CORE</h1>
+        <div class="sub">TEMPORAL JUMP STABILIZATION • CONTAINMENT TRANSFER REQUIRED</div>
       </div>
-
-      <table>
-        <tr>
-          <td class="key">Designation</td>
-          <td>XJC-FSU-39 “Jump Core”</td>
-        </tr>
-        <tr>
-          <td class="key">Primary Function</td>
-          <td>Stabilize localized energy output during jump recalibration events.</td>
-        </tr>
-        <tr>
-          <td class="key">Operator Notes</td>
-          <td>Unit responds to manual spectrum input (remote control) and proximity changes. Intended for rapid demonstration and morale support during field deployment.</td>
-        </tr>
-        <tr>
-          <td class="key">Handling</td>
-          <td>Keep interaction brief in public areas. Present as “calibration check” and disengage if personnel are occupied.</td>
-        </tr>
-      </table>
-    </div>
-
-    <div class="card">
-      <div class="title">
-        <h2>SPECTRUM MODES (REMOTE CONTROL)</h2>
-        <span class="tag">COLOR RESPONSE TABLE</span>
-      </div>
-
-      <div class="modes">
-        <div class="mode">
-          <strong>WHITE — NOVA PRIME</strong>
-          Clean power state. Use as default “tech device” look.
-        </div>
-        <div class="mode">
-          <strong>BLUE — JUMP SYNC</strong>
-          Calibration active. Best for “we’re ready” moments.
-        </div>
-        <div class="mode">
-          <strong>GREEN — TEMPORAL LOCK</strong>
-          Stabilization holding. Good “all systems stable” vibe.
-        </div>
-        <div class="mode">
-          <strong>PURPLE — CONTAINMENT</strong>
-          Energy contained. Use when demonstrating “reactive core.”
-        </div>
-        <div class="mode">
-          <strong>RED — SURGE / ALERT</strong>
-          Use sparingly. Looks intense. Avoid in crowded/security-heavy spots.
-        </div>
-        <div class="mode">
-          <strong>CYCLE — FIELD DEMO</strong>
-          Slow color cycle for show-and-tell moments.
-        </div>
-      </div>
-
-      <div class="btnrow">
-        <a class="btn secondary" href="../">Return to Primary Terminal</a>
+      <div class="rightStatus" id="rightStatus">
+        NODE: XANDAR-RELAY-07<br/>
+        SIGNAL: LOCKED<br/>
+        MODE: INTAKE
       </div>
     </div>
 
-    <div class="foot">
-      Fan-made prop page • Not affiliated with Marvel or Disney
+    <div class="coreRow">
+      <div>
+        <div class="orb" id="orb"></div>
+        <div class="statusBar">
+          <div>CORE STATUS: <span id="coreStatus" class="warn">UNSTABLE</span></div>
+          <div>INSTABILITY: <span id="timer" class="bad">45s</span></div>
+        </div>
+      </div>
+
+      <div class="panel" id="panelAuth">
+        <h2>Phase 1 • Nova Corps ID Verification</h2>
+
+        <div class="grid">
+          <div class="field">
+            <label>Nova ID (Clearance)</label>
+            <input id="novaId" placeholder="e.g. NOVA-PRIME" autocomplete="off"/>
+          </div>
+          <div class="field">
+            <label>Authorization Code</label>
+            <input id="authCode" placeholder="e.g. QUILL1977" autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button onclick="authorize()">AUTHORIZE</button>
+          <button class="secondary" onclick="primeAudio()">ENABLE AUDIO</button>
+          <button class="secondary" onclick="toggleHum()">TOGGLE HUM</button>
+        </div>
+
+        <div class="statusText" id="statusText">
+          STATUS: <span class="warn">AWAITING CLEARANCE</span><br/>
+          NOTE: CORE WILL NOT AUTO-RESET. FAILURE RESULTS IN SYSTEM TAKEOVER.
+        </div>
+
+        <div class="foot">
+          Tip: “ENABLE AUDIO” is required on most phones before sound will play.
+        </div>
+      </div>
+
+      <div class="panel" id="panelScan" style="display:none;">
+        <h2>Phase 2 • Wristband Scan</h2>
+
+        <div class="grid">
+          <div class="field">
+            <label>Prisoner / Custody Band Code</label>
+            <input id="bandCode" placeholder="SCAN OR ENTER BAND CODE" autocomplete="off"/>
+          </div>
+          <div class="field">
+            <label>Containment Transfer Key</label>
+            <input id="transferKey" placeholder="e.g. JUMPPOINT-OK" autocomplete="off"/>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button onclick="confirmTransfer()">CONFIRM TRANSFER</button>
+          <button class="secondary" onclick="relock()">RELOCK</button>
+          <button class="danger" onclick="forceBreach()">FORCE BREACH</button>
+        </div>
+
+        <div class="statusText" id="scanStatus">
+          STATUS: <span class="warn">SCAN REQUIRED</span><br/>
+          PROTOCOL: VERIFY BAND → CONFIRM TRANSFER → STABILIZE JUMP POINT
+        </div>
+      </div>
+
+      <div class="panel" id="panelGranted" style="display:none;">
+        <h2>Access Granted</h2>
+        <div class="statusText">
+          <span class="good">JUMP AUTHORIZATION ACCEPTED</span><br/>
+          CONTAINMENT FIELD: <span class="good">STABLE</span><br/>
+          CLEARANCE: <span class="good">GRANTED</span><br/><br/>
+          NEXT: Proceed to temporal jump intake. Maintain visual contact with the orb.
+        </div>
+        <div class="actions" style="margin-top:14px;">
+          <button class="secondary" onclick="relock()">LOCK DOWN</button>
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- Takeover Screen -->
+  <div class="takeover" id="takeover">
+    <div id="takeoverBox">
+      <h1>INFINITY CORE BREACH</h1>
+      <p>
+        CONTAINMENT FAILURE DETECTED • TEMPORAL SHEAR IMMINENT<br/>
+        NOVA CORPS UPLINK COMPROMISED • INITIATING EMERGENCY BLACKOUT<br/><br/>
+        IF YOU CAN READ THIS, YOU ARE TOO CLOSE.
+      </p>
+    </div>
+  </div>
+
+<script>
+  // =========================
+  // CONFIG (change these)
+  // =========================
+  const VALID_NOVA_IDS = ["NOVA-PRIME", "XANDAR", "CORPS", "NOVA"];
+  const VALID_AUTH_CODES = ["QUILL1977", "STARLORD", "TEMPORALJUMP", "XANDARPRIME", "NOVACLEARANCE"];
+  const VALID_BAND_CODES = ["AURA-01", "PRISONER-7", "BAND-LOCK", "TRANSFER-OK"];
+  const VALID_TRANSFER_KEYS = ["JUMPPOINT-OK", "CONTAIN-LOCK", "FIELD-STABLE"];
+
+  // Countdown + state
+  let timeLeft = 45;
+  let interval = null;
+  let authorized = false;
+  let transferConfirmed = false;
+  let humOn = false;
+
+  // Audio refs
+  const hum = document.getElementById("hum");
+  const sfxDenied = document.getElementById("sfxDenied");
+  const sfxGranted = document.getElementById("sfxGranted");
+  const sfxAlarm = document.getElementById("sfxAlarm");
+
+  const orb = document.getElementById("orb");
+  const coreStatus = document.getElementById("coreStatus");
+  const timerEl = document.getElementById("timer");
+  const statusText = document.getElementById("statusText");
+  const rightStatus = document.getElementById("rightStatus");
+
+  const panelAuth = document.getElementById("panelAuth");
+  const panelScan = document.getElementById("panelScan");
+  const panelGranted = document.getElementById("panelGranted");
+  const scanStatus = document.getElementById("scanStatus");
+
+  const takeover = document.getElementById("takeover");
+  const takeoverBox = document.getElementById("takeoverBox");
+
+  // Start countdown immediately (no auto reset)
+  startCountdown();
+
+  function startCountdown(){
+    if(interval) return;
+    interval = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = `${timeLeft}s`;
+
+      // escalate visuals as time drops
+      if(timeLeft <= 15 && timeLeft > 0){
+        orb.classList.add("shake");
+        coreStatus.textContent = "CRITICAL";
+        coreStatus.className = "bad";
+        rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: DEGRADED<br/>MODE: EMERGENCY`;
+      }
+      if(timeLeft <= 7 && timeLeft > 0){
+        // make the UI feel more broken
+        document.getElementById("ui").style.boxShadow = "0 0 50px rgba(255,43,43,0.15)";
+      }
+
+      if(timeLeft <= 0){
+        clearInterval(interval);
+        interval = null;
+        meltdown();
+      }
+    }, 1000);
+  }
+
+  // Must be user-initiated on mobile
+  function primeAudio(){
+    // tiny play/pause to unlock audio
+    try{
+      hum.volume = 0.35;
+      hum.play().then(()=>{ hum.pause(); hum.currentTime = 0; });
+      sfxGranted.play().then(()=>{ sfxGranted.pause(); sfxGranted.currentTime=0; });
+      sfxDenied.play().then(()=>{ sfxDenied.pause(); sfxDenied.currentTime=0; });
+      sfxAlarm.play().then(()=>{ sfxAlarm.pause(); sfxAlarm.currentTime=0; });
+      statusText.innerHTML = "STATUS: <span class='good'>AUDIO ARMED</span><br/>Proceed with clearance.";
+    }catch(e){
+      statusText.innerHTML = "STATUS: <span class='warn'>AUDIO ARMED (PARTIAL)</span><br/>Some browsers require another tap.";
+    }
+  }
+
+  function toggleHum(){
+    humOn = !humOn;
+    if(humOn){
+      hum.volume = 0.35;
+      hum.play().catch(()=>{});
+    }else{
+      hum.pause();
+      hum.currentTime = 0;
+    }
+  }
+
+  function authorize(){
+    const novaId = (document.getElementById("novaId").value || "").trim().toUpperCase();
+    const authCode = (document.getElementById("authCode").value || "").trim().toUpperCase();
+
+    const idOk = VALID_NOVA_IDS.includes(novaId);
+    const codeOk = VALID_AUTH_CODES.includes(authCode);
+
+    if(idOk && codeOk){
+      authorized = true;
+      coreStatus.textContent = "STABILIZING";
+      coreStatus.className = "warn";
+
+      statusText.innerHTML =
+        "STATUS: <span class='good'>CLEARANCE ACCEPTED</span><br/>NEXT: Wristband scan required to complete containment transfer.";
+
+      // SFX
+      safePlay(sfxGranted, 0.7);
+
+      // move to scan phase
+      panelAuth.style.display = "none";
+      panelScan.style.display = "block";
+
+      rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: VERIFIED<br/>MODE: TRANSFER`;
+
+    } else {
+      statusText.innerHTML =
+        "STATUS: <span class='bad'>ACCESS DENIED</span><br/>Nova Corps verification failed. Core surge increasing.";
+      safePlay(sfxDenied, 0.7);
+    }
+  }
+
+  function confirmTransfer(){
+    if(!authorized){
+      scanStatus.innerHTML = "STATUS: <span class='bad'>DENIED</span><br/>Nova ID verification required first.";
+      safePlay(sfxDenied, 0.7);
+      return;
+    }
+
+    const bandCode = (document.getElementById("bandCode").value || "").trim().toUpperCase();
+    const transferKey = (document.getElementById("transferKey").value || "").trim().toUpperCase();
+
+    const bandOk = VALID_BAND_CODES.includes(bandCode);
+    const keyOk  = VALID_TRANSFER_KEYS.includes(transferKey);
+
+    if(bandOk && keyOk){
+      transferConfirmed = true;
+
+      // Stop escalation visuals
+      orb.classList.remove("shake");
+      coreStatus.textContent = "STABLE";
+      coreStatus.className = "good";
+
+      scanStatus.innerHTML =
+        "STATUS: <span class='good'>TRANSFER CONFIRMED</span><br/>Containment field locked. Jump Point stabilized.";
+
+      // SFX
+      safePlay(sfxGranted, 0.75);
+
+      // Show granted panel
+      panelScan.style.display = "none";
+      panelGranted.style.display = "block";
+
+      rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: GREEN<br/>MODE: AUTHORIZED`;
+
+      // Optional: freeze timer display (no reset, just stop threatening)
+      // If you want the countdown to continue even after success, remove these lines:
+      if(interval){
+        clearInterval(interval);
+        interval = null;
+      }
+      timerEl.textContent = "LOCKED";
+
+    } else {
+      scanStatus.innerHTML =
+        "STATUS: <span class='bad'>SCAN FAILED</span><br/>Band mismatch or invalid transfer key.";
+      safePlay(sfxDenied, 0.7);
+    }
+  }
+
+  function relock(){
+    // No auto reset per your instruction — this just hardens the screen
+    rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: LOCKED<br/>MODE: HOLD`;
+    document.getElementById("ui").style.filter = "saturate(1.1) contrast(1.15)";
+    statusText.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
+    scanStatus.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
+  }
+
+  function forceBreach(){
+    meltdown(true);
+  }
+
+  function meltdown(forced=false){
+    // "malware type takeover" vibe
+    takeover.style.display = "grid";
+    takeover.classList.add("breachFlash");
+
+    // Alarm SFX loops
+    try{
+      sfxAlarm.loop = true;
+      safePlay(sfxAlarm, 0.85);
+    }catch(e){}
+
+    // Hide UI
+    document.getElementById("ui").style.display = "none";
+
+    // Corrupt text feed
+    const lines = [
+      "OVERRIDE: CONTAINMENT FAILED",
+      "TEMPORAL SHEAR DETECTED",
+      "JUMP POINT COLLAPSE IN PROGRESS",
+      "NOVA CORPS UPLINK COMPROMISED",
+      "LOCKING OUT LOCAL CONSOLE",
+      "DO NOT APPROACH THE ORB",
+      "ERROR: REALITY INTEGRITY < 12%",
+      "—",
+      forced ? "MANUAL BREACH INITIATED" : "TIMEOUT BREACH INITIATED"
+    ];
+
+    let i = 0;
+    setInterval(()=>{
+      const noise = randomNoise(42 + Math.floor(Math.random()*22));
+      takeoverBox.querySelector("p").innerHTML =
+        lines.slice(0, Math.min(i, lines.length)).join("<br/>") +
+        "<br/><br/>" +
+        "<span style='color:rgba(255,255,255,0.65)'>" + noise + "</span>";
+      if(i < lines.length) i++;
+    }, 180);
+
+    // background strobe
+    setInterval(()=>{
+      takeover.style.background = (takeover.style.background === "rgb(0, 0, 0)") ? "#120000" : "#000";
+    }, 120);
+  }
+
+  function safePlay(audioEl, volume=0.6){
+    try{
+      audioEl.volume = volume;
+      audioEl.currentTime = 0;
+      audioEl.play().catch(()=>{});
+    }catch(e){}
+  }
+
+  function randomNoise(n){
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}<>/\\|";
+    let out = "";
+    for(let i=0;i<n;i++){
+      out += chars[Math.floor(Math.random()*chars.length)];
+    }
+    return out;
+  }
+
+  // Quality-of-life: Enter key submits on each phase
+  document.addEventListener("keydown", (e)=>{
+    if(e.key !== "Enter") return;
+
+    if(panelAuth.style.display !== "none"){
+      authorize();
+    } else if(panelScan.style.display !== "none"){
+      confirmTransfer();
+    }
+  });
+</script>
 </body>
 </html>
