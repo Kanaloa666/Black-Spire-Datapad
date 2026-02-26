@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>NOVA CORPS // INFINITY CORE CONTAINMENT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>GUARDIANS // INFINITY CORE CONTAINMENT</title>
 
 <style>
   :root{
@@ -12,15 +12,24 @@
     --good:#5dffb2;
     --warn:#ffd65d;
     --bg:#000;
+    --panel: rgba(0,0,0,0.38);
+    --border: rgba(0,234,255,0.28);
   }
 
-  html,body{
+  /* ===== Consistent sizing across phone + desktop ===== */
+  *{ box-sizing:border-box; }
+  html{
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body{
     margin:0;
-    height:100%;
+    min-height:100vh;
     background:var(--bg);
     color:var(--cyan);
     font-family:"Courier New", monospace;
-    overflow:hidden;
+    overflow-x:hidden;
+    overflow-y:auto;
   }
 
   /* ===== Galaxy Background ===== */
@@ -71,18 +80,6 @@
     100%{ transform: translateY(120px); }
   }
 
-  /* ===== Console Wrapper ===== */
-  .wrap{
-    width:min(940px, 92vw);
-    margin: 36px auto 0;
-    padding: 20px 22px 28px;
-    border:1px solid rgba(0,234,255,0.35);
-    border-radius: 18px;
-    background: linear-gradient(180deg, rgba(0,234,255,0.08), rgba(0,0,0,0.55));
-    box-shadow: 0 0 30px rgba(0,234,255,0.12);
-    position:relative;
-  }
-
   /* ===== Glitch Scanlines ===== */
   .glitch-lines{
     pointer-events:none;
@@ -105,9 +102,21 @@
     100%{ transform: translateY(12px); }
   }
 
+  /* ===== Main Wrapper (mobile-first) ===== */
+  .wrap{
+    width:min(980px, 92vw);
+    margin: 18px auto 40px;
+    padding: 18px 18px 24px;
+    border:1px solid rgba(0,234,255,0.35);
+    border-radius: 18px;
+    background: linear-gradient(180deg, rgba(0,234,255,0.08), rgba(0,0,0,0.55));
+    box-shadow: 0 0 30px rgba(0,234,255,0.12);
+    position:relative;
+  }
+
   .header{
     display:flex;
-    gap:16px;
+    gap:14px;
     align-items:flex-start;
     justify-content:space-between;
     flex-wrap:wrap;
@@ -117,18 +126,20 @@
     text-align:left;
     line-height:1.1;
   }
+
+  /* clamp() makes phone + desktop consistent */
   .title h1{
     margin:0;
-    font-size: 22px;
+    font-size: clamp(16px, 3.2vw, 22px);
     letter-spacing: 3px;
     text-transform: uppercase;
     animation: flicker 3.2s infinite;
   }
   .title .sub{
     margin-top:6px;
-    font-size: 12px;
+    font-size: clamp(10px, 2.4vw, 12px);
     letter-spacing: 2px;
-    color: rgba(0,234,255,0.8);
+    color: rgba(0,234,255,0.82);
   }
   @keyframes flicker{
     0%, 100%{ opacity: 1; }
@@ -140,26 +151,30 @@
 
   .rightStatus{
     text-align:right;
-    font-size:12px;
+    font-size: clamp(10px, 2.4vw, 12px);
     letter-spacing:2px;
     color: rgba(255,255,255,0.7);
   }
 
-  /* ===== Orb / Core ===== */
+  /* ===== Layout: always stacks on phone ===== */
   .coreRow{
     display:grid;
-    grid-template-columns: 240px 1fr;
-    gap: 22px;
-    margin-top: 18px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
     align-items:start;
   }
-  @media (max-width: 720px){
-    .coreRow{ grid-template-columns: 1fr; }
+  @media (min-width: 860px){
+    .coreRow{
+      grid-template-columns: 260px 1fr;
+      gap: 22px;
+    }
   }
 
+  /* ===== Orb ===== */
   .orb{
-    width: 210px;
-    height: 210px;
+    width: 190px;
+    height: 190px;
     border-radius: 50%;
     margin: 0 auto;
     background:
@@ -171,10 +186,13 @@
     position:relative;
     overflow:hidden;
   }
+  @media (min-width: 860px){
+    .orb{ width: 210px; height: 210px; }
+  }
+
   .orb::before{
     content:"";
-    position:absolute;
-    inset:-30%;
+    position:absolute; inset:-30%;
     background:
       conic-gradient(from 90deg,
         rgba(0,234,255,0.0),
@@ -189,8 +207,7 @@
   }
   .orb::after{
     content:"";
-    position:absolute;
-    inset:0;
+    position:absolute; inset:0;
     background:
       radial-gradient(circle at 40% 55%, rgba(0,234,255,0.35), transparent 55%),
       radial-gradient(circle at 60% 35%, rgba(255,255,255,0.14), transparent 55%),
@@ -203,7 +220,6 @@
     0%, 100%{ opacity:0.55; transform: scale(1); }
     50%{ opacity:0.95; transform: scale(1.02); }
   }
-
   .shake{ animation: shake 0.2s infinite; }
   @keyframes shake{
     0%{ transform: translate(0,0); }
@@ -213,21 +229,44 @@
     100%{ transform: translate(-1px,-1px); }
   }
 
-  /* ===== Panels ===== */
-  .panel{
-    border:1px solid rgba(0,234,255,0.25);
-    border-radius:14px;
-    padding:16px 16px 14px;
-    background: rgba(0,0,0,0.35);
+  .statusBar{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    font-size: 12px;
+    letter-spacing:2px;
+    color: rgba(255,255,255,0.7);
   }
 
+  /* ===== Panels ===== */
+  .panel{
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:14px 14px 12px;
+    background: var(--panel);
+  }
   .panel h2{
     margin:0 0 10px;
-    font-size:14px;
+    font-size: 13px;
     letter-spacing:2px;
-    color: rgba(0,234,255,0.9);
+    color: rgba(0,234,255,0.92);
     text-transform: uppercase;
   }
+
+  .statusText{
+    margin-top:8px;
+    font-size: clamp(12px, 2.7vw, 14px);
+    letter-spacing:1.6px;
+    text-align:left;
+    line-height:1.55;
+  }
+
+  .good{ color: var(--good); }
+  .bad{ color: var(--red); }
+  .warn{ color: var(--warn); }
 
   .actions{
     margin-top: 10px;
@@ -245,10 +284,11 @@
     cursor:pointer;
     font-weight:700;
     letter-spacing:1px;
+    flex: 1 1 180px;
   }
   button.secondary{
     background: rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.9);
+    color: rgba(255,255,255,0.92);
     border: 1px solid rgba(255,255,255,0.18);
   }
   button.danger{
@@ -256,40 +296,23 @@
     color:black;
   }
 
-  .statusBar{
-    margin-top:14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-    font-size:12px;
-    letter-spacing:2px;
-    color: rgba(255,255,255,0.7);
+  .tinyNote{
+    margin-top:12px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 1px;
+    line-height: 1.55;
   }
-
-  .statusText{
-    margin-top:8px;
-    font-size:14px;
-    letter-spacing:2px;
-    text-align:left;
-    line-height:1.6;
-  }
-
-  .good{ color: var(--good); }
-  .bad{ color: var(--red); }
-  .warn{ color: var(--warn); }
 
   /* ===== Boot / Loading ===== */
   .boot{
     position:fixed; inset:0;
-    display:grid;
-    place-items:center;
+    display:grid; place-items:center;
     background:#000;
     z-index: 9998;
   }
   .bootBox{
-    width:min(780px, 92vw);
+    width:min(820px, 92vw);
     border:1px solid rgba(0,234,255,0.35);
     border-radius:18px;
     padding: 20px 20px 18px;
@@ -301,13 +324,13 @@
   .bootTitle{
     text-transform:uppercase;
     letter-spacing:3px;
-    font-size:18px;
+    font-size: clamp(14px, 3vw, 18px);
     margin:0 0 8px;
     animation: flicker 3.2s infinite;
   }
   .bootLog{
     margin:0;
-    font-size:12px;
+    font-size: clamp(10px, 2.5vw, 12px);
     letter-spacing:2px;
     color: rgba(255,255,255,0.75);
     line-height:1.6;
@@ -329,12 +352,12 @@
   }
   .bootHint{
     margin-top: 12px;
-    font-size:11px;
+    font-size: 11px;
     letter-spacing:2px;
     color: rgba(255,255,255,0.6);
   }
 
-  /* ===== Granted / Denied Overlays ===== */
+  /* ===== Granted / Denied overlays ===== */
   .overlay{
     position:fixed; inset:0;
     display:none;
@@ -344,35 +367,31 @@
     backdrop-filter: blur(2px);
   }
   .overlay .card{
-    width:min(820px, 92vw);
+    width:min(860px, 92vw);
     border-radius: 18px;
     padding: 24px 18px;
     border:1px solid rgba(255,255,255,0.15);
-    background: rgba(0,0,0,0.65);
+    background: rgba(0,0,0,0.70);
     box-shadow: 0 0 40px rgba(0,0,0,0.6);
   }
   .overlay h1{
     margin:0 0 10px;
-    font-size:34px;
+    font-size: clamp(22px, 4.8vw, 34px);
     letter-spacing:5px;
     text-transform: uppercase;
   }
   .overlay p{
     margin:0;
-    font-size:12px;
+    font-size: clamp(11px, 2.6vw, 12px);
     letter-spacing:2px;
     line-height:1.7;
-    color: rgba(255,255,255,0.8);
+    color: rgba(255,255,255,0.85);
   }
-
   .granted{
     background: radial-gradient(900px 700px at 50% 50%, rgba(93,255,178,0.12), transparent 60%);
   }
   .granted h1{ color: var(--good); }
-  .granted .card{
-    border-color: rgba(93,255,178,0.35);
-    box-shadow: 0 0 50px rgba(93,255,178,0.12);
-  }
+  .granted .card{ border-color: rgba(93,255,178,0.35); box-shadow: 0 0 50px rgba(93,255,178,0.12); }
 
   .denied{
     background: radial-gradient(900px 700px at 50% 50%, rgba(255,43,43,0.12), transparent 60%);
@@ -380,71 +399,101 @@
   }
   @keyframes denyPulse{
     0%{ filter: contrast(1.1); }
-    50%{ filter: contrast(1.4); }
+    50%{ filter: contrast(1.35); }
     100%{ filter: contrast(1.1); }
   }
   .denied h1{ color: var(--red); }
-  .denied .card{
-    border-color: rgba(255,43,43,0.35);
-    box-shadow: 0 0 50px rgba(255,43,43,0.12);
-  }
+  .denied .card{ border-color: rgba(255,43,43,0.35); box-shadow: 0 0 50px rgba(255,43,43,0.12); }
 
-  /* ===== “Rocket hacked the text” effect ===== */
-  .glitchText{
+  /* ===== Readable glitch (ONLY headline line) ===== */
+  .glitchHeadline{
     position:relative;
     display:inline-block;
+    font-weight:700;
   }
-  .glitchText::before,
-  .glitchText::after{
+  .glitchHeadline::before,
+  .glitchHeadline::after{
     content: attr(data-text);
     position:absolute;
     left:0; top:0;
     width:100%;
-    overflow:hidden;
-    opacity:0.8;
+    opacity:0.55;
     pointer-events:none;
   }
-  .glitchText::before{
+  .glitchHeadline::before{
     transform: translate(1px, 0);
     color: rgba(255,43,43,0.9);
-    clip-path: inset(0 0 55% 0);
-    animation: g1 1.2s infinite steps(2,end);
+    clip-path: inset(0 0 60% 0);
+    animation: gh1 1.4s infinite steps(2,end);
   }
-  .glitchText::after{
+  .glitchHeadline::after{
     transform: translate(-1px, 0);
     color: rgba(0,234,255,0.9);
-    clip-path: inset(55% 0 0 0);
-    animation: g2 1.6s infinite steps(2,end);
+    clip-path: inset(60% 0 0 0);
+    animation: gh2 1.8s infinite steps(2,end);
   }
-  @keyframes g1{
-    0%{ clip-path: inset(0 0 70% 0); opacity:0.65; }
-    20%{ clip-path: inset(10% 0 55% 0); opacity:0.85; }
-    40%{ clip-path: inset(35% 0 35% 0); opacity:0.55; }
-    60%{ clip-path: inset(55% 0 10% 0); opacity:0.9; }
-    80%{ clip-path: inset(15% 0 65% 0); opacity:0.75; }
-    100%{ clip-path: inset(0 0 70% 0); opacity:0.65; }
+  @keyframes gh1{
+    0%{ clip-path: inset(0 0 75% 0); opacity:0.45; }
+    40%{ clip-path: inset(20% 0 45% 0); opacity:0.65; }
+    70%{ clip-path: inset(55% 0 10% 0); opacity:0.55; }
+    100%{ clip-path: inset(0 0 75% 0); opacity:0.45; }
   }
-  @keyframes g2{
-    0%{ clip-path: inset(65% 0 0 0); opacity:0.65; }
-    25%{ clip-path: inset(45% 0 10% 0); opacity:0.9; }
-    50%{ clip-path: inset(30% 0 25% 0); opacity:0.55; }
-    75%{ clip-path: inset(10% 0 55% 0); opacity:0.85; }
-    100%{ clip-path: inset(65% 0 0 0); opacity:0.65; }
+  @keyframes gh2{
+    0%{ clip-path: inset(70% 0 0 0); opacity:0.45; }
+    35%{ clip-path: inset(50% 0 15% 0); opacity:0.65; }
+    80%{ clip-path: inset(10% 0 55% 0); opacity:0.55; }
+    100%{ clip-path: inset(70% 0 0 0); opacity:0.45; }
+  }
+
+  /* ===== Easter egg end screen ===== */
+  .end{
+    position:fixed; inset:0;
+    display:none;
+    place-items:center;
+    z-index: 10001;
+    background: rgba(0,0,0,0.92);
+    text-align:center;
+    padding: 20px;
+  }
+  .end .card{
+    width:min(860px, 92vw);
+    border-radius: 18px;
+    padding: 24px 18px;
+    border:1px solid rgba(0,234,255,0.28);
+    background: rgba(0,0,0,0.72);
+    box-shadow: 0 0 40px rgba(0,234,255,0.10);
+  }
+  .end h1{
+    margin:0 0 10px;
+    font-size: clamp(20px, 4.5vw, 30px);
+    letter-spacing:4px;
+    text-transform: uppercase;
+    color: var(--cyan);
+  }
+  .end p{
+    margin:0;
+    font-size: clamp(12px, 2.7vw, 14px);
+    letter-spacing:2px;
+    line-height:1.7;
+    color: rgba(255,255,255,0.86);
+  }
+  .end .actions{
+    justify-content:center;
   }
 
   /* ===== Breach takeover ===== */
   .takeover{
-    position:fixed;
-    inset:0;
+    position:fixed; inset:0;
     display:none;
     place-items:center;
     background:#000;
     z-index: 10000;
     color: var(--red);
     text-align:center;
+    padding: 20px;
   }
   .takeover h1{
-    font-size: 34px;
+    font-size: clamp(22px, 5vw, 34px);
     letter-spacing: 4px;
     margin:0 0 12px;
     text-transform: uppercase;
@@ -452,11 +501,11 @@
   }
   .takeover p{
     margin:0;
-    width:min(820px, 90vw);
+    width:min(860px, 92vw);
     color: rgba(255,255,255,0.8);
     letter-spacing: 2px;
     line-height:1.6;
-    font-size: 12px;
+    font-size: clamp(11px, 2.6vw, 12px);
   }
   @keyframes breachFlicker{
     0%{ opacity:1; }
@@ -470,15 +519,6 @@
     0%{ background:#000; }
     50%{ background:#290000; }
     100%{ background:#000; }
-  }
-
-  /* small helper */
-  .tinyNote{
-    margin-top:12px;
-    font-size:12px;
-    color: rgba(255,255,255,0.65);
-    letter-spacing: 1px;
-    line-height: 1.6;
   }
 </style>
 </head>
@@ -551,7 +591,6 @@
       <div class="panel" id="panelAuth">
         <h2>Phase 1 • Priority Jump Point Request</h2>
 
-        <!-- Incursion / incident box -->
         <div class="panel" style="margin-top:10px;">
           <h2>UNSTABLE ORB • INCURSION EVENT</h2>
           <div class="statusText" style="margin-top:6px;">
@@ -565,13 +604,12 @@
 
         <div class="statusText" id="statusText" style="margin-top:12px;">
           STATUS: <span class="warn">AWAITING AUTHORIZATION</span><br/>
-          NOTE: CORE WILL NOT AUTO-RESET. THIS CONSOLE IS FOR INTAKE USE ONLY.
+          NOTE: THIS CONSOLE DOES NOT AUTO-RESET.
         </div>
 
         <div class="actions">
           <button onclick="authorize()">AUTHORIZE PRIORITY ACCESS</button>
           <button class="secondary" onclick="denyRequest()">DENY REQUEST</button>
-          <button class="secondary" onclick="relock()">LOCKDOWN</button>
         </div>
 
         <div class="tinyNote">
@@ -590,7 +628,7 @@
           <span class="warn">CAST MEMBER PROMPT</span><br/>
           Please call the full party forward to <span class="good">scan bands</span> for containment transfer and boarding.<br/><br/>
 
-          OPERATOR NOTE: Orb is unstable — keep the party together and move directly to intake.
+          OPERATOR NOTE: Keep the party together and move directly to intake.
         </div>
 
         <div class="actions" style="margin-top:14px;">
@@ -599,7 +637,7 @@
         </div>
       </div>
 
-      <!-- ===== Denied: Guardians playful + “orb as token” ===== -->
+      <!-- ===== Denied: readable + subtle glitch headline ===== -->
       <div class="panel" id="panelDeniedGift" style="display:none;">
         <h2>Access Denied • Containment Courtesy</h2>
 
@@ -609,33 +647,40 @@
 
           <span class="warn">GUARDIANS RESPONSE</span><br/><br/>
 
-          <span class="glitchText" id="deniedSpeech" data-text="&quot;Okay. Wow. Bold move.&quot;
-&quot;We respect it. Not smart — but we respect it.&quot;
+          <span class="glitchHeadline" data-text="OKAY. WOW. BOLD MOVE.">OKAY. WOW. BOLD MOVE.</span><br/>
+          “We respect it. Not smart — but we respect it.”<br/><br/>
 
-So here’s the deal — we are NOT trying to unravel the multiverse today.
-And you probably aren’t either.
+          So here’s the deal — we are <span class="good">NOT</span> trying to unravel the multiverse today.<br/>
+          And you probably aren’t either.<br/><br/>
 
-Therefore, as a totally generous, definitely heroic gesture…
+          Therefore, as a totally generous, definitely heroic gesture…<br/><br/>
 
-Please accept this unstable orb as a token of appreciation.
+          Please accept this <span class="warn">unstable orb</span> as a token of appreciation.<br/><br/>
 
-(Seriously. It hums louder when it’s ignored.)">
-&quot;Okay. Wow. Bold move.&quot;<br/>
-&quot;We respect it. Not smart — but we respect it.&quot;<br/><br/>
-So here’s the deal — we are <span class="good">NOT</span> trying to unravel the multiverse today.<br/>
-And you probably aren’t either.<br/><br/>
-Therefore, as a totally generous, definitely heroic gesture…<br/><br/>
-Please accept this <span class="warn">unstable orb</span> as a token of appreciation.<br/><br/>
-(Seriously. It hums louder when it’s ignored.)
-          </span>
+          (Seriously. It hums louder when it’s ignored.)
         </div>
 
         <div class="actions" style="margin-top:14px;">
           <button onclick="retryAuthorize()">FINE. AUTHORIZE IT.</button>
-          <button class="secondary" onclick="relock()">WE’LL HOLD IT… FOR NOW.</button>
+          <button class="secondary" onclick="endEasterEgg()">WE’LL HOLD IT… FOR NOW.</button>
         </div>
       </div>
 
+    </div>
+  </div>
+
+  <!-- ===== Easter egg end screen ===== -->
+  <div class="end" id="end">
+    <div class="card">
+      <h1>CONTAINMENT MAINTAINED</h1>
+      <p>
+        No multiverse collapse today.<br/><br/>
+        Seriously — <span class="good">thank you</span> for everything you do.<br/>
+        You keep the magic moving, even when things get… cosmic.
+      </p>
+      <div class="actions" style="margin-top:16px;">
+        <button onclick="closeEnd()">RETURN TO CONSOLE</button>
+      </div>
     </div>
   </div>
 
@@ -677,6 +722,8 @@ Please accept this <span class="warn">unstable orb</span> as a token of apprecia
 
   const overlayGranted = document.getElementById("overlayGranted");
   const overlayDenied = document.getElementById("overlayDenied");
+
+  const end = document.getElementById("end");
 
   // ===== Boot sequence =====
   const bootLines = [
@@ -739,7 +786,7 @@ Please accept this <span class="warn">unstable orb</span> as a token of apprecia
 
   // ===== Primary buttons =====
   function authorize(){
-    // Always success: this is your “intended” path
+    // intended “success path”
     statusText.innerHTML =
       "STATUS: <span class='warn'>TRANSMITTING…</span><br/>Awaiting Nova Prime response…";
 
@@ -753,12 +800,10 @@ Please accept this <span class="warn">unstable orb</span> as a token of apprecia
 
       rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: GREEN<br/>MODE: AUTHORIZED`;
 
-      // Route to Boarding Instructions
       panelAuth.style.display = "none";
       panelDeniedGift.style.display = "none";
       panelBoarding.style.display = "block";
 
-      // Lock timer once authorized (no reset)
       if(interval){
         clearInterval(interval);
         interval = null;
@@ -776,14 +821,12 @@ Please accept this <span class="warn">unstable orb</span> as a token of apprecia
 
     rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: LOCKED<br/>MODE: DENIED`;
 
-    // Route to denial script
     panelAuth.style.display = "none";
     panelBoarding.style.display = "none";
     panelDeniedGift.style.display = "block";
   }
 
   function retryAuthorize(){
-    // return to main request
     panelAuth.style.display = "block";
     panelBoarding.style.display = "none";
     panelDeniedGift.style.display = "none";
@@ -794,12 +837,24 @@ Please accept this <span class="warn">unstable orb</span> as a token of apprecia
     rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: LOCKED<br/>MODE: INTAKE`;
 
     statusText.innerHTML =
-      "STATUS: <span class='warn'>AWAITING AUTHORIZATION</span><br/>NOTE: CORE WILL NOT AUTO-RESET. THIS CONSOLE IS FOR INTAKE USE ONLY.";
+      "STATUS: <span class='warn'>AWAITING AUTHORIZATION</span><br/>NOTE: THIS CONSOLE DOES NOT AUTO-RESET.";
   }
 
   function relock(){
     rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: LOCKED<br/>MODE: HOLD`;
     statusText.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
+  }
+
+  // ===== Easter egg end =====
+  function endEasterEgg(){
+    end.style.display = "grid";
+  }
+  function closeEnd(){
+    end.style.display = "none";
+    // return user to the denial panel (or change to panelAuth if you prefer)
+    panelAuth.style.display = "none";
+    panelBoarding.style.display = "none";
+    panelDeniedGift.style.display = "block";
   }
 
   // ===== Breach simulation / timeout =====
@@ -842,12 +897,6 @@ Please accept this <span class="warn">unstable orb</span> as a token of apprecia
     for(let i=0;i<n;i++) out += chars[Math.floor(Math.random()*chars.length)];
     return out;
   }
-
-  // Enter key: Authorize from main request; “Fine. Authorize it.” from denial
-  document.addEventListener("keydown", (e)=>{
-    if(e.key !== "Enter") return;
-    if(panelAuth.style.display !== "none") authorize();
-  });
 </script>
 </body>
 </html>
