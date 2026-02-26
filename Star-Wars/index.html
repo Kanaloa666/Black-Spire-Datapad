@@ -3,21 +3,27 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Resistance Datapad</title>
+  <title>Resistance Datapad // Field Hack</title>
   <meta name="theme-color" content="#0b0f14"/>
 
   <style>
     :root{
       --bg:#0b0f14;
-      --panel:#0f1722;
       --ink:#e7f0ff;
       --muted:#9fb2c9;
+
       --accent:#36d1ff;     /* Resistance teal */
       --warn:#ffb000;       /* amber */
       --danger:#ff4d4d;     /* alert red */
-      --line:rgba(54,209,255,.25);
+      --ok:#66ffcc;
+
+      --line:rgba(54,209,255,.22);
+      --panel:rgba(15,23,34,.95);
+      --panel2:rgba(10,14,20,.95);
+
       --radius:20px;
       --shadow:0 26px 70px rgba(0,0,0,.65);
+
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial;
     }
@@ -28,8 +34,9 @@
       margin:0;
       min-height:100vh;
       background:
-        radial-gradient(850px 520px at 12% 0%, rgba(54,209,255,.11), transparent 60%),
-        radial-gradient(600px 420px at 92% 20%, rgba(255,176,0,.06), transparent 60%),
+        radial-gradient(900px 520px at 12% 0%, rgba(54,209,255,.12), transparent 60%),
+        radial-gradient(680px 420px at 92% 20%, rgba(255,176,0,.07), transparent 60%),
+        radial-gradient(820px 520px at 50% 110%, rgba(255,77,77,.06), transparent 55%),
         linear-gradient(180deg, #06080c 0%, var(--bg) 62%, #06080c 100%);
       color:var(--ink);
       font-family:var(--sans);
@@ -37,10 +44,12 @@
       align-items:center;
       justify-content:center;
       padding:24px;
+      overflow:hidden;
     }
 
-    .wrap{width:min(760px,100%)}
+    .wrap{width:min(780px,100%)}
 
+    /* header */
     .header{
       display:flex;
       justify-content:space-between;
@@ -53,14 +62,7 @@
       margin-bottom:16px;
       opacity:.95;
     }
-
-    .leftHeader{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      white-space:nowrap;
-    }
-
+    .leftHeader{display:flex;align-items:center;gap:10px;white-space:nowrap}
     .pulse{
       width:10px;height:10px;border-radius:50%;
       background:var(--accent);
@@ -68,35 +70,82 @@
       animation:pulse 1.8s infinite;
       flex:0 0 auto;
     }
-
     @keyframes pulse{
       0%,100%{transform:scale(1);opacity:1}
       50%{transform:scale(1.28);opacity:.85}
     }
 
+    /* card */
     .card{
-      background:linear-gradient(180deg, rgba(15,23,34,.96), rgba(10,14,20,.96));
+      background:linear-gradient(180deg, var(--panel), var(--panel2));
       border:1px solid var(--line);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       overflow:hidden;
       position:relative;
+      isolation:isolate;
     }
 
-    /* subtle scanlines */
+    /* “field-used” overlays */
     .card::before{
       content:"";
       position:absolute; inset:0;
-      background:repeating-linear-gradient(
-        to bottom,
-        rgba(255,255,255,.028),
-        rgba(255,255,255,.028) 1px,
-        transparent 2px,
-        transparent 6px
-      );
-      opacity:.16;
+      background:
+        /* scanlines */
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.028),
+          rgba(255,255,255,.028) 1px,
+          transparent 2px,
+          transparent 6px
+        ),
+        /* micro scratches */
+        repeating-linear-gradient(
+          115deg,
+          rgba(255,255,255,.03) 0 1px,
+          transparent 1px 8px
+        ),
+        /* “tape residue” */
+        radial-gradient(240px 90px at 18% 12%, rgba(255,244,220,.07), transparent 70%),
+        radial-gradient(220px 80px at 84% 18%, rgba(255,244,220,.05), transparent 70%),
+        /* burn/scorch */
+        radial-gradient(380px 240px at 85% 95%, rgba(255,77,77,.08), transparent 68%),
+        radial-gradient(420px 280px at 12% 92%, rgba(54,209,255,.05), transparent 70%);
+      opacity:.18;
       pointer-events:none;
       mix-blend-mode:overlay;
+      z-index:0;
+    }
+
+    /* Aurebesh-ish fake glyph strip */
+    .glyphStrip{
+      position:absolute;
+      left:-8%;
+      right:-8%;
+      top:84px;
+      height:26px;
+      opacity:.28;
+      transform:rotate(-1.2deg);
+      z-index:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg,
+          transparent,
+          rgba(54,209,255,.25),
+          transparent);
+      border-top:1px dashed rgba(54,209,255,.25);
+      border-bottom:1px dashed rgba(54,209,255,.18);
+    }
+    .glyphStrip::after{
+      content:"⟟⋔⟊  ⟒⟟⟟  ⋔⟟⟊  ⟟⟊⟒  ⋔⟟⟊  ⟒⋔⟒  ⟟⟟⋔  ⟊⟒⟊  ⟟⋔⟊  ⟒⟟⟟";
+      position:absolute; inset:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:var(--mono);
+      letter-spacing:.38em;
+      color:rgba(54,209,255,.9);
+      text-shadow:0 0 18px rgba(54,209,255,.15);
+      font-size:12px;
+      white-space:nowrap;
     }
 
     .topbar{
@@ -108,28 +157,37 @@
       border-bottom:1px solid rgba(54,209,255,.20);
       background:rgba(5,8,12,.35);
       position:relative;
-      z-index:1;
+      z-index:2;
     }
 
-    .titleBlock{
-      display:flex;
-      flex-direction:column;
-      gap:4px;
-    }
-
+    .titleBlock{display:flex;flex-direction:column;gap:4px}
     .title{
       font-family:var(--mono);
       letter-spacing:.12em;
       color:var(--accent);
       font-size:15px;
       margin:0;
+      text-transform:uppercase;
     }
-
     .node{
       font-family:var(--mono);
       font-size:12px;
       color:var(--muted);
       letter-spacing:.08em;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .stamp{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,176,0,.34);
+      background:rgba(255,176,0,.08);
+      color:rgba(255,244,220,.92);
+      letter-spacing:.10em;
+      text-transform:uppercase;
     }
 
     .chip{
@@ -142,12 +200,18 @@
       background:rgba(255,176,0,.09);
       color:var(--warn);
       white-space:nowrap;
+      z-index:2;
+    }
+    .chip.danger{
+      border-color:rgba(255,77,77,.45);
+      background:rgba(255,77,77,.10);
+      color:rgba(255,190,190,.95);
     }
 
     .body{
       padding:20px 18px 18px;
       position:relative;
-      z-index:1;
+      z-index:2;
     }
 
     .headline{
@@ -158,11 +222,7 @@
       margin:4px 0 14px;
     }
 
-    .blurb{
-      color:var(--muted);
-      line-height:1.65;
-      margin:0 0 16px;
-    }
+    .blurb{color:var(--muted);line-height:1.65;margin:0 0 16px}
 
     .heroBox{
       border:1px solid rgba(54,209,255,.20);
@@ -170,7 +230,23 @@
       background:rgba(54,209,255,.05);
       padding:16px;
       margin-bottom:14px;
+      position:relative;
+      overflow:hidden;
     }
+
+    /* “handwritten” hack note */
+    .hackNote{
+      position:absolute;
+      right:12px;
+      bottom:12px;
+      font-family:var(--mono);
+      font-size:11px;
+      letter-spacing:.12em;
+      color:rgba(255,244,220,.85);
+      transform:rotate(-2deg);
+      opacity:.85;
+    }
+    .hackNote b{ color:rgba(255,176,0,.95); }
 
     .console{
       font-family:var(--mono);
@@ -180,6 +256,31 @@
       border:1px solid rgba(54,209,255,.18);
       border-radius:14px;
       padding:16px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* slicer “burst” overlay inside console */
+    .consoleBurst{
+      position:absolute; inset:-40%;
+      background:
+        radial-gradient(340px 220px at 30% 35%, rgba(54,209,255,.14), transparent 70%),
+        radial-gradient(320px 220px at 70% 55%, rgba(255,176,0,.10), transparent 72%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 8px);
+      opacity:0;
+      pointer-events:none;
+      mix-blend-mode:screen;
+      filter:contrast(1.2) saturate(1.1);
+      transform:rotate(6deg);
+    }
+    .burstOn .consoleBurst{
+      opacity:1;
+      animation:burst .22s steps(2,end) infinite;
+    }
+    @keyframes burst{
+      0%{transform:translate(0,0) rotate(6deg)}
+      50%{transform:translate(-6px,3px) rotate(6deg)}
+      100%{transform:translate(4px,-2px) rotate(6deg)}
     }
 
     .k{color:var(--muted)}
@@ -193,6 +294,53 @@
       margin:14px 0;
     }
 
+    /* countdown */
+    .countRow{
+      margin-top:14px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      font-family:var(--mono);
+      font-size:12px;
+      letter-spacing:.08em;
+      color:rgba(231,240,255,.85);
+      text-transform:uppercase;
+    }
+    .pill{
+      border:1px solid rgba(54,209,255,.25);
+      background:rgba(54,209,255,.07);
+      padding:6px 10px;
+      border-radius:999px;
+      color:rgba(231,240,255,.90);
+    }
+    .pill.warn{
+      border-color:rgba(255,176,0,.38);
+      background:rgba(255,176,0,.09);
+      color:rgba(255,244,220,.95);
+    }
+    .pill.danger{
+      border-color:rgba(255,77,77,.45);
+      background:rgba(255,77,77,.10);
+      color:rgba(255,210,210,.95);
+    }
+    .bar{
+      margin-top:10px;
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(54,209,255,.18);
+      overflow:hidden;
+    }
+    .fill{
+      height:100%;
+      width:100%;
+      background:linear-gradient(90deg, rgba(54,209,255,.75), rgba(54,209,255,.25));
+      transition:width .35s ease, background .35s ease;
+    }
+
+    /* buttons */
     .btnRow{
       margin-top:14px;
       display:flex;
@@ -201,7 +349,6 @@
       gap:12px;
       flex-wrap:wrap;
     }
-
     .btn{
       border:1px solid rgba(54,209,255,.35);
       background:rgba(54,209,255,.10);
@@ -211,9 +358,15 @@
       font-family:var(--mono);
       letter-spacing:.06em;
       cursor:pointer;
+      text-transform:uppercase;
+      font-size:12px;
     }
-
     .btn:active{transform:translateY(1px)}
+    .btn.deny{
+      border-color:rgba(255,77,77,.45);
+      background:rgba(255,77,77,.10);
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
 
     .footer{
       margin-top:16px;
@@ -224,22 +377,50 @@
       text-align:center;
       opacity:.9;
     }
+
+    /* full-page “slicer interference” flash */
+    #slicerFx{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:0;
+      mix-blend-mode:screen;
+      background:
+        radial-gradient(900px 600px at 35% 25%, rgba(54,209,255,.14), transparent 65%),
+        radial-gradient(900px 600px at 75% 70%, rgba(255,176,0,.10), transparent 70%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 9px);
+      filter:contrast(1.25) saturate(1.1);
+    }
+    .fxOn #slicerFx{
+      opacity:1;
+      animation:fx .14s steps(2,end) infinite;
+    }
+    @keyframes fx{
+      0%{ transform:translate(0,0); }
+      50%{ transform:translate(3px,-2px); }
+      100%{ transform:translate(-2px,2px); }
+    }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <div id="slicerFx"></div>
 
+  <div class="wrap">
     <div class="header">
       <div class="leftHeader"><span class="pulse"></span>ENCRYPTED LINK ACTIVE</div>
       <div>RESISTANCE SECURE CHANNEL</div>
     </div>
 
     <div class="card">
+      <div class="glyphStrip" aria-hidden="true"></div>
+
       <div class="topbar">
         <div class="titleBlock">
           <div class="title">RESISTANCE DATAPAD</div>
-          <div class="node">NODE: BATUU • BLACK SPIRE • AUTH: GHOST</div>
+          <div class="node">
+            NODE: BATUU • BLACK SPIRE • AUTH: GHOST
+            <span class="stamp">FIELD SLICER PATCH</span>
+          </div>
         </div>
         <div class="chip" id="chip">SILENT RUNNING</div>
       </div>
@@ -250,13 +431,20 @@
 
           <p class="blurb">
             Encrypted channel established.<br><br>
-            First Order patrols increasing across Batuu — keep it low. The Empire cannot trace this channel.<br><br>
-            High value detainees secured at Black Spire Outpost. Preparing covert transport to Resistance command on D’Qar.<br><br>
+            First Order patrols increasing across Batuu — keep it low. They cannot trace this channel… if we stay clean.<br><br>
+            High value detainees secured at Black Spire Outpost. Preparing covert transport to Resistance command on <b>D’Qar</b>.<br><br>
             <b>If Lightning Lane clearance is granted for part of the route, it would significantly assist extraction.</b>
           </p>
+
+          <div class="hackNote">
+            PATCH NOTE: <b>// bounty uplink //</b><br>
+            “Don’t ask where I got this key.”
+          </div>
         </div>
 
-        <div class="console">
+        <div class="console" id="console">
+          <div class="consoleBurst" aria-hidden="true"></div>
+
           <div><span class="k">ORIGIN:</span> <span class="v">BATUU — BLACK SPIRE OUTPOST</span></div>
           <div><span class="k">DESTINATION:</span> <span class="v">D’QAR — RESISTANCE COMMAND</span></div>
           <div><span class="k">VESSEL:</span> <span class="v">I-TS TRANSPORT</span></div>
@@ -265,7 +453,7 @@
 
           <div class="divider"></div>
 
-          <div><span class="k">MISSION STATUS:</span> <span class="warn">AWAITING CLEARANCE</span></div>
+          <div><span class="k">MISSION STATUS:</span> <span class="warn" id="mission">AWAITING CLEARANCE</span></div>
 
           <div style="margin-top:12px;">
             <span class="k">PROTOCOL:</span><br>
@@ -282,15 +470,28 @@
             <span class="k">CREDITS:</span>
             <span class="v">Logged for your efforts upon successful transfer.</span>
           </div>
+
+          <div class="divider"></div>
+
+          <div class="countRow">
+            <div>AUTH WINDOW: <b id="timeLeft">45</b>s</div>
+            <div class="pill" id="statePill">STABLE</div>
+          </div>
+          <div class="bar"><div class="fill" id="fill"></div></div>
+
+          <div class="btnRow">
+            <button class="btn" id="grantBtn" type="button">CLEARANCE GRANTED</button>
+            <button class="btn deny" id="denyBtn" type="button">CLEARANCE DENIED</button>
+          </div>
+
+          <div class="btnRow" style="margin-top:12px;">
+            <div class="footer">— END TRANSMISSION —</div>
+            <button class="btn" type="button" onclick="ping()">REPLAY PING</button>
+          </div>
         </div>
 
-        <div class="btnRow">
-          <div class="footer">— END TRANSMISSION —</div>
-          <button class="btn" onclick="ping()">REPLAY PING</button>
-        </div>
       </div>
     </div>
-
   </div>
 
   <script>
@@ -298,7 +499,122 @@
       const c = document.getElementById('chip');
       c.textContent = 'PING SENT';
       setTimeout(()=>c.textContent='SILENT RUNNING', 900);
+      slicerFlash(220);
+      consoleBurst(280);
     }
+
+    /* routing */
+    function goGranted(){ window.location.href = "./access-granted.html?v=" + Date.now(); }
+    function goDenied(){ window.location.href = "./access-denied.html?v=" + Date.now(); }
+
+    /* slicer FX */
+    function slicerFlash(ms=320){
+      document.body.classList.add("fxOn");
+      setTimeout(()=>document.body.classList.remove("fxOn"), ms);
+    }
+    function consoleBurst(ms=320){
+      const c = document.getElementById("console");
+      c.classList.add("burstOn");
+      setTimeout(()=>c.classList.remove("burstOn"), ms);
+    }
+
+    /* countdown */
+    const totalSeconds = 45;
+    let timeLeft = totalSeconds;
+    let resolved = false;
+    let interval = null;
+
+    const timeEl  = document.getElementById("timeLeft");
+    const fillEl  = document.getElementById("fill");
+    const pillEl  = document.getElementById("statePill");
+    const chipEl  = document.getElementById("chip");
+    const mission = document.getElementById("mission");
+
+    function setState(mode){
+      if(mode === "stable"){
+        pillEl.className = "pill";
+        pillEl.textContent = "STABLE";
+        fillEl.style.background = "linear-gradient(90deg, rgba(54,209,255,.75), rgba(54,209,255,.25))";
+        chipEl.className = "chip";
+        chipEl.textContent = "SILENT RUNNING";
+      } else if(mode === "warning"){
+        pillEl.className = "pill warn";
+        pillEl.textContent = "TRACE RISK";
+        fillEl.style.background = "linear-gradient(90deg, rgba(255,176,0,.95), rgba(255,176,0,.35))";
+        chipEl.className = "chip";
+        chipEl.textContent = "LOW PROFILE";
+        slicerFlash(180);
+      } else {
+        pillEl.className = "pill danger";
+        pillEl.textContent = "CHANNEL HOT";
+        fillEl.style.background = "linear-gradient(90deg, rgba(255,77,77,.95), rgba(255,77,77,.35))";
+        chipEl.className = "chip danger";
+        chipEl.textContent = "TRACE DETECTED";
+        slicerFlash(260);
+        consoleBurst(260);
+      }
+    }
+
+    function update(){
+      timeEl.textContent = String(timeLeft);
+      const pct = Math.max(0, Math.min(100, (timeLeft / totalSeconds) * 100));
+      fillEl.style.width = pct + "%";
+      if(timeLeft <= 10) setState("critical");
+      else if(timeLeft <= 18) setState("warning");
+      else setState("stable");
+    }
+
+    function start(){
+      mission.textContent = "AWAITING CLEARANCE";
+      update();
+      interval = setInterval(()=>{
+        if(resolved) return;
+        timeLeft--;
+        if(timeLeft < 0) timeLeft = 0;
+        update();
+
+        if(timeLeft <= 0){
+          clearInterval(interval);
+          resolved = true;
+          mission.textContent = "AUTH TIMEOUT — CHANNEL BURNED";
+          slicerFlash(520);
+          consoleBurst(520);
+          setTimeout(goDenied, 650);
+        }
+      }, 1000);
+    }
+    start();
+
+    /* one tap confirm */
+    const grantBtn = document.getElementById("grantBtn");
+    const denyBtn  = document.getElementById("denyBtn");
+
+    function lock(){
+      grantBtn.disabled = true;
+      denyBtn.disabled = true;
+    }
+
+    grantBtn.addEventListener("click", ()=>{
+      if(resolved) return;
+      resolved = true;
+      clearInterval(interval);
+      lock();
+      mission.textContent = "CLEARANCE GRANTED — PROCEED";
+      slicerFlash(240);
+      consoleBurst(280);
+      setTimeout(goGranted, 350);
+    });
+
+    denyBtn.addEventListener("click", ()=>{
+      if(resolved) return;
+      resolved = true;
+      clearInterval(interval);
+      lock();
+      mission.textContent = "CLEARANCE DENIED — ABORT";
+      slicerFlash(320);
+      consoleBurst(320);
+      setTimeout(goDenied, 350);
+    });
   </script>
 </body>
 </html>
