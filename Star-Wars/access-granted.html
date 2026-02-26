@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CLEARANCE GRANTED // RESISTANCE</title>
+<meta name="theme-color" content="#0b0f14"/>
+<style>
+:root{
+  --bg:#0b0f14; --ink:#e7f0ff; --muted:#9fb2c9;
+  --accent:#36d1ff; --ok:#66ffcc;
+  --line:rgba(54,209,255,.22);
+  --panel:rgba(15,23,34,.95);
+  --shadow:0 26px 70px rgba(0,0,0,.65);
+  --radius:20px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh;
+  background:
+    radial-gradient(850px 520px at 12% 0%, rgba(54,209,255,.12), transparent 60%),
+    linear-gradient(180deg, #06080c 0%, var(--bg) 62%, #06080c 100%);
+  color:var(--ink);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+}
+.card{
+  width:min(760px,100%);
+  background:linear-gradient(180deg, var(--panel), rgba(10,14,20,.95));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.card:before{
+  content:"";
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 2px 6px);
+  opacity:.14;
+  pointer-events:none;
+  mix-blend-mode:overlay;
+}
+h1{
+  margin:0;
+  font-family:var(--mono);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-size:16px;
+  color:var(--accent);
+  position:relative; z-index:1;
+}
+.p{
+  margin:14px 0 0;
+  color:var(--muted);
+  line-height:1.65;
+  position:relative; z-index:1;
+}
+.okBox{
+  margin-top:16px;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(102,255,204,.28);
+  background:rgba(102,255,204,.08);
+  font-family:var(--mono);
+  line-height:1.65;
+  color:rgba(231,240,255,.92);
+  position:relative; z-index:1;
+}
+.okBox b{ color:var(--ok); }
+a{
+  display:inline-block;
+  margin-top:16px;
+  border:1px solid rgba(54,209,255,.35);
+  background:rgba(54,209,255,.10);
+  color:var(--ink);
+  padding:10px 12px;
+  border-radius:12px;
+  font-family:var(--mono);
+  letter-spacing:.06em;
+  text-decoration:none;
+  text-transform:uppercase;
+  font-size:12px;
+  position:relative; z-index:1;
+}
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>CLEARANCE GRANTED</h1>
+    <div class="p">Field patch accepted. Keep moving.</div>
+
+    <div class="okBox">
+      <b>ACCESS GRANTED.</b><br>
+      CALL PRISONERS FORWARD.<br>
+      SCAN BANDS TO CONFIRM CUSTODY TRANSFER.<br>
+      ROUTE GREEN — PROCEED TO BOARDING.<br>
+      CREDITS LOGGED FOR YOUR EFFORTS.<br>
+      END OF LINE.
+    </div>
+
+    <a href="./">RETURN TO DATAPAD</a>
+  </div>
+
+<script>
+  setTimeout(() => { window.location.href = "./"; }, 10000);
+</script>
+</body>
+</html>
