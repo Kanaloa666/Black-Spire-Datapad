@@ -16,8 +16,8 @@
     --border: rgba(0,234,255,0.28);
   }
 
-  /* ===== Consistent sizing across phone + desktop ===== */
   *{ box-sizing:border-box; }
+
   html{
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
@@ -102,7 +102,7 @@
     100%{ transform: translateY(12px); }
   }
 
-  /* ===== Main Wrapper (mobile-first) ===== */
+  /* ===== Main Wrapper ===== */
   .wrap{
     width:min(980px, 92vw);
     margin: 18px auto 40px;
@@ -127,7 +127,6 @@
     line-height:1.1;
   }
 
-  /* clamp() makes phone + desktop consistent */
   .title h1{
     margin:0;
     font-size: clamp(16px, 3.2vw, 22px);
@@ -156,7 +155,7 @@
     color: rgba(255,255,255,0.7);
   }
 
-  /* ===== Layout: always stacks on phone ===== */
+  /* ===== Layout ===== */
   .coreRow{
     display:grid;
     grid-template-columns: 1fr;
@@ -185,6 +184,7 @@
       0 0 48px rgba(0,234,255,0.18);
     position:relative;
     overflow:hidden;
+    transition: filter .2s ease, transform .2s ease;
   }
   @media (min-width: 860px){
     .orb{ width: 210px; height: 210px; }
@@ -227,6 +227,12 @@
     50%{ transform: translate(-1px,1px); }
     75%{ transform: translate(1px,1px); }
     100%{ transform: translate(-1px,-1px); }
+  }
+
+  /* Orb “stabilize” flash */
+  .stabilize{
+    filter: brightness(1.15) saturate(1.2);
+    transform: scale(1.01);
   }
 
   .statusBar{
@@ -357,7 +363,7 @@
     color: rgba(255,255,255,0.6);
   }
 
-  /* ===== Granted / Denied overlays ===== */
+  /* ===== Overlays ===== */
   .overlay{
     position:fixed; inset:0;
     display:none;
@@ -365,6 +371,7 @@
     z-index: 9999;
     text-align:center;
     backdrop-filter: blur(2px);
+    padding: 18px;
   }
   .overlay .card{
     width:min(860px, 92vw);
@@ -387,11 +394,15 @@
     line-height:1.7;
     color: rgba(255,255,255,0.85);
   }
+
   .granted{
     background: radial-gradient(900px 700px at 50% 50%, rgba(93,255,178,0.12), transparent 60%);
   }
   .granted h1{ color: var(--good); }
-  .granted .card{ border-color: rgba(93,255,178,0.35); box-shadow: 0 0 50px rgba(93,255,178,0.12); }
+  .granted .card{
+    border-color: rgba(93,255,178,0.35);
+    box-shadow: 0 0 50px rgba(93,255,178,0.12);
+  }
 
   .denied{
     background: radial-gradient(900px 700px at 50% 50%, rgba(255,43,43,0.12), transparent 60%);
@@ -403,9 +414,21 @@
     100%{ filter: contrast(1.1); }
   }
   .denied h1{ color: var(--red); }
-  .denied .card{ border-color: rgba(255,43,43,0.35); box-shadow: 0 0 50px rgba(255,43,43,0.12); }
+  .denied .card{
+    border-color: rgba(255,43,43,0.35);
+    box-shadow: 0 0 50px rgba(255,43,43,0.12);
+  }
 
-  /* ===== Readable glitch (ONLY headline line) ===== */
+  .holdOverlay{
+    background: radial-gradient(900px 700px at 50% 50%, rgba(0,234,255,0.10), transparent 60%);
+  }
+  .holdOverlay .card{
+    border-color: rgba(0,234,255,0.35);
+    box-shadow: 0 0 50px rgba(0,234,255,0.10);
+  }
+  .holdOverlay h1{ color: var(--cyan); }
+
+  /* ===== Readable glitch headline (ONLY headline line) ===== */
   .glitchHeadline{
     position:relative;
     display:inline-block;
@@ -562,6 +585,17 @@
     </div>
   </div>
 
+  <div class="overlay holdOverlay" id="overlayHold">
+    <div class="card">
+      <h1>HOLD POSITION</h1>
+      <p id="holdText">
+        COOL. WE’LL JUST STAND HERE<br/>
+        HOLDING A REALITY-BENDING SPACE MARBLE.<br/>
+        NO PRESSURE.
+      </p>
+    </div>
+  </div>
+
   <!-- ===== MAIN UI ===== -->
   <div class="wrap" id="ui" style="display:none;">
     <div class="glitch-lines"></div>
@@ -632,12 +666,12 @@
         </div>
 
         <div class="actions" style="margin-top:14px;">
-          <button class="secondary" onclick="relock()">HOLD POSITION</button>
+          <button class="secondary" onclick="holdPosition()">HOLD POSITION</button>
           <button class="danger" onclick="forceBreach()">SIMULATE BREACH</button>
         </div>
       </div>
 
-      <!-- ===== Denied: readable + subtle glitch headline ===== -->
+      <!-- ===== Denied: Guardians playful + token orb + end easter egg ===== -->
       <div class="panel" id="panelDeniedGift" style="display:none;">
         <h2>Access Denied • Containment Courtesy</h2>
 
@@ -722,6 +756,8 @@
 
   const overlayGranted = document.getElementById("overlayGranted");
   const overlayDenied = document.getElementById("overlayDenied");
+  const overlayHold = document.getElementById("overlayHold");
+  const holdText = document.getElementById("holdText");
 
   const end = document.getElementById("end");
 
@@ -786,7 +822,6 @@
 
   // ===== Primary buttons =====
   function authorize(){
-    // intended “success path”
     statusText.innerHTML =
       "STATUS: <span class='warn'>TRANSMITTING…</span><br/>Awaiting Nova Prime response…";
 
@@ -840,9 +875,20 @@
       "STATUS: <span class='warn'>AWAITING AUTHORIZATION</span><br/>NOTE: THIS CONSOLE DOES NOT AUTO-RESET.";
   }
 
-  function relock(){
-    rightStatus.innerHTML = `NODE: XANDAR-RELAY-07<br/>SIGNAL: LOCKED<br/>MODE: HOLD`;
-    statusText.innerHTML = "STATUS: <span class='warn'>LOCKDOWN ENABLED</span><br/>Awaiting next command.";
+  // ===== HOLD POSITION (Guardians flavor + subtle orb stabilize) =====
+  function holdPosition(){
+    const lines = [
+      "COOL. WE’LL JUST STAND HERE<br/>HOLDING A REALITY-BENDING SPACE MARBLE.<br/>NO PRESSURE.",
+      "HOLDING. LIKE YOU SAID.<br/>IF THIS THING STARTS SINGING? THAT’S ON YOU.",
+      "WE ARE HOLDING POSITION.<br/>PLEASE ENJOY THIS ENTIRELY NORMAL COSMIC HUM.",
+      "COPY THAT.<br/>WE’LL BE OVER HERE — NOT DESTROYING REALITY. YOU’RE WELCOME."
+    ];
+    holdText.innerHTML = lines[Math.floor(Math.random() * lines.length)];
+
+    orb.classList.add("stabilize");
+    setTimeout(()=>orb.classList.remove("stabilize"), 1400);
+
+    showOverlay(overlayHold, 1400);
   }
 
   // ===== Easter egg end =====
@@ -851,7 +897,6 @@
   }
   function closeEnd(){
     end.style.display = "none";
-    // return user to the denial panel (or change to panelAuth if you prefer)
     panelAuth.style.display = "none";
     panelBoarding.style.display = "none";
     panelDeniedGift.style.display = "block";
@@ -897,6 +942,12 @@
     for(let i=0;i<n;i++) out += chars[Math.floor(Math.random()*chars.length)];
     return out;
   }
+
+  // Enter key quick action
+  document.addEventListener("keydown", (e)=>{
+    if(e.key !== "Enter") return;
+    if(panelAuth.style.display !== "none") authorize();
+  });
 </script>
 </body>
 </html>
