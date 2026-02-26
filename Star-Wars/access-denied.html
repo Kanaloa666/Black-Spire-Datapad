@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CLEARANCE DENIED // CHANNEL BURNED</title>
+<meta name="theme-color" content="#0b0f14"/>
+<style>
+:root{
+  --bg:#0b0f14; --ink:#e7f0ff; --muted:#9fb2c9;
+  --danger:#ff4d4d;
+  --line:rgba(255,77,77,.28);
+  --panel:rgba(15,23,34,.95);
+  --shadow:0 26px 70px rgba(0,0,0,.65);
+  --radius:20px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --sans: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; min-height:100vh;
+  background:
+    radial-gradient(850px 520px at 86% 8%, rgba(255,77,77,.12), transparent 60%),
+    radial-gradient(720px 520px at 12% 92%, rgba(54,209,255,.06), transparent 65%),
+    linear-gradient(180deg, #06080c 0%, var(--bg) 62%, #06080c 100%);
+  color:var(--ink);
+  font-family:var(--sans);
+  display:flex; align-items:center; justify-content:center;
+  padding:24px;
+  overflow:hidden;
+}
+#fx{
+  position:fixed; inset:0;
+  pointer-events:none;
+  opacity:.85;
+  mix-blend-mode:screen;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0 1px, transparent 1px 9px),
+    radial-gradient(900px 600px at 60% 40%, rgba(255,77,77,.18), transparent 70%);
+  animation:flicker .10s steps(2,end) infinite;
+}
+@keyframes flicker{
+  0%{ transform:translate(0,0); }
+  50%{ transform:translate(3px,-2px); }
+  100%{ transform:translate(-2px,2px); }
+}
+.card{
+  width:min(760px,100%);
+  background:linear-gradient(180deg, var(--panel), rgba(10,14,20,.95));
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:22px;
+  position:relative;
+  overflow:hidden;
+}
+.card:before{
+  content:"";
+  position:absolute; inset:0;
+  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.03) 0 1px, transparent 2px 6px);
+  opacity:.14;
+  pointer-events:none;
+  mix-blend-mode:overlay;
+}
+h1{
+  margin:0;
+  font-family:var(--mono);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  font-size:16px;
+  color:rgba(255,190,190,.95);
+  position:relative; z-index:1;
+}
+.p{
+  margin:14px 0 0;
+  color:var(--muted);
+  line-height:1.65;
+  position:relative; z-index:1;
+}
+.badBox{
+  margin-top:16px;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid rgba(255,77,77,.30);
+  background:rgba(255,77,77,.10);
+  font-family:var(--mono);
+  line-height:1.65;
+  color:rgba(231,240,255,.92);
+  position:relative; z-index:1;
+}
+.badBox b{ color:var(--danger); }
+pre{
+  margin:12px 0 0;
+  white-space:pre-wrap;
+  font-family:var(--mono);
+  font-size:12px;
+  color:rgba(255,190,190,.92);
+}
+a{
+  display:inline-block;
+  margin-top:16px;
+  border:1px solid rgba(255,77,77,.35);
+  background:rgba(255,77,77,.10);
+  color:var(--ink);
+  padding:10px 12px;
+  border-radius:12px;
+  font-family:var(--mono);
+  letter-spacing:.06em;
+  text-decoration:none;
+  text-transform:uppercase;
+  font-size:12px;
+  position:relative; z-index:1;
+}
+</style>
+</head>
+<body>
+<div id="fx"></div>
+
+<div class="card">
+  <h1>CLEARANCE DENIED</h1>
+  <div class="p">Trace spike detected. This channel is burned.</div>
+
+  <div class="badBox">
+    <b>ACCESS DENIED.</b><br>
+    CLEARANCE TOKEN REJECTED.<br>
+    FIRST ORDER TRACE ACTIVE.<br>
+    EXFIL WINDOW CLOSED.<br>
+    END OF LINE.
+    <pre id="log"></pre>
+  </div>
+
+  <a href="./">REINITIALIZE DATAPAD</a>
+</div>
+
+<script>
+const lines = [
+  "ALERT // ENCRYPTED LINK FLAGGED",
+  "TRACE // BATUU.NODE // HOT",
+  "LOCK // CLEARANCE ROUTE // CLOSED",
+  "SCRUB // TOKENS // INVALIDATED",
+  "JAM // COMMS BURST // COMPLETE",
+  "EOL // END OF LINE."
+];
+const el = document.getElementById("log");
+let i = 0;
+const iv = setInterval(()=>{
+  el.textContent += (el.textContent ? "\n" : "") + lines[i];
+  i++;
+  if(i >= lines.length) clearInterval(iv);
+}, 240);
+
+setTimeout(() => { window.location.href = "./"; }, 10000);
+</script>
+</body>
+</html>
