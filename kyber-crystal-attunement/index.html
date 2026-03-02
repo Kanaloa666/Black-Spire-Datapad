@@ -13,8 +13,6 @@
       --muted:#9aa6b2;
       --line:#1b2530;
       --accent:#4ad3ff;
-      --good:#67ffb8;
-      --warn:#ffb84a;
 
       --c-green:#44ff8a;
       --c-blue:#4aa3ff;
@@ -367,16 +365,6 @@
       margin-top:10px;
       line-height:1.55;
     }
-    .link{
-      background:transparent;
-      border:none;
-      padding:0;
-      color: var(--accent);
-      cursor:pointer;
-      text-decoration: underline;
-      font: inherit;
-      font-size:12px;
-    }
 
     .hidden{ display:none !important; }
   </style>
@@ -384,6 +372,19 @@
 
 <body class="crt">
   <div class="static" id="static"></div>
+
+  <!-- AUDIO (upload the 3 mp3s to kyber-crystal-attunement/audio/) -->
+  <audio id="startup" preload="auto">
+    <source src="audio/light-saber-startup.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="hum" loop preload="auto">
+    <source src="audio/lightsaber-hum.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="lockin" preload="auto">
+    <source src="audio/deep-harmonic-tonal-whoosh.mp3" type="audio/mpeg">
+  </audio>
 
   <div class="wrap">
     <div class="topbar">
@@ -418,14 +419,12 @@ Breathe once. Let Batuu fall away.</p>
               <p class="label">SIGNAL // LOW-POWER RESONANCE</p>
               <div class="aura"></div>
               <div class="ring" aria-hidden="true"></div>
-              <p class="tiny">
-                NOTE: This terminal does not store identity. It only reads resonance.
-              </p>
+              <p class="tiny">NOTE: This terminal does not store identity. It only reads resonance.</p>
             </div>
           </div>
 
           <div class="btnRow">
-            <button class="primary" onclick="go(2, {glitch:true})">BEGIN</button>
+            <button class="primary" onclick="startSequence(); go(2, {glitch:true});">BEGIN</button>
             <button class="ghost" onclick="softReset()">RESET</button>
           </div>
         </section>
@@ -449,7 +448,7 @@ Do not chase it. Let it approach.</p>
                   <div id="drift" style="height:100%; width:56%; background:linear-gradient(90deg, rgba(74,211,255,0.18), rgba(74,211,255,0.65)); box-shadow:0 0 14px rgba(74,211,255,0.20);"></div>
                 </div>
                 <p class="tiny" style="margin:10px 0 0;">
-                  When you answer, choose what feels true—fast. The crystal listens to instinct.
+                  Choose what feels true—fast. The crystal listens to instinct.
                 </p>
               </div>
             </div>
@@ -629,9 +628,6 @@ Do not chase it. Let it approach.</p>
                 <button onclick="manualPick('Blue')">Blue</button>
                 <button onclick="manualPick('Green')">Green</button>
                 <button onclick="manualPick('Red')">Red</button>
-                <!-- If you EVER want Black selectable, add:
-                <button onclick="manualPick('Black')">Black</button>
-                -->
                 <button class="ghost" onclick="toggleOverride(false)">Never mind</button>
               </div>
 
@@ -640,13 +636,6 @@ Do not chase it. Let it approach.</p>
               </p>
             </div>
           </div>
-
-          <p class="tiny">
-            <button class="link" onclick="showCredits()">terminal notes</button>
-            <span id="credits" class="hidden">
-              — built for Batuu-bound travelers. no data stored. no tracking. —
-            </span>
-          </p>
         </section>
 
       </div>
@@ -656,7 +645,7 @@ Do not chase it. Let it approach.</p>
   <script>
     // ====== CONFIG ======
     // Super rare BLACK outcome chance (independent of answers).
-    // Set 0.02 = 2% (about 1 in 50). Try 0.01 if you want it rarer.
+    // 0.02 = 2% (about 1 in 50). Set 0.01 if you want rarer.
     const BLACK_RARE_CHANCE = 0.02;
 
     // Optional tiny randomness for normal colors (leave at 0 for pure scoring).
@@ -676,6 +665,63 @@ Do not chase it. Let it approach.</p>
     const pages = ["p1","p2","p3","p4","p5","p6","p7"];
     const $ = (id) => document.getElementById(id);
 
+    // ====== AUDIO CONTROL ======
+    let audioReady = false;
+
+    function unlockAudio(){
+      if (audioReady) return;
+      audioReady = true;
+
+      const startup = $("startup");
+      const hum = $("hum");
+      const lockin = $("lockin");
+
+      // Tune volumes here
+      startup.volume = 0.60;
+      hum.volume = 0.18;
+      lockin.volume = 0.55;
+
+      startup.load();
+      hum.load();
+      lockin.load();
+    }
+
+    async function startSequence(){
+      unlockAudio();
+
+      const startup = $("startup");
+      const hum = $("hum");
+
+      try{
+        // power-up (one-shot)
+        startup.currentTime = 0;
+        await startup.play();
+
+        // begin hum shortly after power-up begins
+        setTimeout(() => {
+          hum.currentTime = 0;
+          hum.play().catch(()=>{});
+        }, 150);
+      } catch(e){
+        // if startup fails, try hum anyway
+        hum.play().catch(()=>{});
+      }
+    }
+
+    function setHum(level){
+      const hum = $("hum");
+      if (!hum) return;
+      hum.volume = Math.max(0, Math.min(1, level));
+    }
+
+    function playLockIn(){
+      const lockin = $("lockin");
+      if (!lockin) return;
+      lockin.currentTime = 0;
+      lockin.play().catch(()=>{});
+    }
+
+    // ====== UI HELPERS ======
     function randId(){
       const s = Math.random().toString(36).slice(2,6).toUpperCase();
       const t = Math.random().toString(36).slice(2,6).toUpperCase();
@@ -709,84 +755,71 @@ Do not chase it. Let it approach.</p>
 
       if(opts.glitch) staticGlitch();
 
+      // hum dynamics by scene
+      if (audioReady){
+        if (n === 6) setHum(0.24);      // loading tension
+        else if (n === 7) setHum(0.18); // result settle
+        else setHum(0.18);
+      }
+
       switch(n){
-        case 1:
-          setHeader("KYBER ATTUNEMENT PROTOCOL", "STANDBY");
-          break;
-        case 2:
-          setHeader("RESONANCE FIELD MONITOR", "LOCKED");
-          driftWobble();
-          break;
-        case 3:
-          setHeader("ATTUNEMENT // PHASE I", "INPUT REQUIRED");
-          break;
-        case 4:
-          setHeader("ATTUNEMENT // PHASE II", "INPUT REQUIRED");
-          break;
-        case 5:
-          setHeader("ATTUNEMENT // PHASE III", "INPUT REQUIRED");
-          break;
-        case 6:
-          setHeader("CALIBRATION // ANALYSIS", "RUNNING");
-          runLoadingThenResult();
-          break;
-        case 7:
-          setHeader("RESULT // KYBER RECOMMENDATION", "COMPLETE");
-          break;
+        case 1: setHeader("KYBER ATTUNEMENT PROTOCOL", "STANDBY"); break;
+        case 2: setHeader("RESONANCE FIELD MONITOR", "LOCKED"); driftWobble(); break;
+        case 3: setHeader("ATTUNEMENT // PHASE I", "INPUT REQUIRED"); break;
+        case 4: setHeader("ATTUNEMENT // PHASE II", "INPUT REQUIRED"); break;
+        case 5: setHeader("ATTUNEMENT // PHASE III", "INPUT REQUIRED"); break;
+        case 6: setHeader("CALIBRATION // ANALYSIS", "RUNNING"); runLoadingThenResult(); break;
+        case 7: setHeader("RESULT // KYBER RECOMMENDATION", "COMPLETE"); break;
       }
     }
 
     function answer(q, v){
       state.answers[q] = v;
-      staticGlitch(); // makes it feel terminal-ish
+      staticGlitch();
       if(q === "q1") go(4);
       if(q === "q2") go(5);
       if(q === "q3") go(6);
     }
 
+    // ====== SCORING ======
     function score(){
-      // reset
       for(const k of Object.keys(state.scores)) state.scores[k] = 0;
 
       const {q1,q2,q3} = state.answers;
 
-      // --- Normal scoring (Blue/Green/Yellow/Red) ---
-      // Q1: impulse under pressure
+      // Q1
       if(q1 === "protect"){ state.scores.Blue += 3; state.scores.Green += 1; }
       if(q1 === "observe"){ state.scores.Green += 3; state.scores.Yellow += 1; }
       if(q1 === "act"){ state.scores.Red += 3; state.scores.Yellow += 1; }
 
-      // Q2: meaning of power
+      // Q2
       if(q2 === "responsibility"){ state.scores.Blue += 3; state.scores.Green += 1; }
       if(q2 === "tool"){ state.scores.Yellow += 3; state.scores.Green += 1; }
       if(q2 === "weapon"){ state.scores.Red += 3; state.scores.Yellow += 1; }
 
-      // Q3: compass
+      // Q3
       if(q3 === "loyalty"){ state.scores.Blue += 3; state.scores.Green += 1; }
       if(q3 === "knowledge"){ state.scores.Green += 3; state.scores.Yellow += 1; }
       if(q3 === "freedom"){ state.scores.Yellow += 3; state.scores.Red += 1; }
 
-      // Optional tiny nudge
       if(Math.random() < RARE_GLITCH_CHANCE){
         const keys = ["Yellow","Blue","Green","Red"];
         state.scores[keys[(Math.random()*keys.length)|0]] += 1;
       }
 
-      // --- BLACK rare roll (super rare / cinematic) ---
+      // BLACK rare roll
       if(Math.random() < BLACK_RARE_CHANCE){
         state.result = "Black";
         return "Black";
       }
 
-      // Tie-break preference order (earlier wins ties)
+      // Tie-break order (earlier wins ties)
       const pref = ["Yellow","Blue","Green","Red"];
-
       let best = pref[0], bestScore = -Infinity;
       for(const k of pref){
         const s = state.scores[k];
         if(s > bestScore){ bestScore = s; best = k; }
       }
-
       state.result = best;
       return best;
     }
@@ -795,34 +828,23 @@ Do not chase it. Let it approach.</p>
       const lore = {
         Yellow: {
           title: "YELLOW — The Choice of the True",
-          text:
-            "Clarity without cruelty. Purpose without noise.\n" +
-            "You move with intent—and Batuu doesn’t miss it."
+          text: "Clarity without cruelty. Purpose without noise.\nYou move with intent—and Batuu doesn’t miss it."
         },
         Blue: {
           title: "BLUE — The Oath of the Guardian",
-          text:
-            "You stand when others step back.\n" +
-            "The crystal answers your steadiness, like a beacon through dust storms."
+          text: "You stand when others step back.\nThe crystal answers your steadiness, like a beacon through dust storms."
         },
         Green: {
           title: "GREEN — The Quiet Current",
-          text:
-            "Patience is not hesitation. Wisdom is not softness.\n" +
-            "Your resonance is steady—like stone warmed by twin suns."
+          text: "Patience is not hesitation. Wisdom is not softness.\nYour resonance is steady—like stone warmed by twin suns."
         },
         Red: {
           title: "RED — The Claim of Power",
-          text:
-            "The field sharpens around you.\n" +
-            "It does not ask permission. It waits to see if you will take what you want."
+          text: "The field sharpens around you.\nIt does not ask permission. It waits to see if you will take what you want."
         },
         Black: {
           title: "BLACK — The Void Answered",
-          text:
-            "A silence behind the signal.\n" +
-            "Something ancient stirs in the lattice.\n" +
-            "Keep your grip—Batuu remembers what it feeds."
+          text: "A silence behind the signal.\nSomething ancient stirs in the lattice.\nKeep your grip—Batuu remembers what it feeds."
         }
       };
       return lore[color] || lore.Yellow;
@@ -838,6 +860,7 @@ Do not chase it. Let it approach.</p>
       }[color] || "var(--accent)";
     }
 
+    // ====== LOADING + RESULT ======
     function runLoadingThenResult(){
       const color = score();
 
@@ -847,8 +870,6 @@ Do not chase it. Let it approach.</p>
 
       let p = 0;
       bar.style.width = "0%";
-      loadText.textContent = "Sampling field harmonics…";
-      loadLines.innerHTML = "&gt; establishing baseline…<br/>&gt; correcting drift…<br/>&gt; isolating signature…";
 
       const steps = [
         {t:"Sampling field harmonics…", lines:["establishing baseline…","correcting drift…","isolating signature…"]},
@@ -857,7 +878,6 @@ Do not chase it. Let it approach.</p>
         {t:"Finalizing recommendation…", lines:["mapping signature…","confirming output…","transfer ready…"]}
       ];
 
-      // Make BLACK feel like the terminal is struggling
       if(color === "Black"){
         steps[1].t = "WARNING: anomalous silence detected…";
         steps[2].t = "Containment routines failing…";
@@ -882,7 +902,6 @@ Do not chase it. Let it approach.</p>
         loadText.textContent = s.t;
         loadLines.innerHTML = `&gt; ${s.lines[0]}<br/>&gt; ${s.lines[1]}<br/>&gt; ${s.lines[2]}`;
 
-        // glitch behavior
         if(color === "Black"){
           if(Math.random() < 0.35) staticGlitch();
         } else {
@@ -897,15 +916,16 @@ Do not chase it. Let it approach.</p>
     }
 
     function renderResult(color){
-      const l = loreFor(color);
+      // lock-in sound happens right at reveal
+      playLockIn();
 
+      const l = loreFor(color);
       $("resultName").textContent = l.title;
       $("resultLore").textContent = l.text;
 
       const c = colorToCSS(color);
       $("glow").style.background = `radial-gradient(circle at 50% 30%, ${c}, transparent 62%)`;
 
-      // Subtitle + dramatic effect for BLACK
       if(color === "Black"){
         $("resultSubtitle").textContent = "The terminal did not expect this. Proceed carefully.";
         staticGlitch(); setTimeout(staticGlitch, 160); setTimeout(staticGlitch, 320);
@@ -923,20 +943,14 @@ Do not chase it. Let it approach.</p>
 
     function accept(){
       staticGlitch();
-      const msg =
-        `Alignment accepted: ${state.result}\n\n` +
-        `Present the chamber.\nReceive the crystal.`;
-      alert(msg);
+      alert(`Alignment accepted: ${state.result}\n\nPresent the chamber.\nReceive the crystal.`);
     }
 
     function manualPick(color){
       staticGlitch();
       const l = loreFor(color);
-
       $("resultName").textContent = l.title + " (Manual Selection)";
-      $("resultLore").textContent =
-        "Chosen by will, not signal.\n" +
-        l.text;
+      $("resultLore").textContent = "Chosen by will, not signal.\n" + l.text;
 
       const c = colorToCSS(color);
       $("glow").style.background = `radial-gradient(circle at 50% 30%, ${c}, transparent 62%)`;
@@ -953,10 +967,6 @@ Do not chase it. Let it approach.</p>
       state.result = null;
       toggleOverride(false);
       go(1);
-    }
-
-    function showCredits(){
-      $("credits").classList.toggle("hidden");
     }
 
     // init
